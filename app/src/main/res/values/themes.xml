@@ -1,0 +1,21 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="Theme.ZapAlerts" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorSurface">@color/huawei_white</item>
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/huawei_white3</item>
+        <item name="colorPrimaryVariant">@color/huawei_white2</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/huawei_blue</item>
+        <item name="colorSecondaryVariant">#004D9E</item>
+        <item name="colorOnSecondary">@color/huawei_white</item>
+
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">#E1E1E1</item>
+    </style>
+
+    <style name="CustomCardview" parent="CardView">
+        <item name="cardBackgroundColor">#BAF1F1F1</item>
+    </style>
+</resources>

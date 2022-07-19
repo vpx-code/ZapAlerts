@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="huawei_white">#FCFCFC</color>
+    <color name="huawei_white2">#efeff0</color>
+    <color name="huawei_white3">#e5e5e5</color>
+    <color name="huawei_blue">#017eff</color>
+    <color name="more_blue">#0277BD</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+</resources>
