@@ -1,0 +1,150 @@
+package com.xvlaze.zapalerts.receivers
+
+import android.R
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.BroadcastReceiver
+import android.content.ContentValues
+import android.content.Context
+import android.content.Intent
+import android.media.RingtoneManager
+import android.os.Build
+import android.util.Log
+import androidx.core.app.NotificationCompat
+import com.huawei.hms.searchkit.bean.ImageItem
+import com.huawei.hms.searchkit.bean.NewsItem
+import com.huawei.hms.searchkit.bean.VideoItem
+import com.huawei.hms.searchkit.bean.WebItem
+import com.xvlaze.zapalerts.model.*
+import com.xvlaze.zapalerts.ui.MainActivity
+import com.xvlaze.zapalerts.util.Constants.InterestType.*
+import kotlin.random.Random
+
+class AlertReceiver : BroadcastReceiver() {
+    override fun onReceive(c: Context, intent: Intent) {
+        Log.d(ContentValues.TAG, "Alarm received!")
+
+        val interests = InterestsManager.getSavedInterests(c)
+
+        val updatedImages = arrayListOf<ImageItem>()
+        val updatedVideos = arrayListOf<VideoItem>()
+        val updatedNews = arrayListOf<NewsItem>()
+        val updatedWebsites = arrayListOf<WebItem>()
+
+        val updatedNames = arrayListOf<String>()
+
+        for (interest in interests) {
+            when (interest.type) {
+                Image -> {
+                    ImageSearcher.search(
+                        interest.name,
+                        interest.language,
+                        interest.country,
+                        c,
+                        object : OnImageSearchPerformedCallback {
+                            override fun onImageSearchResult(result: ArrayList<ImageItem>) {
+                                TODO()
+                            }
+                        }
+                    )
+                }
+                News -> {
+                    NewsSearcher.search(
+                        interest.name,
+                        interest.language,
+                        interest.country,
+                        c,
+                        object : OnNewsSearchPerformedCallback {
+                            override fun onNewsSearchResult(result: ArrayList<NewsItem>) {
+                                // TODO: Debug aquí para REALTIME.
+
+                                //updatedNews.addAll(result.filter {
+                                // it.publishTime.toLong() < interest.lastUpdate })
+                                val lastUpdate = interest.lastUpdate
+                                if (result.any { it.publishTime.toLong() * 1000 > lastUpdate }) {
+                                    updatedNames.add(interest.name)
+                                    interest.lastUpdate = System.currentTimeMillis()
+                                }
+                                InterestsManager.updateInterestInJSON(interest, c)
+                            }
+                        }
+                    )
+                }
+                Video -> {
+                    VideoSearcher.search(
+                        interest.name,
+                        interest.language,
+                        interest.country,
+                        c,
+                        object : OnVideoSearchPerformedCallback {
+                            override fun onVideoSearchResult(result: ArrayList<VideoItem>) {
+                                TODO()
+                            }
+                        }
+                    )
+                }
+                Website -> {
+                    WebSearcher.search(
+                        interest.name,
+                        interest.language,
+                        interest.country,
+                        c,
+                        object : OnWebsiteSearchPerformedCallback {
+                            override fun onWebsiteSearchResult(result: ArrayList<WebItem>) {
+                                TODO()
+                            }
+                        }
+                    )
+                }
+            }
+        }
+
+        if (updatedNames.isNotEmpty()) {
+            showNotification(
+                c,
+                "New contents for ${updatedNames.joinToString(", ")}",
+                Random.nextInt()
+            )
+        }
+    }
+
+    private fun showNotification(
+        context: Context,
+        message: String?,
+        reqCode: Int
+    ) {
+        val pendingIntent =
+            PendingIntent.getActivity(
+                context,
+                reqCode,
+                Intent(context, MainActivity::class.java),
+                when {
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                    }
+                    else -> PendingIntent.FLAG_IMMUTABLE
+                }
+            )
+        val channelID = "channel_name" // The id of the channel.
+        val notificationBuilder: NotificationCompat.Builder =
+            NotificationCompat.Builder(context, channelID)
+                .setSmallIcon(R.mipmap.sym_def_app_icon)
+                .setContentTitle("Updates on your interests!")
+                .setContentText(message)
+                .setAutoCancel(true)
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .setContentIntent(pendingIntent)
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val name: CharSequence = "Channel Name" // The user-visible name of the channel.
+        val importance = NotificationManager.IMPORTANCE_HIGH
+        val mChannel = NotificationChannel(channelID, name, importance)
+        notificationManager.createNotificationChannel(mChannel)
+        notificationManager.notify(
+            reqCode,
+            notificationBuilder.build()
+        )
+        Log.d("showNotification", "showNotification: $reqCode")
+    }
+}

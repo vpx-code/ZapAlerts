@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="freqs">
+        <item>Cada día, como máximo</item>
+        <item>Cada semana, como máximo</item>
+        <item>Tiempo real (BETA)</item>
+    </string-array>
+    <string-array name="types">
+        <item>Webs</item>
+        <item>Fotos</item>
+        <item>Vídeos</item>
+        <item>Noticias</item>
+    </string-array>
+    <string-array name="countries">
+        <item>Todo el mundo</item>
+        <item>Chile</item>
+        <item>Colombia</item>
+        <item>Chequia</item>
+        <item>Dinamarca</item>
+        <item>Egipto</item>
+        <item>Finlandia</item>
+        <item>Francia</item>
+        <item>Alemania</item>
+        <item>India</item>
+        <item>Irlanda</item>
+        <item>Italia</item>
+        <item>México</item>
+        <item>Noruega</item>
+        <item>Filipinas</item>
+        <item>Polonia</item>
+        <item>Portugal</item>
+        <item>Arabia Saudí</item>
+        <item>Singapur</item>
+        <item>Sudáfrica</item>
+        <item>España</item>
+        <item>Suecia</item>
+        <item>Turquía</item>
+        <item>Emiratos Árabes Unidos</item>
+        <item>Reino Unido</item>
+    </string-array>
+    <string-array name="languages">
+        <item>Inglés</item>
+        <item>Español</item>
+        <item>Alemán</item>
+        <item>Italiano</item>
+        <item>Francés</item>
+        <item>Árabe</item>
+        <item>Polaco</item>
+        <item>Turco</item>
+        <item>Finlandés</item>
+        <item>Sueco</item>
+        <item>Danés</item>
+        <item>Noruego</item>
+        <item>Portugués</item>
+        <item>Checo</item>
+    </string-array>
+</resources>
