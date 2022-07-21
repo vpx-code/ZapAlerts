@@ -8,10 +8,9 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.Spinner
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.xvlaze.zapalerts.R
@@ -23,24 +22,13 @@ import com.xvlaze.zapalerts.util.Constants.InterestType.*
 
 class InterestsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityInterestsBinding
-    private lateinit var viewModel: InterestsViewModel
-    private lateinit var freqSpinner: Spinner
-    private lateinit var typeSpinner: Spinner
-    private lateinit var countrySpinner: Spinner
-    private lateinit var langSpinner: Spinner
+    private val viewModel: InterestsViewModel by viewModels()
     private lateinit var fab: FloatingActionButton
-    private var isCustomizeMenuVisible = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityInterestsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        viewModel = ViewModelProvider(
-            this,
-            InterestsViewModel.MyViewModelFactory(application)
-        ).get(
-            InterestsViewModel::class.java
-        )
 
         val upperBlob = binding.upperBlob
         val lowerBlob = binding.lowerBlob

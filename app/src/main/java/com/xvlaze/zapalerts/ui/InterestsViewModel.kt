@@ -3,12 +3,9 @@ package com.xvlaze.zapalerts.ui
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.huawei.hms.searchkit.bean.NewsItem
 import com.xvlaze.zapalerts.model.OnNewsSearchPerformedCallback
 import com.xvlaze.zapalerts.repository.Repository
-import com.xvlaze.zapalerts.util.Constants
 import com.xvlaze.zapalerts.util.Constants.AlertType
 import com.xvlaze.zapalerts.util.Constants.InterestType
 
@@ -16,7 +13,7 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
     private val repository = Repository(application.applicationContext)
     val searchResults = MutableLiveData<ArrayList<NewsItem>>() // FIXME
     val isInterestSaved = MutableLiveData<Boolean>()
-    val preferredLanguage = MutableLiveData<Int>()
+    private val preferredLanguage = MutableLiveData<Int>()
 
     fun doSearch(
         searchQuery: String,
@@ -78,6 +75,24 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
         preferredLanguage.postValue(repository.getPreferredLanguage())
     }
 
+    fun overwriteInterest(
+        searchQuery: String,
+        frequency: AlertType,
+        language: Int,
+        country: Int,
+        type: InterestType
+    ) {
+        // TODO: Buscar el método que tengo guardado en InterestsManager o JSONProvider para actualizar intereses.
+        repository.overwriteInterest(
+            searchQuery,
+            frequency,
+            language,
+            country,
+            type
+        )
+        isInterestSaved.postValue(true)
+    }
+
     /*fun doWebSearch(searchQuery: String) {
         repository.doWebSearch(searchQuery, object: IOnSearchPerformedCallback {
             override fun onWebSearchResult(result: ArrayList<WebItem>) { // FIXME: enum? Igual que ImageSaver
@@ -85,15 +100,4 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
             }
         })
     }*/
-
-    class MyViewModelFactory(val app: Application) : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return if (modelClass.isAssignableFrom(InterestsViewModel::class.java)) {
-                @Suppress("UNCHECKED_CAST")
-                InterestsViewModel(app) as T
-            } else {
-                throw IllegalArgumentException("ViewModel Not Found")
-            }
-        }
-    }
 }
