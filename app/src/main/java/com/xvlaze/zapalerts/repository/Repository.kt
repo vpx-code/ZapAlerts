@@ -99,6 +99,40 @@ class Repository(private val c: Context) {
         }
     }
 
+    fun overwriteInterest(
+        searchQuery: String,
+        frequency: AlertType,
+        language: Int,
+        country: Int,
+        type: InterestType
+    ) {
+        InterestsManager.updateInterestInJSON(
+            Interest(
+                searchQuery,
+                frequency,
+                language,
+                country,
+                System.currentTimeMillis(),
+                type
+            ),
+            c
+        )
+        when (frequency) {
+            DAILY -> {
+                Daily.updateSavedDate(c)
+                MyAlarmManager.scheduleAlarm(Daily, c)
+            }
+            WEEKLY -> {
+                Weekly.updateSavedDate(c)
+                MyAlarmManager.scheduleAlarm(Weekly, c)
+            }
+            REALTIME -> {
+                Realtime.updateSavedDate(c)
+                MyAlarmManager.scheduleAlarm(Realtime, c)
+            }
+        }
+    }
+
     fun getSavedInterests() = InterestsManager.getSavedInterests(c)
 
     fun searchInterest(name: String): Interest =
