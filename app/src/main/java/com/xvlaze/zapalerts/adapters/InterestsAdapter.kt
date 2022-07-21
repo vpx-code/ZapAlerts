@@ -24,7 +24,8 @@ class InterestsAdapter(private val interestsList: ArrayList<Interest>): Recycler
     override fun getItemCount(): Int = interestsList.size
 
     interface IOnItemClickListener {
-        fun onItemClick(position: Int)
+        fun onSourceClicked(position: Int)
+        fun onEditButtonClicked(position: Int)
     }
 
     fun setOnItemClickListener(listener: IOnItemClickListener) {
@@ -36,8 +37,12 @@ class InterestsAdapter(private val interestsList: ArrayList<Interest>): Recycler
         listener: IOnItemClickListener
     ): RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.root.setOnClickListener {
-                listener.onItemClick(adapterPosition)
+            binding.source.setOnClickListener {
+                listener.onSourceClicked(adapterPosition)
+            }
+
+            binding.editInterest.setOnClickListener {
+                listener.onEditButtonClicked(adapterPosition)
             }
         }
     }

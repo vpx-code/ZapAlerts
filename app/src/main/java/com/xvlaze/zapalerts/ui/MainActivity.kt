@@ -2,14 +2,11 @@ package com.xvlaze.zapalerts.ui
 
 import android.content.Intent
 import android.content.res.Configuration
-import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModelProvider
 import com.xvlaze.zapalerts.R
-import com.xvlaze.zapalerts.adapters.AlertsAdapter
 import com.xvlaze.zapalerts.adapters.InterestsAdapter
 import com.xvlaze.zapalerts.databinding.ActivityMainBinding
 
@@ -54,11 +51,15 @@ class MainActivity : AppCompatActivity() {
         viewModel.savedInterests.observe(this) {
             adapter = InterestsAdapter(it)
             adapter.setOnItemClickListener(object: InterestsAdapter.IOnItemClickListener {
-                override fun onItemClick(position: Int) {
+                override fun onSourceClicked(position: Int) {
                     Intent(this@MainActivity, InterestDetailActivity::class.java).apply {
                         putExtra("name", it[position].name)
                         startActivity(this)
                     }
+                }
+
+                override fun onEditButtonClicked(position: Int) {
+                    EditInterestFragment().show(supportFragmentManager, "Edit Interest Fragment")
                 }
             })
             recyclerView.adapter = adapter
