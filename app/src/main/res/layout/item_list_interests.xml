@@ -4,51 +4,75 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clickable="true">
+
     <androidx.cardview.widget.CardView
+        style="@style/CustomCardview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="32sp"
+        android:elevation="0dp"
+        android:outlineProvider="none"
+        app:cardCornerRadius="12dp"
+        app:cardUseCompatPadding="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginBottom="32sp"
-        app:cardCornerRadius="12dp"
-        android:elevation="0dp"
-        style="@style/CustomCardview"
-        android:outlineProvider="none"
-        android:foreground="?android:attr/selectableItemBackground"
-        app:cardUseCompatPadding="true">
+        app:layout_constraintTop_toTopOf="parent">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingTop="8dp"
-            android:paddingHorizontal="24dp">
+            android:paddingHorizontal="24dp"
+            android:paddingTop="20dp">
 
-            <TextView
-                android:id="@+id/interest_title"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/name_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="12dp"
-                android:fontFamily="@font/lato_black"
-                android:text="Loading..."
-                android:textSize="32sp"
-                android:textStyle="bold" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/interest_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/lato_black"
+                    android:maxLines="1"
+                    android:text="Loading..."
+                    android:textSize="32sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/edit_interest"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/edit_interest"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_edit_24"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
             <com.google.android.material.divider.MaterialDivider
                 android:id="@+id/divider"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_below="@id/interest_title"/>
+                android:layout_below="@id/name_layout"
+                android:layout_marginTop="8dp" />
+
             <TextView
                 android:id="@+id/source"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/divider"
+                android:layout_marginVertical="12dp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="Consultar últimas novedades"
+                android:textColor="#0277BD"
                 android:textSize="16sp"
                 android:textStyle="italic"
-                android:text="Consultar últimas novedades"
-                android:layout_marginVertical="12dp"
-                android:layout_below="@id/divider"
-                android:textColor="#0277BD"
                 app:drawableEndCompat="@drawable/ic_baseline_arrow_forward_24" />
         </RelativeLayout>
     </androidx.cardview.widget.CardView>

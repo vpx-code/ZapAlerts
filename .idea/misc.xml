@@ -7,6 +7,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../../../layout/custom_preview.xml" value="0.1357913669064748" />
         <entry key="..\:/Users/xvlaze/AppData/Local/Android/Sdk/platforms/android-31/data/res/layout/simple_spinner_item.xml" value="0.11510416666666666" />
         <entry key="..\:/Users/xvlaze/Desarrollo/Android/AndroidStudioProjects/ZapAlerts/app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="..\:/Users/xvlaze/Desarrollo/Android/AndroidStudioProjects/ZapAlerts/app/src/main/res/layout/item_list_news.xml" value="0.25" />
@@ -19,6 +20,13 @@
         <entry key="..\:/Users/xvlaze/Desarrollo/Android/AndroidStudioProjects/ZapAlertsTEST/app/src/main/res/layout/item_list_interests.xml" value="0.1" />
         <entry key="..\:/Users/xvlaze/Desarrollo/Android/AndroidStudioProjects/ZapAlertsTEST/app/src/main/res/layout/item_list_news.xml" value="0.33" />
         <entry key="..\:/Users/xvlaze/Desarrollo/Android/AndroidStudioProjects/ZapAlertsTEST/app/src/main/res/layout/spinner_item.xml" value="0.4140625" />
+        <entry key="app/src/main/res/layout/activity_interest_detail.xml" value="0.21822916666666667" />
+        <entry key="app/src/main/res/layout/activity_interests.xml" value="0.21822916666666667" />
+        <entry key="app/src/main/res/layout/edit_dialog.xml" value="0.20860137939453122" />
+        <entry key="app/src/main/res/layout/interest_customizer.xml" value="0.2171875" />
+        <entry key="app/src/main/res/layout/item_list_interests.xml" value="0.273284912109375" />
+        <entry key="app/src/main/res/layout/item_list_news.xml" value="0.21822916666666667" />
+        <entry key="app/src/main/res/layout/view_interest_customizer.xml" value="0.1" />
       </map>
     </option>
   </component>

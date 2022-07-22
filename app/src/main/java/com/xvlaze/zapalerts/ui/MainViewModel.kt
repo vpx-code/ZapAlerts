@@ -3,8 +3,6 @@ package com.xvlaze.zapalerts.ui
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.huawei.hms.searchkit.bean.NewsItem
 import com.xvlaze.zapalerts.model.Interest
 import com.xvlaze.zapalerts.repository.Repository
@@ -25,15 +23,4 @@ class MainViewModel (application: Application): AndroidViewModel(application) {
             }
         })
     }*/
-
-    class MyViewModelFactory(val app: Application): ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-                @Suppress("UNCHECKED_CAST")
-                MainViewModel(app) as T
-            } else {
-                throw IllegalArgumentException("ViewModel Not Found")
-            }
-        }
-    }
 }
