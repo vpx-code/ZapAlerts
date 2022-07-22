@@ -4,9 +4,9 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProvider
 import com.xvlaze.zapalerts.R
 import com.xvlaze.zapalerts.adapters.AlertsAdapter
 import com.xvlaze.zapalerts.databinding.ActivityInterestDetailBinding
@@ -14,18 +14,12 @@ import com.xvlaze.zapalerts.util.Constants
 
 class InterestDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityInterestDetailBinding
-    private lateinit var viewModel: InterestDetailViewModel
+    private val viewModel: InterestDetailViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityInterestDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        viewModel = ViewModelProvider(
-            this,
-            InterestDetailViewModel.MyViewModelFactory(application)
-        ).get(
-            InterestDetailViewModel::class.java
-        )
 
         val upperBlob = binding.upperBlob
         val lowerBlob = binding.lowerBlob

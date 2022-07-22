@@ -59,8 +59,11 @@ class AlertReceiver : BroadcastReceiver() {
                             override fun onNewsSearchResult(result: ArrayList<NewsItem>) {
                                 // TODO: Debug aquí para REALTIME.
 
-                                //updatedNews.addAll(result.filter {
-                                // it.publishTime.toLong() < interest.lastUpdate })
+                                updatedNews.addAll( // TODO: Se guarda bien, pero ¿ahora cómo lo pasamos? ¿Lo guardamos en un JSON o rehacemos la búsqueda al entrar?
+                                    result.filter {
+                                        it.publishTime.toLong() < interest.lastUpdate
+                                    }
+                                )
                                 val lastUpdate = interest.lastUpdate
                                 if (result.any { it.publishTime.toLong() * 1000 > lastUpdate }) {
                                     updatedNames.add(interest.name)
@@ -118,7 +121,10 @@ class AlertReceiver : BroadcastReceiver() {
             PendingIntent.getActivity(
                 context,
                 reqCode,
-                Intent(context, MainActivity::class.java),
+                Intent(
+                    context,
+                    MainActivity::class.java
+                ), // TODO: Añadir extra con los updated o bien recalcular en Main pasando una flag.
                 when {
                     Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
                         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE

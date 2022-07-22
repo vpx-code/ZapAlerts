@@ -102,7 +102,7 @@ object Weekly : AlertType() {
 }
 
 object Realtime : AlertType() {
-    override val interval: Long = 60000*5 // Ojo al cambiar esto
+    override val interval: Long = 60000*5 // Ojo al cambiar esto. 5 minutos para realtime.
 
     override fun getType(): Constants.AlertType = REALTIME
 

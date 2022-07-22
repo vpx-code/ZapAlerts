@@ -8,11 +8,9 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.ArrayAdapter
-import android.widget.Spinner
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.xvlaze.zapalerts.R
@@ -24,24 +22,14 @@ import com.xvlaze.zapalerts.util.Constants.InterestType.*
 
 class InterestsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityInterestsBinding
-    private lateinit var viewModel: InterestsViewModel
-    private lateinit var freqSpinner: Spinner
-    private lateinit var typeSpinner: Spinner
-    private lateinit var countrySpinner: Spinner
-    private lateinit var langSpinner: Spinner
+    private val viewModel: InterestsViewModel by viewModels()
     private lateinit var fab: FloatingActionButton
-    private var isCustomizeMenuVisible = false
+    private lateinit var adapter: AlertsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityInterestsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        viewModel = ViewModelProvider(
-            this,
-            InterestsViewModel.MyViewModelFactory(application)
-        ).get(
-            InterestsViewModel::class.java
-        )
 
         val upperBlob = binding.upperBlob
         val lowerBlob = binding.lowerBlob
@@ -62,7 +50,7 @@ class InterestsActivity : AppCompatActivity() {
 
         binding.progress.visibility = View.INVISIBLE
         val recyclerView = binding.recycler
-        var adapter = AlertsAdapter(arrayListOf())
+        adapter = AlertsAdapter(arrayListOf())
         recyclerView.adapter = adapter
 
         fab = binding.saveAlert
@@ -82,16 +70,16 @@ class InterestsActivity : AppCompatActivity() {
                     putFabOnSearchMode()
                 } else {
                     fab.setOnClickListener {
-                        binding.customizeDropdown.visibility = View.GONE
+                        binding.settings.visibility = View.GONE
                         binding.progress.visibility = View.VISIBLE
                         val imm: InputMethodManager =
                             getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
                         imm.hideSoftInputFromWindow(binding.searchview.applicationWindowToken, 0)
                         viewModel.doSearch(
                             searchQuery.toString(),
-                            typeSpinner.selectedItemPosition,
-                            langSpinner.selectedItemPosition,
-                            countrySpinner.selectedItemPosition
+                            binding.settings.getType(),
+                            binding.settings.getLang(),
+                            binding.settings.getCountry()
                         )
 
                         viewModel.searchResults.observe(this@InterestsActivity) {
@@ -114,7 +102,7 @@ class InterestsActivity : AppCompatActivity() {
                             fab.setOnClickListener {
                                 viewModel.saveInterest(
                                     searchQuery.toString(),
-                                    when (freqSpinner.selectedItemPosition) {
+                                    when (binding.settings.getFrequency()) {
                                         0 -> {
                                             DAILY
                                         }
@@ -128,10 +116,10 @@ class InterestsActivity : AppCompatActivity() {
                                             DAILY
                                         }
                                     },
-                                    langSpinner.selectedItemPosition,
-                                    countrySpinner.selectedItemPosition,
+                                    binding.settings.getLang(),
+                                    binding.settings.getCountry(),
                                     // FIXME: No debería estar aquí.
-                                    when (typeSpinner.selectedItemPosition) {
+                                    when (binding.settings.getType()) {
                                         0 -> Website
                                         1 -> Image
                                         2 -> Video
@@ -164,18 +152,18 @@ class InterestsActivity : AppCompatActivity() {
             }
         })
 
-        binding.customizeDropdown.visibility = View.VISIBLE
-        binding.customizeOption.setOnClickListener {
+        /*binding.settings.visibility = View.VISIBLE
+        binding.settings.customizeOption.setOnClickListener {
             if (isCustomizeMenuVisible) {
-                binding.customizeDropdown.visibility = View.GONE
-                binding.arrowIcon.setImageResource(R.drawable.ic_baseline_keyboard_arrow_down_24)
+                binding.settings.customizeDropdown.visibility = View.GONE
+                binding.settings.arrowIcon.setImageResource(R.drawable.ic_baseline_keyboard_arrow_down_24)
             } else {
-                binding.customizeDropdown.visibility = View.VISIBLE
-                binding.arrowIcon.setImageResource(R.drawable.ic_baseline_keyboard_arrow_up_24)
+                binding.settings.customizeDropdown.visibility = View.VISIBLE
+                binding.settings.arrowIcon.setImageResource(R.drawable.ic_baseline_keyboard_arrow_up_24)
             }
             isCustomizeMenuVisible = !isCustomizeMenuVisible
         }
-        initializeSpinners()
+        initializeSpinners()*/
     }
 
     private fun putFabOnSearchMode() {
@@ -193,11 +181,11 @@ class InterestsActivity : AppCompatActivity() {
         }
     }
 
-    private fun initializeSpinners() {
-        freqSpinner = binding.freqSpinner
-        typeSpinner = binding.typeSpinner
-        countrySpinner = binding.countrySpinner
-        langSpinner = binding.langSpinner
+    /*private fun initializeSpinners() {
+        freqSpinner = binding.settings.freqSpinner
+        typeSpinner = binding.settings.typeSpinner
+        countrySpinner = binding.settings.countrySpinner
+        langSpinner = binding.settings.langSpinner
 
         val freqAdapter =
             ArrayAdapter.createFromResource(this, R.array.freqs, (R.layout.spinner_item))
@@ -224,7 +212,7 @@ class InterestsActivity : AppCompatActivity() {
         viewModel.preferredLanguage.observe(this) {
             langSpinner.setSelection(it)
         }
-    }
+    }*/
 
     private fun openInBrowser(selectedItem: String) =
         Intent(Intent.ACTION_VIEW, Uri.parse(selectedItem)).apply {
