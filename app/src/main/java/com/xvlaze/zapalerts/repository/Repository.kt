@@ -140,5 +140,5 @@ class Repository(private val c: Context) {
 
     fun getPreferredLanguage(): Int = LanguageUtils.getPreferredLanguage()
     fun isInterestUnique(name: String): Boolean = InterestsManager.isInterestUnique(name, c)
-    fun deleteInterest(searchQuery: String) = InterestsManager.deleteInterestFromJSON(searchQuery)
+    fun deleteInterest(searchQuery: String) = InterestsManager.deleteInterestFromJSON(searchQuery, c)
 }

@@ -8,7 +8,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -219,11 +218,4 @@ class InterestsActivity : AppCompatActivity() {
         Intent(Intent.ACTION_VIEW, Uri.parse(selectedItem)).apply {
             startActivity(this)
         }
-
-    // FIXME: No va.
-    override fun onResume() {
-        super.onResume()
-        Toast.makeText(this@InterestsActivity, "Resume...", Toast.LENGTH_SHORT).show()
-        adapter.notifyDataSetChanged()
-    }
 }

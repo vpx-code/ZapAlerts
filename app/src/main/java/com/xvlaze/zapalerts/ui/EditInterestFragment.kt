@@ -1,6 +1,7 @@
 package com.xvlaze.zapalerts.ui
 
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -88,7 +89,7 @@ class EditInterestFragment : DialogFragment() {
 
         val deleteButton = binding.btnDelete
         deleteButton.setOnClickListener {
-            viewModel.deleteInterest(interestName) // FIXME: Need to include this via an Intent (?)
+            viewModel.deleteInterest(interestName)
             dismiss()
         }
     }
@@ -98,6 +99,11 @@ class EditInterestFragment : DialogFragment() {
         arguments?.getString("interestName")?.let {
             interestName = it
         }
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        (activity as DialogInterface.OnDismissListener).onDismiss(dialog)
     }
 
     companion object {

@@ -1,19 +1,23 @@
 package com.xvlaze.zapalerts.ui
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 import com.xvlaze.zapalerts.R
 import com.xvlaze.zapalerts.adapters.InterestsAdapter
 import com.xvlaze.zapalerts.databinding.ActivityMainBinding
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
     private lateinit var binding: ActivityMainBinding
     private val viewModel: MainViewModel by viewModels()
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: InterestsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,8 +40,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        val recyclerView = binding.recycler
-        var adapter = InterestsAdapter(arrayListOf())
+        recyclerView = binding.recycler
+        adapter = InterestsAdapter(arrayListOf())
         recyclerView.adapter = adapter
 
         viewModel.getSavedInterests()
@@ -52,7 +56,10 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onEditButtonClicked(position: Int) {
-                    EditInterestFragment.newInstance(it[position].name).show(supportFragmentManager, "Edit Interest Fragment")
+                    val dialog = EditInterestFragment.newInstance(
+                        it[position].name
+                    )
+                    dialog.show(supportFragmentManager, "Edit Interest Fragment")
                 }
             })
             recyclerView.adapter = adapter
@@ -65,8 +72,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onDismiss(p0: DialogInterface?) {
         viewModel.getSavedInterests()
     }
 }

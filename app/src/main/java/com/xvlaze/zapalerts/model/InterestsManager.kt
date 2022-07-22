@@ -39,7 +39,8 @@ object InterestsManager {
         JSONProvider.serialize(c)
     }
 
-    fun deleteInterestFromJSON(searchQuery: String) {
+    fun deleteInterestFromJSON(searchQuery: String, c: Context) {
         JSONProvider.remove(searchQuery)
+        JSONProvider.serialize(c)
     }
 }
