@@ -1,5 +1,6 @@
 package com.xvlaze.zapalerts.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,7 @@ class EditInterestFragment : DialogFragment() {
 
     private lateinit var binding: EditDialogBinding
     private lateinit var viewModel: InterestsViewModel
+    private lateinit var interestName: String
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,8 +40,7 @@ class EditInterestFragment : DialogFragment() {
             Toast.makeText(context, "Confirmed!", Toast.LENGTH_SHORT).show()
 
             viewModel.overwriteInterest(
-                // TODO: Pasar el nombre del Interest a este Fragment para ponerlo aquí.
-                "Apple",
+                interestName,
                 when (binding.settings.getFrequency()) { // FIXME: THIS IS SHIT! No puedo estar repitiendo este código cada vez.
                     0 -> {
                         Constants.AlertType.DAILY
@@ -81,13 +82,30 @@ class EditInterestFragment : DialogFragment() {
                         Snackbar.LENGTH_LONG
                     ).show()
                 }
-                activity?.onBackPressed()
+                dismiss()
             }
         }
 
         val deleteButton = binding.btnDelete
         deleteButton.setOnClickListener {
-            Toast.makeText(context, "Deleting...", Toast.LENGTH_SHORT).show()
+            viewModel.deleteInterest(interestName) // FIXME: Need to include this via an Intent (?)
+            dismiss()
+        }
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        arguments?.getString("interestName")?.let {
+            interestName = it
+        }
+    }
+
+    companion object {
+        @JvmStatic
+        fun newInstance(interestName: String) = EditInterestFragment().apply {
+            arguments = Bundle().apply {
+                putString("interestName", interestName)
+            }
         }
     }
 }

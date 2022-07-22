@@ -136,8 +136,9 @@ class Repository(private val c: Context) {
     fun getSavedInterests() = InterestsManager.getSavedInterests(c)
 
     fun searchInterest(name: String): Interest =
-        InterestsManager.getSavedInterests(c).filter { it.name == name }[0]
+        InterestsManager.getSavedInterests(c).first { it.name == name }
 
     fun getPreferredLanguage(): Int = LanguageUtils.getPreferredLanguage()
     fun isInterestUnique(name: String): Boolean = InterestsManager.isInterestUnique(name, c)
+    fun deleteInterest(searchQuery: String) = InterestsManager.deleteInterestFromJSON(searchQuery)
 }

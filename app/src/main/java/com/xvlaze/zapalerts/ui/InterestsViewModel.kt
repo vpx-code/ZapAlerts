@@ -93,6 +93,10 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
         isInterestSaved.postValue(true)
     }
 
+    fun deleteInterest(searchQuery: String) {
+        repository.deleteInterest(searchQuery)
+    }
+
     /*fun doWebSearch(searchQuery: String) {
         repository.doWebSearch(searchQuery, object: IOnSearchPerformedCallback {
             override fun onWebSearchResult(result: ArrayList<WebItem>) { // FIXME: enum? Igual que ImageSaver
