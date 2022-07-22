@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onEditButtonClicked(position: Int) {
-                    EditInterestFragment().show(supportFragmentManager, "Edit Interest Fragment")
+                    EditInterestFragment.newInstance(it[position].name).show(supportFragmentManager, "Edit Interest Fragment")
                 }
             })
             recyclerView.adapter = adapter

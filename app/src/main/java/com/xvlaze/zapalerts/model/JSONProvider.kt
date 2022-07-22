@@ -45,7 +45,10 @@ object JSONProvider {
         savedInterests.add(index, interest)
     }
 
-    fun remove(interest: Interest) {
+    fun remove(interestName: String) {
+        val interest = savedInterests.find {
+            it.name == interestName
+        }
         savedInterests.remove(interest)
     }
 

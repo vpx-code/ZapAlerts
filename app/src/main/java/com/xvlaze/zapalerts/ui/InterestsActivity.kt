@@ -8,6 +8,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -24,6 +25,7 @@ class InterestsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityInterestsBinding
     private val viewModel: InterestsViewModel by viewModels()
     private lateinit var fab: FloatingActionButton
+    private lateinit var adapter: AlertsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +51,7 @@ class InterestsActivity : AppCompatActivity() {
 
         binding.progress.visibility = View.INVISIBLE
         val recyclerView = binding.recycler
-        var adapter = AlertsAdapter(arrayListOf())
+        adapter = AlertsAdapter(arrayListOf())
         recyclerView.adapter = adapter
 
         fab = binding.saveAlert
@@ -217,4 +219,11 @@ class InterestsActivity : AppCompatActivity() {
         Intent(Intent.ACTION_VIEW, Uri.parse(selectedItem)).apply {
             startActivity(this)
         }
+
+    // FIXME: No va.
+    override fun onResume() {
+        super.onResume()
+        Toast.makeText(this@InterestsActivity, "Resume...", Toast.LENGTH_SHORT).show()
+        adapter.notifyDataSetChanged()
+    }
 }
