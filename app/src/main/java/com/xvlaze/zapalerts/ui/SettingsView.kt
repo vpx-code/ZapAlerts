@@ -12,13 +12,19 @@ class SettingsView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
 ) : ConstraintLayout(context, attrs) {
 
+    private lateinit var interestName: String
+
     private val isCollapsible: Boolean
     private var isCustomizeMenuVisible = false
 
     private lateinit var freqSpinner: Spinner
+    private var freqSelection = 0
     private lateinit var typeSpinner: Spinner
+    private var typeSelection = 3
     private lateinit var countrySpinner: Spinner
+    private var countrySelection = 0
     private lateinit var langSpinner: Spinner
+    private var langSelection = 0
 
     init {
         val view = LayoutInflater
@@ -56,18 +62,19 @@ class SettingsView @JvmOverloads constructor(
             ArrayAdapter.createFromResource(context, R.array.freqs, (R.layout.spinner_item))
         freqAdapter.setDropDownViewResource(R.layout.spinner_item)
         freqSpinner.adapter = freqAdapter
+        freqSpinner.setSelection(freqSelection)
 
         val typeAdapter =
             ArrayAdapter.createFromResource(context, R.array.types, (R.layout.spinner_item))
         typeAdapter.setDropDownViewResource(R.layout.spinner_item)
         typeSpinner.adapter = typeAdapter
-        typeSpinner.setSelection(3) // TODO: No dejar así
+        typeSpinner.setSelection(typeSelection) // TODO: No dejar así
 
         val countryAdapter =
             ArrayAdapter.createFromResource(context, R.array.countries, (R.layout.spinner_item))
         countryAdapter.setDropDownViewResource(R.layout.spinner_item)
         countrySpinner.adapter = countryAdapter
-        countrySpinner.setSelection(0)
+        countrySpinner.setSelection(countrySelection)
 
 
         val langAdapter =
@@ -78,7 +85,23 @@ class SettingsView @JvmOverloads constructor(
         viewModel.preferredLanguage.observe(this) {
             langSpinner.setSelection(it)
         }*/
-        langSpinner.setSelection(0)
+        langSpinner.setSelection(langSelection)
+    }
+
+    fun setFreqSelection(selection: Int) {
+        this.freqSelection = selection
+    }
+
+    fun setTypeSelection(selection: Int) {
+        this.typeSelection = selection
+    }
+
+    fun setCountrySelection(selection: Int) {
+        this.countrySelection = selection
+    }
+
+    fun setLangSelection(selection: Int) {
+        this.langSelection = selection
     }
 
     fun getFrequency(): Int = freqSpinner.selectedItemPosition
