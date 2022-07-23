@@ -136,34 +136,31 @@ class InterestsActivity : AppCompatActivity() {
                                             finish()
                                         }
                                         else -> {
-                                            // Todo: Colores!!
-                                            Snackbar.make(
+                                            val snackbar = Snackbar.make(
                                                 binding.root,
                                                 "Ya tienes este interés guardado. Por favor, cambia la búsqueda y vuelve a intentarlo.",
                                                 Snackbar.LENGTH_LONG
-                                            ).show()
+                                            )
+
+                                            snackbar.apply {
+                                                setBackgroundTint(
+                                                    ContextCompat.getColor(
+                                                        this@InterestsActivity,
+                                                        R.color.danger
+                                                    )
+                                                )
+                                                show()
+                                            }
                                         }
                                     }
                                 }
+
                             }
                         }
                     }
                 }
             }
         })
-
-        /*binding.settings.visibility = View.VISIBLE
-        binding.settings.customizeOption.setOnClickListener {
-            if (isCustomizeMenuVisible) {
-                binding.settings.customizeDropdown.visibility = View.GONE
-                binding.settings.arrowIcon.setImageResource(R.drawable.ic_baseline_keyboard_arrow_down_24)
-            } else {
-                binding.settings.customizeDropdown.visibility = View.VISIBLE
-                binding.settings.arrowIcon.setImageResource(R.drawable.ic_baseline_keyboard_arrow_up_24)
-            }
-            isCustomizeMenuVisible = !isCustomizeMenuVisible
-        }
-        initializeSpinners()*/
     }
 
     private fun putFabOnSearchMode() {
@@ -180,39 +177,6 @@ class InterestsActivity : AppCompatActivity() {
             imm.showSoftInput(binding.searchview, InputMethodManager.SHOW_IMPLICIT)
         }
     }
-
-    /*private fun initializeSpinners() {
-        freqSpinner = binding.settings.freqSpinner
-        typeSpinner = binding.settings.typeSpinner
-        countrySpinner = binding.settings.countrySpinner
-        langSpinner = binding.settings.langSpinner
-
-        val freqAdapter =
-            ArrayAdapter.createFromResource(this, R.array.freqs, (R.layout.spinner_item))
-        freqAdapter.setDropDownViewResource(R.layout.spinner_item)
-        freqSpinner.adapter = freqAdapter
-
-        val typeAdapter =
-            ArrayAdapter.createFromResource(this, R.array.types, (R.layout.spinner_item))
-        typeAdapter.setDropDownViewResource(R.layout.spinner_item)
-        typeSpinner.adapter = typeAdapter
-        typeSpinner.setSelection(3) // TODO: No dejar así
-
-        val countryAdapter =
-            ArrayAdapter.createFromResource(this, R.array.countries, (R.layout.spinner_item))
-        countryAdapter.setDropDownViewResource(R.layout.spinner_item)
-        countrySpinner.adapter = countryAdapter
-        countrySpinner.setSelection(0)
-
-        val langAdapter =
-            ArrayAdapter.createFromResource(this, R.array.languages, (R.layout.spinner_item))
-        langAdapter.setDropDownViewResource(R.layout.spinner_item)
-        langSpinner.adapter = langAdapter
-        viewModel.getPreferredLanguage()
-        viewModel.preferredLanguage.observe(this) {
-            langSpinner.setSelection(it)
-        }
-    }*/
 
     private fun openInBrowser(selectedItem: String) =
         Intent(Intent.ACTION_VIEW, Uri.parse(selectedItem)).apply {

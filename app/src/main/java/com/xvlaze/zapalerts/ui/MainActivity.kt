@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.xvlaze.zapalerts.R
 import com.xvlaze.zapalerts.adapters.InterestsAdapter
 import com.xvlaze.zapalerts.databinding.ActivityMainBinding
@@ -73,6 +74,21 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
     }
 
     override fun onDismiss(p0: DialogInterface?) {
+        val snackbar = Snackbar.make(
+            binding.root,
+            "Updating Interests...",
+            Snackbar.LENGTH_LONG
+        )
+
+        snackbar.apply {
+            setBackgroundTint(
+                ContextCompat.getColor(
+                    context,
+                    R.color.huawei_blue
+                )
+            )
+            show()
+        }
         viewModel.getSavedInterests()
     }
 }
