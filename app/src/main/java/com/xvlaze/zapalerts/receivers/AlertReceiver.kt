@@ -18,7 +18,7 @@ import com.huawei.hms.searchkit.bean.VideoItem
 import com.huawei.hms.searchkit.bean.WebItem
 import com.xvlaze.zapalerts.model.*
 import com.xvlaze.zapalerts.ui.MainActivity
-import com.xvlaze.zapalerts.util.Constants.InterestType.*
+import com.xvlaze.zapalerts.util.Constants.AlertType.*
 import kotlin.random.Random
 
 class AlertReceiver : BroadcastReceiver() {
@@ -35,7 +35,7 @@ class AlertReceiver : BroadcastReceiver() {
 
         for (interest in interests) {
             when (interest.type) {
-                Image -> {
+                IMAGE.id -> {
                     ImageSearcher.search(
                         interest.name,
                         interest.language,
@@ -48,7 +48,7 @@ class AlertReceiver : BroadcastReceiver() {
                         }
                     )
                 }
-                News -> {
+                NEWS.id -> {
                     NewsSearcher.search(
                         interest.name,
                         interest.language,
@@ -72,7 +72,7 @@ class AlertReceiver : BroadcastReceiver() {
                         }
                     )
                 }
-                Video -> {
+                VIDEO.id -> {
                     VideoSearcher.search(
                         interest.name,
                         interest.language,
@@ -85,7 +85,7 @@ class AlertReceiver : BroadcastReceiver() {
                         }
                     )
                 }
-                Website -> {
+                WEBSITE.id -> {
                     WebSearcher.search(
                         interest.name,
                         interest.language,

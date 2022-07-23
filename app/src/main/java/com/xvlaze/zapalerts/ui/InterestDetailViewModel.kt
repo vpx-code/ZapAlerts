@@ -7,26 +7,25 @@ import com.huawei.hms.searchkit.bean.NewsItem
 import com.xvlaze.zapalerts.model.Interest
 import com.xvlaze.zapalerts.model.OnNewsSearchPerformedCallback
 import com.xvlaze.zapalerts.repository.Repository
-import com.xvlaze.zapalerts.util.Constants
-import com.xvlaze.zapalerts.util.Constants.InterestType.*
+import com.xvlaze.zapalerts.util.Constants.AlertType.*
 
 class InterestDetailViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = Repository(application.applicationContext)
     val foundInterest = MutableLiveData<Interest>()
     val searchResults = MutableLiveData<ArrayList<NewsItem>>() // FIXME
 
-    fun doSearch(searchQuery: String, frequency: Constants.AlertType, type: Constants.InterestType, language: Int, country: Int) {
+    fun doSearch(searchQuery: String, frequency: Int, type: Int, language: Int, country: Int) {
         when (type) {
-            Website -> {
+            WEBSITE.id -> {
                 TODO("doWebpageSearch")
             }
-            Image -> {
+            IMAGE.id -> {
                 TODO("doImageSearch")
             }
-            Video -> {
+            VIDEO.id -> {
                 TODO("doVideoSearch")
             }
-            News -> {
+            NEWS.id -> {
                 repository.doNewsSearch(
                     searchQuery,
                     language,
