@@ -10,7 +10,6 @@ import androidx.core.content.ContextCompat
 import com.xvlaze.zapalerts.R
 import com.xvlaze.zapalerts.adapters.AlertsAdapter
 import com.xvlaze.zapalerts.databinding.ActivityInterestDetailBinding
-import com.xvlaze.zapalerts.util.Constants
 
 class InterestDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityInterestDetailBinding
@@ -47,13 +46,6 @@ class InterestDetailActivity : AppCompatActivity() {
 
         viewModel.searchInterest(name!!)
         viewModel.foundInterest.observe(this) {
-            val type = when (it.type) {
-                Constants.InterestType.Image -> 1
-                Constants.InterestType.News -> 3
-                Constants.InterestType.Video -> 2
-                Constants.InterestType.Website -> 0
-            }
-
             viewModel.doSearch(
                 it.name,
                 it.frequency,
