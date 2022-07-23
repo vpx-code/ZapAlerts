@@ -6,11 +6,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
-import com.xvlaze.zapalerts.R
 import com.xvlaze.zapalerts.databinding.EditDialogBinding
 import com.xvlaze.zapalerts.util.Constants
 
@@ -37,53 +35,62 @@ class EditInterestFragment : DialogFragment() {
         val height = (resources.displayMetrics.heightPixels * 0.9).toInt()
         dialog!!.window?.setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT)
 
-        val confirmButton = binding.btnSave
-        confirmButton.setOnClickListener {
+        viewModel.getInterestInfo(interestName)
+        viewModel.interestSearchResult.observe(this) {
+            // FIXME: Freq y Type se guardan como constantes, no puedo sacar el código de aquí!
+            binding.settings.setFreqSelection(0)
+            binding.settings.setLangSelection(it.language)
+            binding.settings.setCountrySelection(it.country)
+            binding.settings.setTypeSelection(0)
 
-            viewModel.overwriteInterest(
-                interestName,
-                when (binding.settings.getFrequency()) { // FIXME: THIS IS SHIT! No puedo estar repitiendo este código cada vez.
-                    0 -> {
-                        Constants.AlertType.DAILY
-                    }
-                    1 -> {
-                        Constants.AlertType.WEEKLY
-                    }
-                    2 -> {
-                        Constants.AlertType.REALTIME
-                    }
-                    else -> {
-                        Constants.AlertType.DAILY
-                    }
-                },
-                binding.settings.getLang(),
-                binding.settings.getCountry(),
-                when (binding.settings.getType()) {
-                    0 -> Constants.InterestType.Website
-                    1 -> Constants.InterestType.Image
-                    2 -> Constants.InterestType.Video
-                    3 -> Constants.InterestType.News
-                    else -> {
-                        Constants.InterestType.News
-                    }
-                }
-            )
 
-            viewModel.isInterestSaved.observe(requireActivity()) { isSaveSuccessful ->
-                if (isSaveSuccessful) {
-                    Snackbar.make(
-                        binding.root,
-                        "Successfully edited Interest.",
-                        Snackbar.LENGTH_LONG
-                    ).show()
-                } else {
-                    Snackbar.make(
-                        binding.root,
-                        "Something wrong happened.",
-                        Snackbar.LENGTH_LONG
-                    ).show()
+            val confirmButton = binding.btnSave
+            confirmButton.setOnClickListener {
+                viewModel.overwriteInterest(
+                    interestName,
+                    when (binding.settings.getFrequency()) { // FIXME: THIS IS SHIT! No puedo estar repitiendo este código cada vez.
+                        0 -> {
+                            Constants.AlertType.DAILY
+                        }
+                        1 -> {
+                            Constants.AlertType.WEEKLY
+                        }
+                        2 -> {
+                            Constants.AlertType.REALTIME
+                        }
+                        else -> {
+                            Constants.AlertType.DAILY
+                        }
+                    },
+                    binding.settings.getLang(),
+                    binding.settings.getCountry(),
+                    when (binding.settings.getType()) {
+                        0 -> Constants.InterestType.Website
+                        1 -> Constants.InterestType.Image
+                        2 -> Constants.InterestType.Video
+                        3 -> Constants.InterestType.News
+                        else -> {
+                            Constants.InterestType.News
+                        }
+                    }
+                )
+
+                viewModel.isInterestSaved.observe(requireActivity()) { isSaveSuccessful ->
+                    if (isSaveSuccessful) {
+                        Snackbar.make(
+                            binding.root,
+                            "Successfully edited Interest.",
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                    } else {
+                        Snackbar.make(
+                            binding.root,
+                            "Something wrong happened.",
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                    }
+                    dismiss()
                 }
-                dismiss()
             }
         }
 

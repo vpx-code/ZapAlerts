@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.huawei.hms.searchkit.bean.NewsItem
+import com.xvlaze.zapalerts.model.Interest
 import com.xvlaze.zapalerts.model.OnNewsSearchPerformedCallback
 import com.xvlaze.zapalerts.repository.Repository
 import com.xvlaze.zapalerts.util.Constants.AlertType
@@ -13,6 +14,7 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
     private val repository = Repository(application.applicationContext)
     val searchResults = MutableLiveData<ArrayList<NewsItem>>() // FIXME
     val isInterestSaved = MutableLiveData<Boolean>()
+    val interestSearchResult = MutableLiveData<Interest>()
     private val preferredLanguage = MutableLiveData<Int>()
 
     fun doSearch(
@@ -95,6 +97,10 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun deleteInterest(searchQuery: String) {
         repository.deleteInterest(searchQuery)
+    }
+
+    fun getInterestInfo(interestName: String) {
+        interestSearchResult.postValue(repository.searchInterest(interestName))
     }
 
     /*fun doWebSearch(searchQuery: String) {
