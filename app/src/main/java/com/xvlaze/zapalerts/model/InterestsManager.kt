@@ -3,17 +3,15 @@ package com.xvlaze.zapalerts.model
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.xvlaze.zapalerts.util.Constants.AlertType
-import com.xvlaze.zapalerts.util.Constants.InterestType
 
 object InterestsManager {
     @RequiresApi(Build.VERSION_CODES.R)
     fun saveInterestToJSON(
         searchQuery: String,
-        frequency: AlertType,
+        frequency: Int,
         language: Int,
         country: Int,
-        type: InterestType,
+        type: Int,
         c: Context
     ) {
         JSONProvider.add(

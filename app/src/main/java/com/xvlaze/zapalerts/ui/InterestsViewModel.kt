@@ -4,15 +4,16 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.huawei.hms.searchkit.bean.NewsItem
+import com.xvlaze.zapalerts.model.Interest
 import com.xvlaze.zapalerts.model.OnNewsSearchPerformedCallback
 import com.xvlaze.zapalerts.repository.Repository
 import com.xvlaze.zapalerts.util.Constants.AlertType
-import com.xvlaze.zapalerts.util.Constants.InterestType
 
 class InterestsViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = Repository(application.applicationContext)
     val searchResults = MutableLiveData<ArrayList<NewsItem>>() // FIXME
     val isInterestSaved = MutableLiveData<Boolean>()
+    val interestSearchResult = MutableLiveData<Interest>()
     private val preferredLanguage = MutableLiveData<Int>()
 
     fun doSearch(
@@ -50,10 +51,10 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun saveInterest(
         searchQuery: String,
-        frequency: AlertType,
+        frequency: Int,
         language: Int,
         country: Int,
-        type: InterestType
+        type: Int
     ) {
         isInterestSaved.postValue(
             if (isInterestUnique(searchQuery)) {
@@ -77,10 +78,10 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun overwriteInterest(
         searchQuery: String,
-        frequency: AlertType,
+        frequency: Int,
         language: Int,
         country: Int,
-        type: InterestType
+        type: Int
     ) {
         // TODO: Buscar el método que tengo guardado en InterestsManager o JSONProvider para actualizar intereses.
         repository.overwriteInterest(
@@ -95,6 +96,10 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun deleteInterest(searchQuery: String) {
         repository.deleteInterest(searchQuery)
+    }
+
+    fun getInterestInfo(interestName: String) {
+        interestSearchResult.postValue(repository.searchInterest(interestName))
     }
 
     /*fun doWebSearch(searchQuery: String) {
