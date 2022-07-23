@@ -56,12 +56,13 @@ class SettingsView @JvmOverloads constructor(
             ArrayAdapter.createFromResource(context, R.array.freqs, (R.layout.spinner_item))
         freqAdapter.setDropDownViewResource(R.layout.spinner_item)
         freqSpinner.adapter = freqAdapter
+        freqSpinner.setSelection(0)
 
         val typeAdapter =
             ArrayAdapter.createFromResource(context, R.array.types, (R.layout.spinner_item))
         typeAdapter.setDropDownViewResource(R.layout.spinner_item)
         typeSpinner.adapter = typeAdapter
-        typeSpinner.setSelection(3) // TODO: No dejar así
+        typeSpinner.setSelection(3)
 
         val countryAdapter =
             ArrayAdapter.createFromResource(context, R.array.countries, (R.layout.spinner_item))
@@ -79,6 +80,22 @@ class SettingsView @JvmOverloads constructor(
             langSpinner.setSelection(it)
         }*/
         langSpinner.setSelection(0)
+    }
+
+    fun setFreqSelection(selection: Int) {
+        freqSpinner.setSelection(selection)
+    }
+
+    fun setTypeSelection(selection: Int) {
+        typeSpinner.setSelection(selection)
+    }
+
+    fun setCountrySelection(selection: Int) {
+        countrySpinner.setSelection(selection)
+    }
+
+    fun setLangSelection(selection: Int) {
+        langSpinner.setSelection(selection)
     }
 
     fun getFrequency(): Int = freqSpinner.selectedItemPosition

@@ -91,4 +91,9 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
         }
         viewModel.getSavedInterests()
     }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.getSavedInterests()
+    }
 }

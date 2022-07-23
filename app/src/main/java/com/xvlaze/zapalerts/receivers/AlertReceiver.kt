@@ -18,25 +18,24 @@ import com.huawei.hms.searchkit.bean.VideoItem
 import com.huawei.hms.searchkit.bean.WebItem
 import com.xvlaze.zapalerts.model.*
 import com.xvlaze.zapalerts.ui.MainActivity
-import com.xvlaze.zapalerts.util.Constants.InterestType.*
+import com.xvlaze.zapalerts.util.Constants.AlertType.*
 import kotlin.random.Random
 
 class AlertReceiver : BroadcastReceiver() {
+    private lateinit var updatedImages: ArrayList<ImageItem>
+    private lateinit var updatedVideos: ArrayList<VideoItem>
+    private lateinit var updatedNews: ArrayList<NewsItem>
+    private lateinit var updatedWebsites: ArrayList<WebItem>
+
     override fun onReceive(c: Context, intent: Intent) {
         Log.d(ContentValues.TAG, "Alarm received!")
 
         val interests = InterestsManager.getSavedInterests(c)
-
-        val updatedImages = arrayListOf<ImageItem>()
-        val updatedVideos = arrayListOf<VideoItem>()
-        val updatedNews = arrayListOf<NewsItem>()
-        val updatedWebsites = arrayListOf<WebItem>()
-
         val updatedNames = arrayListOf<String>()
 
         for (interest in interests) {
             when (interest.type) {
-                Image -> {
+                IMAGE.id -> {
                     ImageSearcher.search(
                         interest.name,
                         interest.language,
@@ -49,7 +48,7 @@ class AlertReceiver : BroadcastReceiver() {
                         }
                     )
                 }
-                News -> {
+                NEWS.id -> {
                     NewsSearcher.search(
                         interest.name,
                         interest.language,
@@ -58,7 +57,6 @@ class AlertReceiver : BroadcastReceiver() {
                         object : OnNewsSearchPerformedCallback {
                             override fun onNewsSearchResult(result: ArrayList<NewsItem>) {
                                 // TODO: Debug aquí para REALTIME.
-
                                 updatedNews.addAll( // TODO: Se guarda bien, pero ¿ahora cómo lo pasamos? ¿Lo guardamos en un JSON o rehacemos la búsqueda al entrar?
                                     result.filter {
                                         it.publishTime.toLong() < interest.lastUpdate
@@ -74,7 +72,7 @@ class AlertReceiver : BroadcastReceiver() {
                         }
                     )
                 }
-                Video -> {
+                VIDEO.id -> {
                     VideoSearcher.search(
                         interest.name,
                         interest.language,
@@ -87,7 +85,7 @@ class AlertReceiver : BroadcastReceiver() {
                         }
                     )
                 }
-                Website -> {
+                WEBSITE.id -> {
                     WebSearcher.search(
                         interest.name,
                         interest.language,
@@ -106,7 +104,7 @@ class AlertReceiver : BroadcastReceiver() {
         if (updatedNames.isNotEmpty()) {
             showNotification(
                 c,
-                "New contents for ${updatedNames.joinToString(", ")}",
+                "${updatedNews.random().title} and more.",
                 Random.nextInt()
             )
         }
@@ -136,8 +134,8 @@ class AlertReceiver : BroadcastReceiver() {
         val notificationBuilder: NotificationCompat.Builder =
             NotificationCompat.Builder(context, channelID)
                 .setSmallIcon(R.mipmap.sym_def_app_icon)
-                .setContentTitle("Updates on your interests!")
-                .setContentText(message)
+                .setContentTitle("${updatedNews.random().title} and more.")
+                .setContentText("And $updatedNews.size() more updates.")
                 .setAutoCancel(true)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setContentIntent(pendingIntent)

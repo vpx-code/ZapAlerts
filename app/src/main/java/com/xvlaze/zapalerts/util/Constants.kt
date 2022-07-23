@@ -1,7 +1,5 @@
 package com.xvlaze.zapalerts.util
 
-import kotlinx.serialization.Serializable
-
 object Constants {
     const val clientId = "106008821"
     const val clientSecret = "REDACTED_CLIENT_SECRET"
@@ -12,25 +10,16 @@ object Constants {
     const val contentTypeHeaderValue = "application/x-www-form-urlencoded"
     const val maxElements = 10
 
-    @Serializable
-    sealed class AlertType {
-        @Serializable
-        object DAILY : AlertType()
-        @Serializable
-        object WEEKLY : AlertType()
-        @Serializable
-        object REALTIME: AlertType()
+    enum class AlertType(val id: Int) {
+        IMAGE(0),
+        NEWS(1),
+        VIDEO(2),
+        WEBSITE(3)
     }
 
-    @Serializable
-    sealed class InterestType {
-        @Serializable
-        object News: InterestType()
-        @Serializable
-        object Website: InterestType()
-        @Serializable
-        object Image: InterestType()
-        @Serializable
-        object Video: InterestType()
+    enum class InterestFrequency(val id: Int) {
+        DAILY(0),
+        WEEKLY(1),
+        REALTIME(2)
     }
 }
