@@ -8,7 +8,6 @@ import com.xvlaze.zapalerts.model.Interest
 import com.xvlaze.zapalerts.model.OnNewsSearchPerformedCallback
 import com.xvlaze.zapalerts.repository.Repository
 import com.xvlaze.zapalerts.util.Constants.AlertType
-import com.xvlaze.zapalerts.util.Constants.InterestType
 
 class InterestsViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = Repository(application.applicationContext)
@@ -52,10 +51,10 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun saveInterest(
         searchQuery: String,
-        frequency: AlertType,
+        frequency: Int,
         language: Int,
         country: Int,
-        type: InterestType
+        type: Int
     ) {
         isInterestSaved.postValue(
             if (isInterestUnique(searchQuery)) {
@@ -79,10 +78,10 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun overwriteInterest(
         searchQuery: String,
-        frequency: AlertType,
+        frequency: Int,
         language: Int,
         country: Int,
-        type: InterestType
+        type: Int
     ) {
         // TODO: Buscar el método que tengo guardado en InterestsManager o JSONProvider para actualizar intereses.
         repository.overwriteInterest(

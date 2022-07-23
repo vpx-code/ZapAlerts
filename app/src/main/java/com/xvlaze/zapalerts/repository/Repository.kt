@@ -2,9 +2,7 @@ package com.xvlaze.zapalerts.repository
 
 import android.content.Context
 import com.xvlaze.zapalerts.model.*
-import com.xvlaze.zapalerts.util.Constants.AlertType
-import com.xvlaze.zapalerts.util.Constants.AlertType.*
-import com.xvlaze.zapalerts.util.Constants.InterestType
+import com.xvlaze.zapalerts.util.Constants.InterestFrequency.*
 import com.xvlaze.zapalerts.util.LanguageUtils
 
 class Repository(private val c: Context) {
@@ -70,10 +68,10 @@ class Repository(private val c: Context) {
 
     fun saveInterest(
         searchQuery: String,
-        frequency: AlertType,
+        frequency: Int,
         language: Int,
         country: Int,
-        type: InterestType
+        type: Int
     ) {
         InterestsManager.saveInterestToJSON(
             searchQuery,
@@ -84,15 +82,15 @@ class Repository(private val c: Context) {
             c
         )
         when (frequency) {
-            DAILY -> {
+            DAILY.id -> {
                 Daily.updateSavedDate(c)
                 MyAlarmManager.scheduleAlarm(Daily, c)
             }
-            WEEKLY -> {
+            WEEKLY.id -> {
                 Weekly.updateSavedDate(c)
                 MyAlarmManager.scheduleAlarm(Weekly, c)
             }
-            REALTIME -> {
+            REALTIME.id -> {
                 Realtime.updateSavedDate(c)
                 MyAlarmManager.scheduleAlarm(Realtime, c)
             }
@@ -101,10 +99,10 @@ class Repository(private val c: Context) {
 
     fun overwriteInterest(
         searchQuery: String,
-        frequency: AlertType,
+        frequency: Int,
         language: Int,
         country: Int,
-        type: InterestType
+        type: Int
     ) {
         InterestsManager.updateInterestInJSON(
             Interest(
@@ -118,15 +116,15 @@ class Repository(private val c: Context) {
             c
         )
         when (frequency) {
-            DAILY -> {
+            DAILY.id -> {
                 Daily.updateSavedDate(c)
                 MyAlarmManager.scheduleAlarm(Daily, c)
             }
-            WEEKLY -> {
+            WEEKLY.id -> {
                 Weekly.updateSavedDate(c)
                 MyAlarmManager.scheduleAlarm(Weekly, c)
             }
-            REALTIME -> {
+            REALTIME.id -> {
                 Realtime.updateSavedDate(c)
                 MyAlarmManager.scheduleAlarm(Realtime, c)
             }

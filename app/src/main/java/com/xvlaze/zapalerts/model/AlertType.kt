@@ -1,24 +1,17 @@
 package com.xvlaze.zapalerts.model
 
-import android.app.PendingIntent
 import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
-import android.content.Intent
-import android.os.Build
 import android.util.Log
-import com.xvlaze.zapalerts.receivers.AlertReceiver
-import com.xvlaze.zapalerts.util.Constants
-import com.xvlaze.zapalerts.util.Constants.AlertType.*
 import com.xvlaze.zapalerts.util.Extensions.isDateInThePast
 import com.xvlaze.zapalerts.util.Extensions.toTimeStamp
 import java.util.*
-import kotlin.random.Random
 
-abstract class AlertType {
-    abstract val code: Int
-    abstract val interval: Long
-    val pendingIntent: PendingIntent = PendingIntent.getBroadcast(
+interface AlertType {
+    val code: Int
+    val interval: Long
+    /*val pendingIntent: PendingIntent = PendingIntent.getBroadcast(
         MyApplication.appContext,
         Random.nextInt(),
         Intent(MyApplication.appContext, AlertReceiver::class.java),
@@ -28,13 +21,12 @@ abstract class AlertType {
             }
             else -> PendingIntent.FLAG_UPDATE_CURRENT
         }
-    )
+    )*/
 
-    abstract fun getType(): Constants.AlertType
-    abstract fun calculateNextDate(): Long
-    abstract fun updateSavedDate(c: Context)
-    abstract fun getSavedDate(c: Context): Long
-    abstract fun getId(): Int
+    fun getType(): Int
+    fun calculateNextDate(): Long
+    fun updateSavedDate(c: Context)
+    fun getSavedDate(c: Context): Long
     fun hasDatePassed(c: Context): Boolean {
         val now = System.currentTimeMillis()
         val savedDate = getSavedDate(c)
@@ -47,11 +39,10 @@ abstract class AlertType {
     fun doesSavedDateExist(c: Context): Boolean = getSavedDate(c) != 0.toLong()
 }
 
-object Daily : AlertType() {
+object Daily : AlertType {
     override val code = 0
     override val interval: Long = 86400000
-    override fun getType(): Constants.AlertType = DAILY
-    override fun getId(): Int = code
+    override fun getType(): Int = code
     override fun calculateNextDate(): Long {
         val calendar: Calendar = Calendar.getInstance()
         calendar.set(Calendar.HOUR_OF_DAY, 9)
@@ -79,11 +70,10 @@ object Daily : AlertType() {
     }
 }
 
-object Weekly : AlertType() {
+object Weekly : AlertType {
     override val code = 1
     override val interval: Long = 86400000 * 7
-    override fun getType(): Constants.AlertType = WEEKLY
-    override fun getId(): Int = code
+    override fun getType(): Int = code
     override fun calculateNextDate(): Long {
         val calendar: Calendar = Calendar.getInstance()
         calendar.set(Calendar.HOUR_OF_DAY, 9)
@@ -107,11 +97,10 @@ object Weekly : AlertType() {
     }
 }
 
-object Realtime : AlertType() {
+object Realtime : AlertType {
     override val code = 2
     override val interval: Long = 60000*5 // Ojo al cambiar esto. 5 minutos para realtime.
-    override fun getType(): Constants.AlertType = REALTIME
-    override fun getId(): Int = code
+    override fun getType(): Int = code
     private var firstRingTime: Long = 0
 
     override fun calculateNextDate(): Long {
