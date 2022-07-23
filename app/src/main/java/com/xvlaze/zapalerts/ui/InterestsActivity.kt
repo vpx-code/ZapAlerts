@@ -16,8 +16,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.xvlaze.zapalerts.R
 import com.xvlaze.zapalerts.adapters.AlertsAdapter
 import com.xvlaze.zapalerts.databinding.ActivityInterestsBinding
-import com.xvlaze.zapalerts.util.Constants.AlertType.*
-import com.xvlaze.zapalerts.util.Constants.InterestType.*
 
 
 class InterestsActivity : AppCompatActivity() {
@@ -102,32 +100,10 @@ class InterestsActivity : AppCompatActivity() {
                             fab.setOnClickListener {
                                 viewModel.saveInterest(
                                     searchQuery.toString(),
-                                    when (binding.settings.getFrequency()) {
-                                        0 -> {
-                                            DAILY
-                                        }
-                                        1 -> {
-                                            WEEKLY
-                                        }
-                                        2 -> {
-                                            REALTIME
-                                        }
-                                        else -> {
-                                            DAILY
-                                        }
-                                    },
+                                    binding.settings.getFrequency(),
                                     binding.settings.getLang(),
                                     binding.settings.getCountry(),
-                                    // FIXME: No debería estar aquí.
-                                    when (binding.settings.getType()) {
-                                        0 -> Website
-                                        1 -> Image
-                                        2 -> Video
-                                        3 -> News
-                                        else -> {
-                                            News
-                                        }
-                                    }
+                                    binding.settings.getType()
                                 )
                                 viewModel.isInterestUnique(searchQuery.toString())
                                 viewModel.isInterestSaved.observe(this@InterestsActivity) { isSaveSuccessful ->
