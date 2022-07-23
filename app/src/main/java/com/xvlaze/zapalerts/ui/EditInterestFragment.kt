@@ -6,10 +6,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
+import com.xvlaze.zapalerts.R
 import com.xvlaze.zapalerts.databinding.EditDialogBinding
 import com.xvlaze.zapalerts.util.Constants
 
@@ -38,7 +39,6 @@ class EditInterestFragment : DialogFragment() {
 
         val confirmButton = binding.btnSave
         confirmButton.setOnClickListener {
-            Toast.makeText(context, "Confirmed!", Toast.LENGTH_SHORT).show()
 
             viewModel.overwriteInterest(
                 interestName,
