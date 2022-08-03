@@ -7,7 +7,6 @@ import com.huawei.hms.searchkit.bean.NewsItem
 import com.xvlaze.zapalerts.model.Interest
 import com.xvlaze.zapalerts.model.OnNewsSearchPerformedCallback
 import com.xvlaze.zapalerts.repository.Repository
-import com.xvlaze.zapalerts.util.Constants.AlertType
 
 class InterestsViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = Repository(application.applicationContext)
@@ -18,33 +17,19 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun doSearch(
         searchQuery: String,
-        type: Int,
         language: Int,
         country: Int
     ) {
-        when (type) {
-            0 -> {
-                TODO("doWebpageSearch")
+        repository.doNewsSearch(
+            searchQuery,
+            language,
+            country,
+            object : OnNewsSearchPerformedCallback {
+                override fun onNewsSearchResult(result: ArrayList<NewsItem>) {
+                    searchResults.postValue(result)
+                }
             }
-            1 -> {
-                TODO("doImageSearch")
-            }
-            2 -> {
-                TODO("doVideoSearch")
-            }
-            3 -> {
-                repository.doNewsSearch(
-                    searchQuery,
-                    language,
-                    country,
-                    object : OnNewsSearchPerformedCallback {
-                        override fun onNewsSearchResult(result: ArrayList<NewsItem>) {
-                            searchResults.postValue(result)
-                        }
-                    }
-                )
-            }
-        }
+        )
     }
 
     fun isInterestUnique(searchQuery: String): Boolean = repository.isInterestUnique(searchQuery)
@@ -53,8 +38,7 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
         searchQuery: String,
         frequency: Int,
         language: Int,
-        country: Int,
-        type: Int
+        country: Int
     ) {
         isInterestSaved.postValue(
             if (isInterestUnique(searchQuery)) {
@@ -62,8 +46,7 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
                     searchQuery,
                     frequency,
                     language,
-                    country,
-                    type
+                    country
                 )
                 true
             } else {
@@ -80,16 +63,14 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
         searchQuery: String,
         frequency: Int,
         language: Int,
-        country: Int,
-        type: Int
+        country: Int
     ) {
         // TODO: Buscar el método que tengo guardado en InterestsManager o JSONProvider para actualizar intereses.
         repository.overwriteInterest(
             searchQuery,
             frequency,
             language,
-            country,
-            type
+            country
         )
         isInterestSaved.postValue(true)
     }
@@ -102,11 +83,11 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
         interestSearchResult.postValue(repository.searchInterest(interestName))
     }
 
-    /*fun doWebSearch(searchQuery: String) {
-        repository.doWebSearch(searchQuery, object: IOnSearchPerformedCallback {
-            override fun onWebSearchResult(result: ArrayList<WebItem>) { // FIXME: enum? Igual que ImageSaver
-                searchResults.postValue(result)
-            }
-        })
-    }*/
+/*fun doWebSearch(searchQuery: String) {
+    repository.doWebSearch(searchQuery, object: IOnSearchPerformedCallback {
+        override fun onWebSearchResult(result: ArrayList<WebItem>) { // FIXME: enum? Igual que ImageSaver
+            searchResults.postValue(result)
+        }
+    })
+}*/
 }

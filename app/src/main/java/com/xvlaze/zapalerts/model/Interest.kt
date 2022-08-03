@@ -8,6 +8,5 @@ data class Interest(
     var frequency: Int,
     var language: Int,
     var country: Int,
-    var lastUpdate: Long,
-    var type: Int
+    var lastUpdate: Long
 )
