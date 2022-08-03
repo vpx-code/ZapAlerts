@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clickable="true">
@@ -17,17 +18,20 @@
         android:outlineProvider="none"
         android:foreground="?android:attr/selectableItemBackground"
         app:cardUseCompatPadding="true">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingTop="24dp"
-            android:paddingHorizontal="24dp">
+            android:paddingHorizontal="24dp"
+            android:paddingTop="24dp">
+
             <TextView
                 android:id="@+id/date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="#A10000"
                 android:textSize="16sp"
-                android:textColor="#A10000" />
+                tools:text="03/08/2022 17:39"/>
 
             <TextView
                 android:id="@+id/new_flag"
@@ -35,9 +39,9 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:background="@drawable/rounded"
+                android:fontFamily="@font/lato_bold"
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="4dp"
-                android:fontFamily="@font/lato_bold"
                 android:text="NEW!"
                 android:textColor="#ffffff"
                 android:textSize="24sp"
@@ -49,19 +53,22 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/date"
                 android:layout_alignParentEnd="true"
-                android:layout_marginEnd="64dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="4dp"
                 android:layout_marginBottom="12dp"
                 android:ellipsize="end"
                 android:fontFamily="@font/lato_black"
                 android:maxLines="2"
-                android:textSize="24sp"
-                android:textStyle="bold" />
+                android:textSize="18sp"
+                android:textStyle="bold"
+                tools:text="Apple's iPhone 14 Release Date May Be Just 1 Month Ahead" />
+
             <com.google.android.material.divider.MaterialDivider
                 android:id="@+id/divider"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_below="@id/headline"/>
+                android:layout_below="@id/headline"
+                android:layout_marginTop="8dp" />
 
             <TextView
                 android:id="@+id/source"
