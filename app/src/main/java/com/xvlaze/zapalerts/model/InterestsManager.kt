@@ -11,7 +11,6 @@ object InterestsManager {
         frequency: Int,
         language: Int,
         country: Int,
-        type: Int,
         c: Context
     ) {
         JSONProvider.add(
@@ -20,8 +19,7 @@ object InterestsManager {
                 frequency,
                 language,
                 country,
-                System.currentTimeMillis(),
-                type
+                System.currentTimeMillis()
             )
         )
         JSONProvider.serialize(c)

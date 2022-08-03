@@ -10,10 +10,6 @@ object Constants {
     const val contentTypeHeaderValue = "application/x-www-form-urlencoded"
     const val maxElements = 10
 
-    enum class AlertType(val id: Int) {
-        NEWS(3)
-    }
-
     enum class InterestFrequency(val id: Int) {
         DAILY(0),
         WEEKLY(1),

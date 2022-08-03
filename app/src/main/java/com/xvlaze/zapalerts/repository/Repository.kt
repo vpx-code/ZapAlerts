@@ -26,14 +26,12 @@ class Repository(private val c: Context) {
         frequency: Int,
         language: Int,
         country: Int,
-        type: Int
     ) {
         InterestsManager.saveInterestToJSON(
             searchQuery,
             frequency,
             language,
             country,
-            type,
             c
         )
         when (frequency) {
@@ -58,8 +56,7 @@ class Repository(private val c: Context) {
         searchQuery: String,
         frequency: Int,
         language: Int,
-        country: Int,
-        type: Int
+        country: Int
     ) {
         InterestsManager.updateInterestInJSON(
             Interest(
@@ -67,8 +64,7 @@ class Repository(private val c: Context) {
                 frequency,
                 language,
                 country,
-                System.currentTimeMillis(),
-                type
+                System.currentTimeMillis()
             ),
             c
         )

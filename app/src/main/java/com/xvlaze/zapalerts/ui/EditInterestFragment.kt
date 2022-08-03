@@ -39,8 +39,6 @@ class EditInterestFragment : DialogFragment() {
             binding.settings.setFreqSelection(it.frequency)
             binding.settings.setLangSelection(it.language)
             binding.settings.setCountrySelection(it.country)
-            binding.settings.setTypeSelection(it.type)
-
 
             val confirmButton = binding.btnSave
             confirmButton.setOnClickListener {
@@ -48,8 +46,7 @@ class EditInterestFragment : DialogFragment() {
                     interestName,
                     binding.settings.getFrequency(),
                     binding.settings.getLang(),
-                    binding.settings.getCountry(),
-                    binding.settings.getType()
+                    binding.settings.getCountry()
                 )
 
                 viewModel.isInterestSaved.observe(requireActivity()) { isSaveSuccessful ->
