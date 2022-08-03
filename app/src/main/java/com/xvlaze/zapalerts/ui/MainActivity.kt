@@ -74,6 +74,7 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
     }
 
     override fun onDismiss(p0: DialogInterface?) {
+        // TODO: Dudoso
         val snackbar = Snackbar.make(
             binding.root,
             "Updating Interests...",
