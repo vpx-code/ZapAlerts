@@ -11,20 +11,15 @@ import android.media.RingtoneManager
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import com.huawei.hms.searchkit.bean.ImageItem
 import com.huawei.hms.searchkit.bean.NewsItem
-import com.huawei.hms.searchkit.bean.VideoItem
-import com.huawei.hms.searchkit.bean.WebItem
-import com.xvlaze.zapalerts.model.*
+import com.xvlaze.zapalerts.model.InterestsManager
+import com.xvlaze.zapalerts.model.NewsSearcher
+import com.xvlaze.zapalerts.model.OnNewsSearchPerformedCallback
 import com.xvlaze.zapalerts.ui.MainActivity
-import com.xvlaze.zapalerts.util.Constants.AlertType.*
 import kotlin.random.Random
 
 class AlertReceiver : BroadcastReceiver() {
-    private var updatedImages = arrayListOf<ImageItem>()
-    private var updatedVideos = arrayListOf<VideoItem>()
     private var updatedNews = arrayListOf<NewsItem>()
-    private var updatedWebsites = arrayListOf<WebItem>()
 
     override fun onReceive(c: Context, intent: Intent) {
         Log.d("ZAP_TAG", "Alarm received!")
@@ -33,71 +28,28 @@ class AlertReceiver : BroadcastReceiver() {
         val updatedNames = arrayListOf<String>()
 
         for (interest in interests) {
-            when (interest.type) {
-                IMAGE.id -> {
-                    ImageSearcher.search(
-                        interest.name,
-                        interest.language,
-                        interest.country,
-                        c,
-                        object : OnImageSearchPerformedCallback {
-                            override fun onImageSearchResult(result: ArrayList<ImageItem>) {
-                                TODO()
+            NewsSearcher.search(
+                interest.name,
+                interest.language,
+                interest.country,
+                c,
+                object : OnNewsSearchPerformedCallback {
+                    override fun onNewsSearchResult(result: ArrayList<NewsItem>) {
+                        // TODO: Debug aquí para REALTIME.
+                        updatedNews.addAll( // TODO: Se guarda bien, pero ¿ahora cómo lo pasamos? ¿Lo guardamos en un JSON o rehacemos la búsqueda al entrar?
+                            result.filter {
+                                it.publishTime.toLong() < interest.lastUpdate
                             }
+                        )
+                        val lastUpdate = interest.lastUpdate
+                        if (result.any { it.publishTime.toLong() * 1000 > lastUpdate }) {
+                            updatedNames.add(interest.name)
+                            interest.lastUpdate = System.currentTimeMillis()
                         }
-                    )
+                        InterestsManager.updateInterestInJSON(interest, c)
+                    }
                 }
-                NEWS.id -> {
-                    NewsSearcher.search(
-                        interest.name,
-                        interest.language,
-                        interest.country,
-                        c,
-                        object : OnNewsSearchPerformedCallback {
-                            override fun onNewsSearchResult(result: ArrayList<NewsItem>) {
-                                // TODO: Debug aquí para REALTIME.
-                                updatedNews.addAll( // TODO: Se guarda bien, pero ¿ahora cómo lo pasamos? ¿Lo guardamos en un JSON o rehacemos la búsqueda al entrar?
-                                    result.filter {
-                                        it.publishTime.toLong() < interest.lastUpdate
-                                    }
-                                )
-                                val lastUpdate = interest.lastUpdate
-                                if (result.any { it.publishTime.toLong() * 1000 > lastUpdate }) {
-                                    updatedNames.add(interest.name)
-                                    interest.lastUpdate = System.currentTimeMillis()
-                                }
-                                InterestsManager.updateInterestInJSON(interest, c)
-                            }
-                        }
-                    )
-                }
-                VIDEO.id -> {
-                    VideoSearcher.search(
-                        interest.name,
-                        interest.language,
-                        interest.country,
-                        c,
-                        object : OnVideoSearchPerformedCallback {
-                            override fun onVideoSearchResult(result: ArrayList<VideoItem>) {
-                                TODO()
-                            }
-                        }
-                    )
-                }
-                WEBSITE.id -> {
-                    WebSearcher.search(
-                        interest.name,
-                        interest.language,
-                        interest.country,
-                        c,
-                        object : OnWebsiteSearchPerformedCallback {
-                            override fun onWebsiteSearchResult(result: ArrayList<WebItem>) {
-                                TODO()
-                            }
-                        }
-                    )
-                }
-            }
+            )
         }
 
         if (updatedNames.isNotEmpty()) {
