@@ -11,9 +11,6 @@ object Constants {
     const val maxElements = 10
 
     enum class AlertType(val id: Int) {
-        WEBSITE(0),
-        VIDEO(2),
-        IMAGE(1),
         NEWS(3)
     }
 

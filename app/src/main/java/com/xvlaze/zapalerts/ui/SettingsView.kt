@@ -16,7 +16,6 @@ class SettingsView @JvmOverloads constructor(
     private var isCustomizeMenuVisible = false
 
     private lateinit var freqSpinner: Spinner
-    private lateinit var typeSpinner: Spinner
     private lateinit var countrySpinner: Spinner
     private lateinit var langSpinner: Spinner
 
@@ -48,7 +47,6 @@ class SettingsView @JvmOverloads constructor(
 
     private fun initializeSpinners() {
         freqSpinner = findViewById(R.id.freq_spinner)
-        typeSpinner = findViewById(R.id.type_spinner)
         countrySpinner = findViewById(R.id.country_spinner)
         langSpinner = findViewById(R.id.lang_spinner)
 
@@ -58,18 +56,11 @@ class SettingsView @JvmOverloads constructor(
         freqSpinner.adapter = freqAdapter
         freqSpinner.setSelection(0)
 
-        val typeAdapter =
-            ArrayAdapter.createFromResource(context, R.array.types, (R.layout.spinner_item))
-        typeAdapter.setDropDownViewResource(R.layout.spinner_item)
-        typeSpinner.adapter = typeAdapter
-        typeSpinner.setSelection(3)
-
         val countryAdapter =
             ArrayAdapter.createFromResource(context, R.array.countries, (R.layout.spinner_item))
         countryAdapter.setDropDownViewResource(R.layout.spinner_item)
         countrySpinner.adapter = countryAdapter
         countrySpinner.setSelection(0)
-
 
         val langAdapter =
             ArrayAdapter.createFromResource(context, R.array.languages, (R.layout.spinner_item))
@@ -86,10 +77,6 @@ class SettingsView @JvmOverloads constructor(
         freqSpinner.setSelection(selection)
     }
 
-    fun setTypeSelection(selection: Int) {
-        typeSpinner.setSelection(selection)
-    }
-
     fun setCountrySelection(selection: Int) {
         countrySpinner.setSelection(selection)
     }
@@ -99,7 +86,6 @@ class SettingsView @JvmOverloads constructor(
     }
 
     fun getFrequency(): Int = freqSpinner.selectedItemPosition
-    fun getType(): Int = typeSpinner.selectedItemPosition
     fun getCountry(): Int = countrySpinner.selectedItemPosition
     fun getLang(): Int = langSpinner.selectedItemPosition
 }

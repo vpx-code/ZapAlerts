@@ -21,51 +21,6 @@ class Repository(private val c: Context) {
         )
     }
 
-    fun doWebsiteSearch(
-        query: String,
-        language: Int,
-        country: Int,
-        callback: OnWebsiteSearchPerformedCallback
-    ) {
-        WebSearcher.search(
-            query,
-            language,
-            country,
-            c,
-            callback
-        )
-    }
-
-    fun doImageSearch(
-        query: String,
-        language: Int,
-        country: Int,
-        callback: OnImageSearchPerformedCallback
-    ) {
-        ImageSearcher.search(
-            query,
-            language,
-            country,
-            c,
-            callback
-        )
-    }
-
-    fun doVideoSearch(
-        query: String,
-        language: Int,
-        country: Int,
-        callback: OnVideoSearchPerformedCallback
-    ) {
-        VideoSearcher.search(
-            query,
-            language,
-            country,
-            c,
-            callback
-        )
-    }
-
     fun saveInterest(
         searchQuery: String,
         frequency: Int,
