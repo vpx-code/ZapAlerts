@@ -5,7 +5,6 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
-import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
@@ -22,13 +21,13 @@ import com.xvlaze.zapalerts.util.Constants.AlertType.*
 import kotlin.random.Random
 
 class AlertReceiver : BroadcastReceiver() {
-    private lateinit var updatedImages: ArrayList<ImageItem>
-    private lateinit var updatedVideos: ArrayList<VideoItem>
-    private lateinit var updatedNews: ArrayList<NewsItem>
-    private lateinit var updatedWebsites: ArrayList<WebItem>
+    private var updatedImages = arrayListOf<ImageItem>()
+    private var updatedVideos = arrayListOf<VideoItem>()
+    private var updatedNews = arrayListOf<NewsItem>()
+    private var updatedWebsites = arrayListOf<WebItem>()
 
     override fun onReceive(c: Context, intent: Intent) {
-        Log.d(ContentValues.TAG, "Alarm received!")
+        Log.d("ZAP_TAG", "Alarm received!")
 
         val interests = InterestsManager.getSavedInterests(c)
         val updatedNames = arrayListOf<String>()
@@ -135,7 +134,7 @@ class AlertReceiver : BroadcastReceiver() {
             NotificationCompat.Builder(context, channelID)
                 .setSmallIcon(R.mipmap.sym_def_app_icon)
                 .setContentTitle("${updatedNews.random().title} and more.")
-                .setContentText("And $updatedNews.size() more updates.")
+                .setContentText("And ${updatedNews.size} more updates.")
                 .setAutoCancel(true)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setContentIntent(pendingIntent)

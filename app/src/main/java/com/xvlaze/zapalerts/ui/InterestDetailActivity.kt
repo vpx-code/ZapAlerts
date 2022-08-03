@@ -48,7 +48,6 @@ class InterestDetailActivity : AppCompatActivity() {
         viewModel.foundInterest.observe(this) {
             viewModel.doSearch(
                 it.name,
-                it.frequency,
                 it.type,
                 it.language,
                 it.country
