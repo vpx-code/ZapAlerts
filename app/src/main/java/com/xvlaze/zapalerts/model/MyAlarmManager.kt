@@ -4,7 +4,7 @@ import android.app.AlarmManager
 import android.app.AlarmManager.RTC_WAKEUP
 import android.app.PendingIntent
 import android.content.ComponentName
-import android.content.ContentValues.TAG
+
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -19,9 +19,9 @@ object MyAlarmManager {
     private var alarmManager: AlarmManager? = null
 
     /*fun scheduleAlarm(lastSavedDate: SharedPrefsDate, c: Context) {
-        Log.d(TAG, "Scheduling repeating alarm starting at ${lastSavedDate.getSavedDate(c).toTimeStamp()}")
+        Log.d("ZAP_TAG", "Scheduling repeating alarm starting at ${lastSavedDate.getSavedDate(c).toTimeStamp()}")
         val pi = lastSavedDate.pendingIntent
-        Log.d(TAG, "Intent sender is: ${pi.intentSender}")
+        Log.d("ZAP_TAG", "Intent sender is: ${pi.intentSender}")
         getInstance(c).setRepeating(
             RTC_WAKEUP,
             lastSavedDate.getSavedDate(c),
@@ -32,7 +32,7 @@ object MyAlarmManager {
 
     fun scheduleAlarm(lastSavedDate: AlertType, c: Context) {
         Log.d(
-            TAG,
+            "ZAP_TAG",
             "Scheduling repeating alarm starting at ${lastSavedDate.getSavedDate(c).toTimeStamp()}"
         )
         getInstance(c).setRepeating(
@@ -53,11 +53,24 @@ object MyAlarmManager {
         )
     }
 
-    fun enableReceiver() {
-        val receiver = ComponentName(MyApplication.appContext, BootReceiver::class.java)
+    fun enableReceivers() {
+        Log.d(
+            "ZAP_TAG",
+            "Enabled receivers!"
+        )
+
+        /*val bootReceiver = ComponentName(MyApplication.appContext, BootReceiver::class.java)
 
         MyApplication.appContext.packageManager.setComponentEnabledSetting(
-            receiver,
+            bootReceiver,
+            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+            PackageManager.DONT_KILL_APP
+        )*/
+
+        val alertReceiver = ComponentName(MyApplication.appContext, AlertReceiver::class.java)
+
+        MyApplication.appContext.packageManager.setComponentEnabledSetting(
+            alertReceiver,
             PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
             PackageManager.DONT_KILL_APP
         )

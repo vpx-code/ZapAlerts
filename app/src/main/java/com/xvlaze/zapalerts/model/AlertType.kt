@@ -1,7 +1,5 @@
 package com.xvlaze.zapalerts.model
 
-import android.content.ContentValues
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.util.Log
 import com.xvlaze.zapalerts.util.Extensions.isDateInThePast
@@ -58,7 +56,7 @@ object Daily : AlertType {
         val editor = sharedPrefs.edit()
         editor.putLong("nextDailyDate", calculateNextDate())
         Log.d(
-            ContentValues.TAG,
+            "ZAP_TAG",
             "Updating saved date. New date is ${calculateNextDate().toTimeStamp()}"
         )
         editor.apply()
@@ -66,6 +64,10 @@ object Daily : AlertType {
 
     override fun getSavedDate(c: Context): Long {
         val sharedPrefs = c.getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
+        Log.d(
+            "ZAP_TAG",
+            "Getting saved date: ${sharedPrefs.getLong("nextDailyDate", 0)}"
+        )
         return sharedPrefs.getLong("nextDailyDate", 0)
     }
 }
@@ -106,14 +108,14 @@ object Realtime : AlertType {
     override fun calculateNextDate(): Long {
         val calendar: Calendar = Calendar.getInstance()
         if (calendar.isDateInThePast()) {
-            Log.d(TAG, "Date in the past. Updating calendar to ${(interval / 60000).toInt()} minutes." )
+            Log.d("ZAP_TAG", "Date in the past. Updating calendar to ${(interval / 60000).toInt()} minutes." )
             calendar.add(Calendar.MINUTE, (interval / 60000).toInt()) // Ojo al cambiar esto}
         }
         return calendar.timeInMillis
     }
 
     override fun updateSavedDate(c: Context) {
-        Log.d(TAG, "Updating saved date to ${calculateNextDate()}")
+        Log.d("ZAP_TAG", "Updating saved date to ${calculateNextDate()}")
         val sharedPrefs = c.getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
         val editor = sharedPrefs.edit()
         editor.putLong("nextRealtimeDate", calculateNextDate())

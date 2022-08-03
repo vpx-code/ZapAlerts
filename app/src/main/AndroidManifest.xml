@@ -42,7 +42,7 @@
         </receiver>
         <receiver
             android:name=".receivers.AlertReceiver"
-            android:enabled="true"
+            android:enabled="false"
             android:exported="false" />
 
         <meta-data

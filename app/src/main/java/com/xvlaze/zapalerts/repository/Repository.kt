@@ -95,6 +95,8 @@ class Repository(private val c: Context) {
                 MyAlarmManager.scheduleAlarm(Realtime, c)
             }
         }
+
+        MyAlarmManager.enableReceivers()
     }
 
     fun overwriteInterest(
