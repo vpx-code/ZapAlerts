@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.widget.SearchView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -64,6 +65,19 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
                 }
             })
             recyclerView.adapter = adapter
+
+            binding.searchview.setOnQueryTextListener(object: SearchView.OnQueryTextListener,
+                androidx.appcompat.widget.SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    adapter.getFilter().filter(query)
+                    return true
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    adapter.getFilter().filter(newText)
+                    return true
+                }
+            })
         }
 
         binding.fab.setOnClickListener {

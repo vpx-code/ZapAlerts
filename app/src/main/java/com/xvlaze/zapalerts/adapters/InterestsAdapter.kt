@@ -2,13 +2,50 @@ package com.xvlaze.zapalerts.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Filter
 import androidx.recyclerview.widget.RecyclerView
 import com.xvlaze.zapalerts.databinding.ItemListInterestsBinding
 import com.xvlaze.zapalerts.model.Interest
+import java.util.*
 
-class InterestsAdapter(private val interestsList: ArrayList<Interest>): RecyclerView.Adapter<InterestsAdapter.InterestsViewHolder>() {
-    private lateinit var listener: InterestsAdapter.IOnItemClickListener
-    //private val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm")
+class InterestsAdapter(private val interestsList: ArrayList<Interest>) :
+    RecyclerView.Adapter<InterestsAdapter.InterestsViewHolder>() {
+    private lateinit var listener: IOnItemClickListener
+
+    val initialInterestList = ArrayList<Interest>().apply {
+        addAll(interestsList)
+    }
+
+    fun getFilter(): Filter {
+        return interestsFilter
+    }
+
+    private val interestsFilter = object : Filter() {
+        override fun performFiltering(constraint: CharSequence?): FilterResults {
+            val filteredList: ArrayList<Interest> = ArrayList()
+            if (constraint == null || constraint.isEmpty()) {
+                initialInterestList.let { filteredList.addAll(it) }
+            } else {
+                val query = constraint.toString().trim().toLowerCase()
+                initialInterestList.forEach {
+                    if (it.name.lowercase(Locale.ROOT).contains(query)) {
+                        filteredList.add(it)
+                    }
+                }
+            }
+            val results = FilterResults()
+            results.values = filteredList
+            return results
+        }
+
+        override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+            if (results?.values is ArrayList<*>) {
+                interestsList.clear()
+                interestsList.addAll(results.values as ArrayList<Interest>)
+                notifyDataSetChanged()
+            }
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): InterestsViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -35,7 +72,7 @@ class InterestsAdapter(private val interestsList: ArrayList<Interest>): Recycler
     class InterestsViewHolder(
         val binding: ItemListInterestsBinding,
         listener: IOnItemClickListener
-    ): RecyclerView.ViewHolder(binding.root) {
+    ) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.source.setOnClickListener {
                 listener.onSourceClicked(adapterPosition)
