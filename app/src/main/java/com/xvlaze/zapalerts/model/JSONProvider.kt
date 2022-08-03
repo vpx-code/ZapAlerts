@@ -2,6 +2,7 @@ package com.xvlaze.zapalerts.model
 
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -33,10 +34,12 @@ object JSONProvider {
     }
 
     fun add(interest: Interest) {
+        Log.d("ZAP_TAG", "Adding interest ${interest.name}...")
         savedInterests.add(interest)
     }
 
     fun update(interest: Interest) {
+        Log.d("ZAP_TAG", "Updating interest ${interest.name}...")
         val interestToUpdate = savedInterests.find {
             it.name == interest.name
         }
@@ -46,6 +49,8 @@ object JSONProvider {
     }
 
     fun remove(interestName: String) {
+        Log.d("ZAP_TAG", "Deleting interest ${interestName}...")
+
         val interest = savedInterests.find {
             it.name == interestName
         }
@@ -53,6 +58,7 @@ object JSONProvider {
     }
 
     fun getSavedInterests(c: Context): ArrayList<Interest> {
+        Log.d("ZAP_TAG", "Getting saved interests...")
         return format.decodeFromString(File(c.filesDir.path + "/interests.json").readText(Charsets.UTF_8))
     }
 }

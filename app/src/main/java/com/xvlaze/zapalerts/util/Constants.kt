@@ -11,10 +11,10 @@ object Constants {
     const val maxElements = 10
 
     enum class AlertType(val id: Int) {
-        IMAGE(0),
-        NEWS(1),
+        WEBSITE(0),
         VIDEO(2),
-        WEBSITE(3)
+        IMAGE(1),
+        NEWS(3)
     }
 
     enum class InterestFrequency(val id: Int) {

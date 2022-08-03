@@ -14,7 +14,7 @@ class InterestDetailViewModel(application: Application) : AndroidViewModel(appli
     val foundInterest = MutableLiveData<Interest>()
     val searchResults = MutableLiveData<ArrayList<NewsItem>>() // FIXME
 
-    fun doSearch(searchQuery: String, frequency: Int, type: Int, language: Int, country: Int) {
+    fun doSearch(searchQuery: String, type: Int, language: Int, country: Int) {
         when (type) {
             WEBSITE.id -> {
                 TODO("doWebpageSearch")
