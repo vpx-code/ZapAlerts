@@ -100,6 +100,6 @@ class AlertReceiver : BroadcastReceiver() {
             reqCode,
             notificationBuilder.build()
         )
-        Log.d("showNotification", "showNotification: $reqCode")
+        Log.d("ZAP_TAG", "showNotification: $reqCode")
     }
 }
