@@ -5,14 +5,14 @@ import android.view.ViewGroup
 import android.widget.Filter
 import androidx.recyclerview.widget.RecyclerView
 import com.xvlaze.zapalerts.databinding.ItemListInterestsBinding
-import com.xvlaze.zapalerts.model.Interest
+import com.xvlaze.zapalerts.model.InterestCloudObject
 import java.util.*
 
-class InterestsAdapter(private val interestsList: ArrayList<Interest>) :
+class InterestsAdapter(private val interestsList: ArrayList<InterestCloudObject>) :
     RecyclerView.Adapter<InterestsAdapter.InterestsViewHolder>() {
     private lateinit var listener: IOnItemClickListener
 
-    val initialInterestList = ArrayList<Interest>().apply {
+    val initialInterestList = ArrayList<InterestCloudObject>().apply {
         addAll(interestsList)
     }
 
@@ -22,7 +22,7 @@ class InterestsAdapter(private val interestsList: ArrayList<Interest>) :
 
     private val interestsFilter = object : Filter() {
         override fun performFiltering(constraint: CharSequence?): FilterResults {
-            val filteredList: ArrayList<Interest> = ArrayList()
+            val filteredList: ArrayList<InterestCloudObject> = ArrayList()
             if (constraint == null || constraint.isEmpty()) {
                 initialInterestList.let { filteredList.addAll(it) }
             } else {
@@ -41,11 +41,13 @@ class InterestsAdapter(private val interestsList: ArrayList<Interest>) :
         override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
             if (results?.values is ArrayList<*>) {
                 interestsList.clear()
-                interestsList.addAll(results.values as ArrayList<Interest>)
+                interestsList.addAll(results.values as ArrayList<InterestCloudObject>)
                 notifyDataSetChanged()
             }
         }
     }
+
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): InterestsViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)

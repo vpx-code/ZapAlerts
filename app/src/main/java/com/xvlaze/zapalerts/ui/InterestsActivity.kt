@@ -128,7 +128,6 @@ class InterestsActivity : AppCompatActivity() {
                                         }
                                     }
                                 }
-
                             }
                         }
                     }
