@@ -28,7 +28,18 @@ object InterestsManager {
     fun getSavedInterests(c: Context): ArrayList<Interest> = JSONProvider.getSavedInterests(c)
 
     fun isInterestUnique(name: String, c: Context): Boolean =
+        true//!getSavedInterests(c).any { it.name.lowercase() == name.lowercase() }
+
+    fun isInterestUniqueInDB(name: String, c: Context): Boolean =
         !getSavedInterests(c).any { it.name.lowercase() == name.lowercase() }
+
+    fun updateInterestInDB(interest: Interest, c: Context) {
+
+    }
+
+    fun deleteInterestFromDB(name: String, c: Context) {
+
+    }
 
     fun updateInterestInJSON(interest: Interest, c: Context) {
         JSONProvider.update(interest)

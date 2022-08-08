@@ -9,10 +9,11 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar
 import com.xvlaze.zapalerts.R
 import com.xvlaze.zapalerts.adapters.InterestsAdapter
 import com.xvlaze.zapalerts.databinding.ActivityMainBinding
+import com.xvlaze.zapalerts.model.InterestCloudObject
+import com.xvlaze.zapalerts.repository.CloudDBRepository
 
 
 class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
@@ -25,6 +26,9 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        CloudDBRepository.initAGConnectCloudDB(this)
+
         val upperBlob = binding.upperBlob
         val lowerBlob = binding.lowerBlob
         when (resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
@@ -48,7 +52,7 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
 
         viewModel.getSavedInterests()
         viewModel.savedInterests.observe(this) {
-            adapter = InterestsAdapter(it)
+            adapter = InterestsAdapter(it as ArrayList<InterestCloudObject>)
             adapter.setOnItemClickListener(object: InterestsAdapter.IOnItemClickListener {
                 override fun onSourceClicked(position: Int) {
                     Intent(this@MainActivity, InterestDetailActivity::class.java).apply {
@@ -88,7 +92,7 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
     }
 
     override fun onDismiss(p0: DialogInterface?) {
-        // TODO: Dudoso
+        /*// TODO: Dudoso
         val snackbar = Snackbar.make(
             binding.root,
             "Updating Interests...",
@@ -103,7 +107,7 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
                 )
             )
             show()
-        }
+        }*/
         viewModel.getSavedInterests()
     }
 
