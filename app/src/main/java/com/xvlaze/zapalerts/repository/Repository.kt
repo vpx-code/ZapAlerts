@@ -21,64 +21,17 @@ class Repository(private val c: Context) {
         )
     }
 
-    fun doWebsiteSearch(
-        query: String,
-        language: Int,
-        country: Int,
-        callback: OnWebsiteSearchPerformedCallback
-    ) {
-        WebSearcher.search(
-            query,
-            language,
-            country,
-            c,
-            callback
-        )
-    }
-
-    fun doImageSearch(
-        query: String,
-        language: Int,
-        country: Int,
-        callback: OnImageSearchPerformedCallback
-    ) {
-        ImageSearcher.search(
-            query,
-            language,
-            country,
-            c,
-            callback
-        )
-    }
-
-    fun doVideoSearch(
-        query: String,
-        language: Int,
-        country: Int,
-        callback: OnVideoSearchPerformedCallback
-    ) {
-        VideoSearcher.search(
-            query,
-            language,
-            country,
-            c,
-            callback
-        )
-    }
-
     fun saveInterest(
         searchQuery: String,
         frequency: Int,
         language: Int,
         country: Int,
-        type: Int
     ) {
         InterestsManager.saveInterestToJSON(
             searchQuery,
             frequency,
             language,
             country,
-            type,
             c
         )
         when (frequency) {
@@ -103,8 +56,7 @@ class Repository(private val c: Context) {
         searchQuery: String,
         frequency: Int,
         language: Int,
-        country: Int,
-        type: Int
+        country: Int
     ) {
         InterestsManager.updateInterestInJSON(
             Interest(
@@ -112,8 +64,7 @@ class Repository(private val c: Context) {
                 frequency,
                 language,
                 country,
-                System.currentTimeMillis(),
-                type
+                System.currentTimeMillis()
             ),
             c
         )

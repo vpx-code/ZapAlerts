@@ -73,24 +73,6 @@
                     android:dropDownWidth="wrap_content" />
 
                 <TextView
-                    android:id="@+id/type_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/lato_bold"
-                    android:paddingVertical="2.5dp"
-                    android:text="Tipo de resultado"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/freq_text" />
-
-                <Spinner
-                    android:id="@+id/type_spinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:dropDownWidth="wrap_content" />
-
-                <TextView
                     android:id="@+id/lang_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -100,7 +82,7 @@
                     android:textSize="18sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/type_text" />
+                    app:layout_constraintTop_toBottomOf="@id/lang_spinner" />
 
                 <Spinner
                     android:id="@+id/lang_spinner"
