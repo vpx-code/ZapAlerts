@@ -95,6 +95,11 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
         isInterestSaved.postValue(true)*/
     }
 
+    fun editInterest(interest: InterestCloudObject) {
+        interestsRepository.editInterest(interest)
+        isInterestSaved.postValue(true)
+    }
+
     fun deleteInterest(interest: InterestCloudObject) {
         //repository.deleteInterest(searchQuery)
         interestsRepository.deleteInterest(interest)
