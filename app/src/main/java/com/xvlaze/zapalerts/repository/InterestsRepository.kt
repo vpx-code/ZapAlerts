@@ -6,14 +6,14 @@ import com.huawei.agconnect.cloud.database.CloudDBZone
 import com.huawei.agconnect.cloud.database.CloudDBZoneObjectList
 import com.huawei.agconnect.cloud.database.CloudDBZoneQuery
 import com.huawei.agconnect.cloud.database.CloudDBZoneSnapshot
+import com.huawei.hmf.tasks.Task
 import com.xvlaze.zapalerts.model.InterestCloudObject
 import com.xvlaze.zapalerts.model.User
 
-class InterestsRepository(val mCloudDBZone: CloudDBZone) : IDatabase {
+class InterestsRepository(private val mCloudDBZone: CloudDBZone) : IDatabase {
 
     val interestsList = MutableLiveData<MutableList<InterestCloudObject>>()
     val interestToEdit = MutableLiveData<InterestCloudObject>()
-
 
     override fun getAll() {
         val queryTask = mCloudDBZone.executeQuery(
@@ -25,9 +25,6 @@ class InterestsRepository(val mCloudDBZone: CloudDBZone) : IDatabase {
         queryTask
             .addOnSuccessListener { snapshot ->
                 getAllBaseFoodsResultHandler(snapshot)
-            }
-            .addOnFailureListener {
-                //mUiCallBack.updateUiOnError("Query book list from cloud failed")
             }
     }
 
@@ -81,43 +78,34 @@ class InterestsRepository(val mCloudDBZone: CloudDBZone) : IDatabase {
     }
 
     override fun saveInterest(interest: InterestCloudObject) {
-        val getMaxId = mCloudDBZone.executeMaximumQuery(
-            CloudDBZoneQuery
-                .where(InterestCloudObject::class.java),
-            "id",
-            CloudDBZoneQuery.CloudDBZoneQueryPolicy.POLICY_QUERY_FROM_CLOUD_ONLY
-        )
-        getMaxId
+        getMaxId()
             .addOnSuccessListener { number ->
                 var nextID = 1
                 if (number != null) {
                     nextID = number.toInt() + 1
                 }
-
                 interest.id = nextID
-                val upsertTask = mCloudDBZone.executeUpsert(interest)
-                upsertTask
-                    .addOnSuccessListener { cloudDBZoneResult ->
-                        Log.d("ZAP_TAG", "Successfully upserted")
-                    }
-                    .addOnFailureListener {
-                        Log.d("ZAP_TAG", it.toString())
-                    }
-            }.addOnFailureListener {
-                Log.w("ZAP_TAG", "Maximum query is failed: " + Log.getStackTraceString(it))
+                mCloudDBZone.executeUpsert(interest)
             }
     }
 
+    private fun getMaxId(): Task<Number> {
+        return mCloudDBZone.executeMaximumQuery(
+            CloudDBZoneQuery
+                .where(InterestCloudObject::class.java),
+            "id",
+            CloudDBZoneQuery.CloudDBZoneQueryPolicy.POLICY_QUERY_FROM_CLOUD_ONLY
+        )
+    }
+
     override fun editInterest(interest: InterestCloudObject) {
-        saveInterest(interest)
+        mCloudDBZone.executeUpsert(interest)
     }
 
     override fun deleteInterest(interest: InterestCloudObject) {
         mCloudDBZone.executeDelete(interest)
     }
 
-
-    // TODO: Hacer con LiveData. No lo hace bien.
     override fun getInterestByName(name: String) {
         val queryTask2 = mCloudDBZone.executeQuery(
             CloudDBZoneQuery.where(InterestCloudObject::class.java)
@@ -143,5 +131,9 @@ class InterestsRepository(val mCloudDBZone: CloudDBZone) : IDatabase {
                 }
                 snapshot.release()
             }
+    }
+
+    fun getNextId() {
+
     }
 }
