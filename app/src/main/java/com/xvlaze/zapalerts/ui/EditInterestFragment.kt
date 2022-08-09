@@ -35,21 +35,18 @@ class EditInterestFragment : DialogFragment() {
         dialog!!.window?.setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT)
 
         viewModel.getInterestInfo(interestName)
-        viewModel.interestSearchResult.observe(this) {
-            binding.settings.setFreqSelection(it.frequency)
-            binding.settings.setLangSelection(it.language)
-            binding.settings.setCountrySelection(it.country)
-            binding.settings.setTypeSelection(it.type)
-
+        viewModel.interestToEdit.observe(this) { interest ->
+            binding.settings.setFreqSelection(interest.frequency.toInt())
+            binding.settings.setLangSelection(interest.language.toInt())
+            binding.settings.setCountrySelection(interest.country.toInt())
 
             val confirmButton = binding.btnSave
             confirmButton.setOnClickListener {
-                viewModel.overwriteInterest(
-                    interestName,
-                    binding.settings.getFrequency(),
-                    binding.settings.getLang(),
-                    binding.settings.getCountry(),
-                    binding.settings.getType()
+                interest.country = binding.settings.getCountry().toString()
+                interest.language = binding.settings.getLang().toString()
+                interest.frequency = binding.settings.getFrequency().toString()
+                viewModel.editInterest(
+                    interest
                 )
 
                 viewModel.isInterestSaved.observe(requireActivity()) { isSaveSuccessful ->
@@ -69,12 +66,11 @@ class EditInterestFragment : DialogFragment() {
                     dismiss()
                 }
             }
-        }
-
-        val deleteButton = binding.btnDelete
-        deleteButton.setOnClickListener {
-            viewModel.deleteInterest(interestName)
-            dismiss()
+            val deleteButton = binding.btnDelete
+            deleteButton.setOnClickListener {
+                viewModel.deleteInterest(interest)
+                dismiss()
+            }
         }
     }
 
