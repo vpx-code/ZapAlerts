@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.QUICKBOOT_POWERON" /> <!-- ^^^ No tocar ^^^ -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
         android:name=".model.MyApplication"
@@ -16,22 +18,24 @@
         android:theme="@style/Theme.ZapAlerts"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="true" />
+
         <activity
             android:name=".ui.InterestsActivity"
             android:exported="false" />
         <activity
             android:name=".ui.InterestDetailActivity"
-            android:exported="false" />
-
-        <!-- vvv No tocar https://developer.android.com/training/scheduling/alarms#boot vvv -->
+            android:exported="false" /> <!-- vvv No tocar https://developer.android.com/training/scheduling/alarms#boot vvv -->
         <receiver
             android:name=".receivers.BootReceiver"
             android:enabled="true"

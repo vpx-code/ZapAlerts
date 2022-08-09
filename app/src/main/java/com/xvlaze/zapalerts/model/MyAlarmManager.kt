@@ -59,14 +59,6 @@ object MyAlarmManager {
             "Enabled receivers!"
         )
 
-        /*val bootReceiver = ComponentName(MyApplication.appContext, BootReceiver::class.java)
-
-        MyApplication.appContext.packageManager.setComponentEnabledSetting(
-            bootReceiver,
-            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-            PackageManager.DONT_KILL_APP
-        )*/
-
         val alertReceiver = ComponentName(MyApplication.appContext, AlertReceiver::class.java)
 
         MyApplication.appContext.packageManager.setComponentEnabledSetting(
