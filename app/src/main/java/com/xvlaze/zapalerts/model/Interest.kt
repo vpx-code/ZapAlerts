@@ -9,5 +9,5 @@ data class Interest(
     var language: Int,
     var country: Int,
     var lastUpdate: Long,
-    var type: Int
+    var unionId: String = ""
 )

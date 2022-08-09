@@ -75,7 +75,6 @@ class InterestsActivity : AppCompatActivity() {
                         imm.hideSoftInputFromWindow(binding.searchview.applicationWindowToken, 0)
                         viewModel.doSearch(
                             searchQuery.toString(),
-                            binding.settings.getType(),
                             binding.settings.getLang(),
                             binding.settings.getCountry()
                         )
@@ -102,8 +101,7 @@ class InterestsActivity : AppCompatActivity() {
                                     searchQuery.toString(),
                                     binding.settings.getFrequency(),
                                     binding.settings.getLang(),
-                                    binding.settings.getCountry(),
-                                    binding.settings.getType()
+                                    binding.settings.getCountry()
                                 )
                                 viewModel.isInterestUnique(searchQuery.toString())
                                 viewModel.isInterestSaved.observe(this@InterestsActivity) { isSaveSuccessful ->
@@ -130,7 +128,6 @@ class InterestsActivity : AppCompatActivity() {
                                         }
                                     }
                                 }
-
                             }
                         }
                     }

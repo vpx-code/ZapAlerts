@@ -4,66 +4,73 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.huawei.hms.searchkit.bean.NewsItem
-import com.xvlaze.zapalerts.model.Interest
+import com.xvlaze.zapalerts.model.InterestCloudObject
 import com.xvlaze.zapalerts.model.OnNewsSearchPerformedCallback
+import com.xvlaze.zapalerts.model.User
+import com.xvlaze.zapalerts.repository.CloudDBRepository
+import com.xvlaze.zapalerts.repository.InterestsRepository
 import com.xvlaze.zapalerts.repository.Repository
-import com.xvlaze.zapalerts.util.Constants.AlertType
 
 class InterestsViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = Repository(application.applicationContext)
+
+    private val cloudDBRepository = CloudDBRepository(application.applicationContext)
+    private var interestsRepository: InterestsRepository
+
     val searchResults = MutableLiveData<ArrayList<NewsItem>>() // FIXME
     val isInterestSaved = MutableLiveData<Boolean>()
-    val interestSearchResult = MutableLiveData<Interest>()
-    private val preferredLanguage = MutableLiveData<Int>()
+    val interestSearchResult = MutableLiveData<InterestCloudObject>()
+    val interestToEdit: MutableLiveData<InterestCloudObject>
+
+    init {
+        cloudDBRepository.createObjectType()
+        cloudDBRepository.openCloudDbZone()
+        interestsRepository = InterestsRepository(cloudDBRepository.mCloudDbZone!!)
+        interestToEdit = interestsRepository.interestToEdit
+    }
 
     fun doSearch(
         searchQuery: String,
-        type: Int,
         language: Int,
         country: Int
     ) {
-        when (type) {
-            0 -> {
-                TODO("doWebpageSearch")
+        repository.doNewsSearch(
+            searchQuery,
+            language,
+            country,
+            object : OnNewsSearchPerformedCallback {
+                override fun onNewsSearchResult(result: ArrayList<NewsItem>) {
+                    searchResults.postValue(result)
+                }
             }
-            1 -> {
-                TODO("doImageSearch")
-            }
-            2 -> {
-                TODO("doVideoSearch")
-            }
-            3 -> {
-                repository.doNewsSearch(
-                    searchQuery,
-                    language,
-                    country,
-                    object : OnNewsSearchPerformedCallback {
-                        override fun onNewsSearchResult(result: ArrayList<NewsItem>) {
-                            searchResults.postValue(result)
-                        }
-                    }
-                )
-            }
-        }
+        )
     }
 
-    fun isInterestUnique(searchQuery: String): Boolean = repository.isInterestUnique(searchQuery)
+    fun isInterestUnique(searchQuery: String): Boolean =
+        interestsRepository.isInterestUnique(searchQuery)
 
     fun saveInterest(
         searchQuery: String,
         frequency: Int,
         language: Int,
-        country: Int,
-        type: Int
+        country: Int
     ) {
+        val interestToSave = InterestCloudObject()
+        interestToSave.name = searchQuery
+        interestToSave.frequency = frequency.toString()
+        interestToSave.country = country.toString()
+        interestToSave.language = language.toString()
+        interestToSave.unionId = User.unionId
+
         isInterestSaved.postValue(
             if (isInterestUnique(searchQuery)) {
-                repository.saveInterest(
+                /*repository.saveInterest(
                     searchQuery,
                     frequency,
                     language,
-                    country,
-                    type
+                    country*/
+                interestsRepository.saveInterest(
+                    interestToSave
                 )
                 true
             } else {
@@ -72,41 +79,33 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
         )
     }
 
-    fun getPreferredLanguage() {
-        preferredLanguage.postValue(repository.getPreferredLanguage())
-    }
-
     fun overwriteInterest(
         searchQuery: String,
         frequency: Int,
         language: Int,
-        country: Int,
-        type: Int
+        country: Int
     ) {
         // TODO: Buscar el método que tengo guardado en InterestsManager o JSONProvider para actualizar intereses.
-        repository.overwriteInterest(
+        /*repository.overwriteInterest(
             searchQuery,
             frequency,
             language,
-            country,
-            type
+            country
         )
+        isInterestSaved.postValue(true)*/
+    }
+
+    fun editInterest(interest: InterestCloudObject) {
+        interestsRepository.editInterest(interest)
         isInterestSaved.postValue(true)
     }
 
-    fun deleteInterest(searchQuery: String) {
-        repository.deleteInterest(searchQuery)
+    fun deleteInterest(interest: InterestCloudObject) {
+        //repository.deleteInterest(searchQuery)
+        interestsRepository.deleteInterest(interest)
     }
 
     fun getInterestInfo(interestName: String) {
-        interestSearchResult.postValue(repository.searchInterest(interestName))
+        interestsRepository.getInterestByName(interestName)
     }
-
-    /*fun doWebSearch(searchQuery: String) {
-        repository.doWebSearch(searchQuery, object: IOnSearchPerformedCallback {
-            override fun onWebSearchResult(result: ArrayList<WebItem>) { // FIXME: enum? Igual que ImageSaver
-                searchResults.postValue(result)
-            }
-        })
-    }*/
 }
