@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.xvlaze.zapalerts.R
 import com.xvlaze.zapalerts.adapters.InterestsAdapter
 import com.xvlaze.zapalerts.databinding.ActivityMainBinding
+import com.xvlaze.zapalerts.model.CloudDB
 import com.xvlaze.zapalerts.model.InterestCloudObject
-import com.xvlaze.zapalerts.repository.CloudDBRepository
 
 
 class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        CloudDBRepository.initAGConnectCloudDB(this)
+        CloudDB.initAGConnectCloudDB(this)
 
         val upperBlob = binding.upperBlob
         val lowerBlob = binding.lowerBlob

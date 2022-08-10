@@ -4,18 +4,14 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.huawei.hms.searchkit.bean.NewsItem
-import com.xvlaze.zapalerts.model.InterestCloudObject
-import com.xvlaze.zapalerts.model.OnNewsSearchPerformedCallback
-import com.xvlaze.zapalerts.model.User
-import com.xvlaze.zapalerts.repository.CloudDBRepository
-import com.xvlaze.zapalerts.repository.InterestsRepository
+import com.xvlaze.zapalerts.model.*
 import com.xvlaze.zapalerts.repository.Repository
 
 class InterestsViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = Repository(application.applicationContext)
 
-    private val cloudDBRepository = CloudDBRepository(application.applicationContext)
-    private var interestsRepository: InterestsRepository
+    private val cloudDBRepository = CloudDB(application.applicationContext)
+    private var cloudDBQueries: CloudDBQueries
 
     val searchResults = MutableLiveData<ArrayList<NewsItem>>() // FIXME
     val isInterestSaved = MutableLiveData<Boolean>()
@@ -25,8 +21,8 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
     init {
         cloudDBRepository.createObjectType()
         cloudDBRepository.openCloudDbZone()
-        interestsRepository = InterestsRepository(cloudDBRepository.mCloudDbZone!!)
-        interestToEdit = interestsRepository.interestToEdit
+        cloudDBQueries = CloudDBQueries(cloudDBRepository.mCloudDbZone!!)
+        interestToEdit = cloudDBQueries.interestToEdit
     }
 
     fun doSearch(
@@ -47,7 +43,7 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun isInterestUnique(searchQuery: String): Boolean =
-        interestsRepository.isInterestUnique(searchQuery)
+        cloudDBQueries.isInterestUnique(searchQuery)
 
     fun saveInterest(
         searchQuery: String,
@@ -69,7 +65,7 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
                     frequency,
                     language,
                     country*/
-                interestsRepository.saveInterest(
+                cloudDBQueries.saveInterest(
                     interestToSave
                 )
                 true
@@ -96,16 +92,16 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun editInterest(interest: InterestCloudObject) {
-        interestsRepository.editInterest(interest)
+        cloudDBQueries.editInterest(interest)
         isInterestSaved.postValue(true)
     }
 
     fun deleteInterest(interest: InterestCloudObject) {
         //repository.deleteInterest(searchQuery)
-        interestsRepository.deleteInterest(interest)
+        cloudDBQueries.deleteInterest(interest)
     }
 
     fun getInterestInfo(interestName: String) {
-        interestsRepository.getInterestByName(interestName)
+        cloudDBQueries.getInterestByName(interestName)
     }
 }
