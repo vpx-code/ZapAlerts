@@ -1,4 +1,4 @@
-package com.xvlaze.zapalerts.repository
+package com.xvlaze.zapalerts.model
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
@@ -7,15 +7,14 @@ import com.huawei.agconnect.cloud.database.CloudDBZoneObjectList
 import com.huawei.agconnect.cloud.database.CloudDBZoneQuery
 import com.huawei.agconnect.cloud.database.CloudDBZoneSnapshot
 import com.huawei.hmf.tasks.Task
-import com.xvlaze.zapalerts.model.InterestCloudObject
-import com.xvlaze.zapalerts.model.User
 
-class InterestsRepository(private val mCloudDBZone: CloudDBZone) : IDatabase {
+class CloudDBQueries(private val mCloudDBZone: CloudDBZone) : IDatabase {
 
     val interestsList = MutableLiveData<MutableList<InterestCloudObject>>()
     val interestToEdit = MutableLiveData<InterestCloudObject>()
 
-    override fun getAll() {
+    override fun getAll(callback: IOnSuccessListenerCallback) {
+        val result = mutableListOf<InterestCloudObject>()
         val queryTask = mCloudDBZone.executeQuery(
             CloudDBZoneQuery.where(InterestCloudObject::class.java)
                 .equalTo("unionId", User.unionId),
@@ -24,7 +23,13 @@ class InterestsRepository(private val mCloudDBZone: CloudDBZone) : IDatabase {
 
         queryTask
             .addOnSuccessListener { snapshot ->
-                getAllBaseFoodsResultHandler(snapshot)
+                val cursor: CloudDBZoneObjectList<InterestCloudObject> = snapshot.snapshotObjects
+                while (cursor.hasNext()) {
+                    val baseFood = cursor.next()
+                    result.add(baseFood)
+                }
+                snapshot.release()
+                callback.onSuccess(result)
             }
     }
 
@@ -40,11 +45,11 @@ class InterestsRepository(private val mCloudDBZone: CloudDBZone) : IDatabase {
 
         queryTask
             .addOnSuccessListener { snapshot ->
-                val baseFoodCursor: CloudDBZoneObjectList<InterestCloudObject> =
+                val cursor: CloudDBZoneObjectList<InterestCloudObject> =
                     snapshot.snapshotObjects
                 try {
-                    while (baseFoodCursor.hasNext()) {
-                        val baseFood = baseFoodCursor.next()
+                    while (cursor.hasNext()) {
+                        val baseFood = cursor.next()
                         baseFoodListLocal.add(baseFood)
                     }
                 } catch (exception: Exception) {
@@ -60,12 +65,12 @@ class InterestsRepository(private val mCloudDBZone: CloudDBZone) : IDatabase {
     }
 
     private fun getAllBaseFoodsResultHandler(snapshot: CloudDBZoneSnapshot<InterestCloudObject>) {
-        val baseFoodCursor: CloudDBZoneObjectList<InterestCloudObject> = snapshot.snapshotObjects
+        val cursor: CloudDBZoneObjectList<InterestCloudObject> = snapshot.snapshotObjects
         val baseFoodListLocal = mutableListOf<InterestCloudObject>()
 
         try {
-            while (baseFoodCursor.hasNext()) {
-                val baseFood = baseFoodCursor.next()
+            while (cursor.hasNext()) {
+                val baseFood = cursor.next()
                 baseFoodListLocal.add(baseFood)
             }
         } catch (exception: Exception) {
@@ -117,12 +122,12 @@ class InterestsRepository(private val mCloudDBZone: CloudDBZone) : IDatabase {
         val baseFoodListLocal = mutableListOf<InterestCloudObject>()
         queryTask2
             .addOnSuccessListener { snapshot ->
-                val baseFoodCursor: CloudDBZoneObjectList<InterestCloudObject> =
+                val cursor: CloudDBZoneObjectList<InterestCloudObject> =
                     snapshot.snapshotObjects
 
                 try {
-                    while (baseFoodCursor.hasNext()) {
-                        val baseFood = baseFoodCursor.next()
+                    while (cursor.hasNext()) {
+                        val baseFood = cursor.next()
                         baseFoodListLocal.add(baseFood)
                     }
                     interestToEdit.postValue(baseFoodListLocal.first())
@@ -132,8 +137,8 @@ class InterestsRepository(private val mCloudDBZone: CloudDBZone) : IDatabase {
                 snapshot.release()
             }
     }
+}
 
-    fun getNextId() {
-
-    }
+interface IOnSuccessListenerCallback {
+    fun onSuccess(res: MutableList<InterestCloudObject>)
 }
