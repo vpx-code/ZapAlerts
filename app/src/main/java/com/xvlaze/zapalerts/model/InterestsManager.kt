@@ -4,6 +4,17 @@ import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 
+/*
+TODO:
+  - Abrir una branch para limpiar la mierda del repo de DB y unificarlo bien.
+  - Pensar en si voy a usar una "caché" en JSON que se vaya actualizando cuando:
+    - Guardes
+    - Borres
+    - Edites
+    ...y no tengas que depender de la base de datos cada vez.
+  - Reorganizar el código en consecuencia.
+ */
+
 object InterestsManager {
     @RequiresApi(Build.VERSION_CODES.R)
     fun saveInterestToJSON(

@@ -8,26 +8,16 @@ import com.xvlaze.zapalerts.model.InterestCloudObject
 import com.xvlaze.zapalerts.model.OnNewsSearchPerformedCallback
 import com.xvlaze.zapalerts.model.User
 import com.xvlaze.zapalerts.repository.CloudDBRepository
-import com.xvlaze.zapalerts.repository.InterestsRepository
 import com.xvlaze.zapalerts.repository.Repository
 
 class InterestsViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = Repository(application.applicationContext)
 
     private val cloudDBRepository = CloudDBRepository(application.applicationContext)
-    private var interestsRepository: InterestsRepository
 
-    val searchResults = MutableLiveData<ArrayList<NewsItem>>() // FIXME
+    val searchResults = MutableLiveData<ArrayList<NewsItem>>()
     val isInterestSaved = MutableLiveData<Boolean>()
-    val interestSearchResult = MutableLiveData<InterestCloudObject>()
-    val interestToEdit: MutableLiveData<InterestCloudObject>
-
-    init {
-        cloudDBRepository.createObjectType()
-        cloudDBRepository.openCloudDbZone()
-        interestsRepository = InterestsRepository(cloudDBRepository.mCloudDbZone!!)
-        interestToEdit = interestsRepository.interestToEdit
-    }
+    val interestToEdit = MutableLiveData<InterestCloudObject>()
 
     fun doSearch(
         searchQuery: String,
@@ -47,7 +37,7 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun isInterestUnique(searchQuery: String): Boolean =
-        interestsRepository.isInterestUnique(searchQuery)
+        cloudDBRepository.isInterestUnique(searchQuery)
 
     fun saveInterest(
         searchQuery: String,
@@ -64,12 +54,7 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
 
         isInterestSaved.postValue(
             if (isInterestUnique(searchQuery)) {
-                /*repository.saveInterest(
-                    searchQuery,
-                    frequency,
-                    language,
-                    country*/
-                interestsRepository.saveInterest(
+                cloudDBRepository.save(
                     interestToSave
                 )
                 true
@@ -79,33 +64,16 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
         )
     }
 
-    fun overwriteInterest(
-        searchQuery: String,
-        frequency: Int,
-        language: Int,
-        country: Int
-    ) {
-        // TODO: Buscar el método que tengo guardado en InterestsManager o JSONProvider para actualizar intereses.
-        /*repository.overwriteInterest(
-            searchQuery,
-            frequency,
-            language,
-            country
-        )
-        isInterestSaved.postValue(true)*/
-    }
-
     fun editInterest(interest: InterestCloudObject) {
-        interestsRepository.editInterest(interest)
+        cloudDBRepository.edit(interest)
         isInterestSaved.postValue(true)
     }
 
     fun deleteInterest(interest: InterestCloudObject) {
-        //repository.deleteInterest(searchQuery)
-        interestsRepository.deleteInterest(interest)
+        cloudDBRepository.delete(interest)
     }
 
     fun getInterestInfo(interestName: String) {
-        interestsRepository.getInterestByName(interestName)
+        cloudDBRepository.getByName(interestName)
     }
 }
