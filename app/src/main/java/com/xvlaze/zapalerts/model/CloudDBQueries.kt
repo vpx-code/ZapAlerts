@@ -13,7 +13,7 @@ class CloudDBQueries(private val mCloudDBZone: CloudDBZone) : IDatabase {
     val interestsList = MutableLiveData<MutableList<InterestCloudObject>>()
     val interestToEdit = MutableLiveData<InterestCloudObject>()
 
-    override fun getAll(callback: IOnSuccessListenerCallback) {
+    override fun getAll(callback: IOnGetAllSuccessCallback) {
         val result = mutableListOf<InterestCloudObject>()
         val queryTask = mCloudDBZone.executeQuery(
             CloudDBZoneQuery.where(InterestCloudObject::class.java)
@@ -111,7 +111,7 @@ class CloudDBQueries(private val mCloudDBZone: CloudDBZone) : IDatabase {
         mCloudDBZone.executeDelete(interest)
     }
 
-    override fun getInterestByName(name: String) {
+    override fun getInterestByName(name: String, callback: IOnGetByNameSuccessCallback) {
         val queryTask2 = mCloudDBZone.executeQuery(
             CloudDBZoneQuery.where(InterestCloudObject::class.java)
                 .equalTo("unionId", User.unionId)
@@ -135,10 +135,15 @@ class CloudDBQueries(private val mCloudDBZone: CloudDBZone) : IDatabase {
                     Log.w("BaseFoodRepository", "getAllbaseFoods error: ${exception.message}")
                 }
                 snapshot.release()
+                callback.onSuccess(baseFoodListLocal.first())
             }
     }
 }
 
-interface IOnSuccessListenerCallback {
+interface IOnGetAllSuccessCallback {
     fun onSuccess(res: MutableList<InterestCloudObject>)
+}
+
+interface IOnGetByNameSuccessCallback {
+    fun onSuccess(res: InterestCloudObject)
 }

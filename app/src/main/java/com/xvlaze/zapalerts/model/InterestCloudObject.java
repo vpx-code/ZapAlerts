@@ -11,7 +11,7 @@ import com.huawei.agconnect.cloud.database.annotations.PrimaryKeys;
 /**
  * Definition of ObjectType InterestCloudObject.
  *
- * @since 2022-08-06
+ * @since 2022-08-12
  */
 @PrimaryKeys({"id"})
 @Indexes({"name:name"})
@@ -25,8 +25,6 @@ public final class InterestCloudObject extends CloudDBZoneObject {
     private String language;
 
     private String country;
-
-    private String lastUpdate;
 
     private String unionId;
 
@@ -72,14 +70,6 @@ public final class InterestCloudObject extends CloudDBZoneObject {
 
     public String getCountry() {
         return country;
-    }
-
-    public void setLastUpdate(String lastUpdate) {
-        this.lastUpdate = lastUpdate;
-    }
-
-    public String getLastUpdate() {
-        return lastUpdate;
     }
 
     public void setUnionId(String unionId) {
