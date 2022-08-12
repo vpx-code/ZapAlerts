@@ -12,54 +12,75 @@ import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.huawei.hms.searchkit.bean.NewsItem
-import com.xvlaze.zapalerts.model.InterestsManager
-import com.xvlaze.zapalerts.model.NewsSearcher
-import com.xvlaze.zapalerts.model.OnNewsSearchPerformedCallback
+import com.xvlaze.zapalerts.model.*
+import com.xvlaze.zapalerts.repository.CloudDBRepository
+import com.xvlaze.zapalerts.repository.Repository
 import com.xvlaze.zapalerts.ui.MainActivity
+import com.xvlaze.zapalerts.util.Constants.InterestFrequency.*
 import kotlin.random.Random
 
 class AlertReceiver : BroadcastReceiver() {
     private var updatedNews = arrayListOf<NewsItem>()
 
     override fun onReceive(c: Context, intent: Intent) {
+        val cloudDBRepository = CloudDBRepository(c)
+
         Log.d("ZAP_TAG", "Alarm received!")
 
-        val interests = InterestsManager.getSavedInterests(c)
-        val updatedNames = arrayListOf<String>()
+        cloudDBRepository.getAll(object : IOnGetAllSuccessCallback {
+            override fun onSuccess(res: MutableList<InterestCloudObject>) {
+                val updatedNames = arrayListOf<String>()
 
-        for (interest in interests) {
-            NewsSearcher.search(
-                interest.name,
-                interest.language,
-                interest.country,
-                c,
-                object : OnNewsSearchPerformedCallback {
-                    override fun onNewsSearchResult(result: ArrayList<NewsItem>) {
-                        // TODO: Debug aquí para REALTIME.
-                        updatedNews.addAll( // TODO: Se guarda bien, pero ¿ahora cómo lo pasamos? ¿Lo guardamos en un JSON o rehacemos la búsqueda al entrar?
-                            result.filter {
-                                it.publishTime.toLong() < interest.lastUpdate
+                for (interest in res) {
+                    NewsSearcher.search(
+                        interest.name,
+                        interest.language.toInt(),
+                        interest.country.toInt(),
+                        c,
+                        object : OnNewsSearchPerformedCallback {
+                            override fun onNewsSearchResult(result: ArrayList<NewsItem>) {
+                                val lastUpdate = when (interest.frequency.toInt()) {
+                                    DAILY.id -> {
+                                        Daily.getSavedDate(c)
+                                    }
+                                    WEEKLY.id -> {
+                                        Weekly.getSavedDate(c)
+                                    }
+                                    REALTIME.id -> {
+                                        Realtime.getSavedDate(c)
+                                    }
+                                    else -> {
+                                        Realtime.getSavedDate(c)
+                                    }
+                                }
+
+                                updatedNews.addAll( // TODO: Se guarda bien, pero ¿ahora cómo lo pasamos? ¿Lo guardamos en un JSON o rehacemos la búsqueda al entrar?
+                                    result.filter {
+                                        it.publishTime.toLong() < lastUpdate
+                                    }
+                                )
+
+                                if (result.any { it.publishTime.toLong() * 1000 > lastUpdate }) {
+                                    updatedNames.add(interest.name)
+                                }
+
+                                Repository(c).overwriteInterest(interest.frequency.toInt())
                             }
-                        )
-                        val lastUpdate = interest.lastUpdate
-                        if (result.any { it.publishTime.toLong() * 1000 > lastUpdate }) {
-                            updatedNames.add(interest.name)
-                            interest.lastUpdate = System.currentTimeMillis()
                         }
-                        InterestsManager.updateInterestInJSON(interest, c)
-                    }
+                    )
                 }
-            )
-        }
 
-        if (updatedNames.isNotEmpty()) {
-            showNotification(
-                c,
-                "${updatedNews.random().title} and more.",
-                Random.nextInt()
-            )
-        }
+                if (updatedNames.isNotEmpty()) {
+                    showNotification(
+                        c,
+                        "${updatedNews.random().title} and more.",
+                        Random.nextInt()
+                    )
+                }
+            }
+        })
     }
+
 
     private fun showNotification(
         context: Context,

@@ -9,10 +9,7 @@ class MyApplication: Application() {
     override fun onCreate() {
         super.onCreate()
         appContext = applicationContext
-
-        // NO TOCAR
         SearchKitInstance.init(this, clientId)
-        //JSONProvider.setup(this)
         OAuthTokenProvider.requestOAuthToken(this)
     }
 

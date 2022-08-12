@@ -3,7 +3,6 @@ package com.xvlaze.zapalerts.repository
 import android.content.Context
 import com.xvlaze.zapalerts.model.*
 import com.xvlaze.zapalerts.util.Constants.InterestFrequency.*
-import com.xvlaze.zapalerts.util.LanguageUtils
 
 class Repository(private val c: Context) {
     fun doNewsSearch(
@@ -22,18 +21,8 @@ class Repository(private val c: Context) {
     }
 
     fun saveInterest(
-        searchQuery: String,
         frequency: Int,
-        language: Int,
-        country: Int,
     ) {
-        InterestsManager.saveInterestToJSON(
-            searchQuery,
-            frequency,
-            language,
-            country,
-            c
-        )
         when (frequency) {
             DAILY.id -> {
                 Daily.updateSavedDate(c)
@@ -53,21 +42,8 @@ class Repository(private val c: Context) {
     }
 
     fun overwriteInterest(
-        searchQuery: String,
-        frequency: Int,
-        language: Int,
-        country: Int
+        frequency: Int
     ) {
-        InterestsManager.updateInterestInJSON(
-            Interest(
-                searchQuery,
-                frequency,
-                language,
-                country,
-                System.currentTimeMillis()
-            ),
-            c
-        )
         when (frequency) {
             DAILY.id -> {
                 Daily.updateSavedDate(c)
@@ -83,13 +59,4 @@ class Repository(private val c: Context) {
             }
         }
     }
-
-    fun getSavedInterests() = InterestsManager.getSavedInterests(c)
-
-    fun searchInterest(name: String): Interest =
-        InterestsManager.getSavedInterests(c).first { it.name == name }
-
-    fun getPreferredLanguage(): Int = LanguageUtils.getPreferredLanguage()
-    fun isInterestUnique(name: String): Boolean = InterestsManager.isInterestUnique(name, c)
-    fun deleteInterest(searchQuery: String) = InterestsManager.deleteInterestFromJSON(searchQuery, c)
 }
