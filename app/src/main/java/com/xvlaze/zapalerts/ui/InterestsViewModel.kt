@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.huawei.hms.searchkit.bean.NewsItem
+import com.xvlaze.zapalerts.model.IOnGetByNameSuccessCallback
 import com.xvlaze.zapalerts.model.InterestCloudObject
 import com.xvlaze.zapalerts.model.OnNewsSearchPerformedCallback
 import com.xvlaze.zapalerts.model.User
@@ -57,6 +58,7 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
                 cloudDBRepository.save(
                     interestToSave
                 )
+                repository.saveInterest(frequency)
                 true
             } else {
                 false
@@ -66,6 +68,7 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun editInterest(interest: InterestCloudObject) {
         cloudDBRepository.edit(interest)
+        repository.overwriteInterest(interest.frequency.toInt())
         isInterestSaved.postValue(true)
     }
 
@@ -74,6 +77,10 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun getInterestInfo(interestName: String) {
-        cloudDBRepository.getByName(interestName)
+        cloudDBRepository.getByName(interestName, object : IOnGetByNameSuccessCallback {
+            override fun onSuccess(res: InterestCloudObject) {
+                interestToEdit.postValue(res)
+            }
+        })
     }
 }

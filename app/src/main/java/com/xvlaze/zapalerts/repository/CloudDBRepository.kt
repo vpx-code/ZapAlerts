@@ -1,10 +1,7 @@
 package com.xvlaze.zapalerts.repository
 
 import android.content.Context
-import com.xvlaze.zapalerts.model.CloudDB
-import com.xvlaze.zapalerts.model.CloudDBQueries
-import com.xvlaze.zapalerts.model.IOnSuccessListenerCallback
-import com.xvlaze.zapalerts.model.InterestCloudObject
+import com.xvlaze.zapalerts.model.*
 
 class CloudDBRepository(c: Context) {
     private val cloudDBInstance = CloudDB(c)
@@ -16,8 +13,8 @@ class CloudDBRepository(c: Context) {
         cloudDBQueries = CloudDBQueries(cloudDBInstance.mCloudDbZone!!)
     }
 
-    fun getAll(callback: IOnSuccessListenerCallback) = cloudDBQueries.getAll(callback)
-    fun getByName(name: String) = cloudDBQueries.getInterestByName(name)
+    fun getAll(callback: IOnGetAllSuccessCallback) = cloudDBQueries.getAll(callback)
+    fun getByName(name: String, callback: IOnGetByNameSuccessCallback) = cloudDBQueries.getInterestByName(name, callback)
     fun isInterestUnique(name: String) = cloudDBQueries.isInterestUnique(name)
     fun save(interest: InterestCloudObject) = cloudDBQueries.saveInterest(interest)
     fun edit(interest: InterestCloudObject) = cloudDBQueries.editInterest(interest)
