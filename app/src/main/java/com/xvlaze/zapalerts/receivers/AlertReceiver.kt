@@ -23,10 +23,12 @@ class AlertReceiver : BroadcastReceiver() {
     private var updatedNews = arrayListOf<NewsItem>()
 
     override fun onReceive(c: Context, intent: Intent) {
-        val cloudDBRepository = CloudDBRepository(c)
-
         Log.d("ZAP_TAG", "Alarm received!")
 
+        // TODO: CloudDB = CloudDB() o como sea
+        val cloudDBRepository = CloudDBRepository(c)
+
+        // FIXME Descomentar a partir de aquí supone un problema porque no enciende el receiver o se mata. Creo que es porque no tengo la base de datos inicializada al reiniciar el teléfono.
         cloudDBRepository.getAll(object : IOnGetAllSuccessCallback {
             override fun onSuccess(res: MutableList<InterestCloudObject>) {
                 val updatedNames = arrayListOf<String>()
@@ -54,7 +56,7 @@ class AlertReceiver : BroadcastReceiver() {
                                     }
                                 }
 
-                                updatedNews.addAll( // TODO: Se guarda bien, pero ¿ahora cómo lo pasamos? ¿Lo guardamos en un JSON o rehacemos la búsqueda al entrar?
+                                updatedNews.addAll(
                                     result.filter {
                                         it.publishTime.toLong() < lastUpdate
                                     }
@@ -63,12 +65,14 @@ class AlertReceiver : BroadcastReceiver() {
                                 if (result.any { it.publishTime.toLong() * 1000 > lastUpdate }) {
                                     updatedNames.add(interest.name)
                                 }
-
-                                Repository(c).overwriteInterest(interest.frequency.toInt())
                             }
                         }
                     )
                 }
+
+                //Repository(c).overwriteInterest(Daily.getType())
+                //Repository(c).overwriteInterest(Weekly.getType())
+                Repository(c).saveInterest(Realtime.getType())
 
                 if (updatedNames.isNotEmpty()) {
                     showNotification(

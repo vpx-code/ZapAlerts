@@ -101,16 +101,16 @@ object Weekly : AlertType {
 
 object Realtime : AlertType {
     override val code = 2
-    override val interval: Long = 60000*5 // Ojo al cambiar esto. 5 minutos para realtime.
+    override val interval: Long = 60000 // Ojo al cambiar esto. 5 minutos para realtime.
     override fun getType(): Int = code
     private var firstRingTime: Long = 0
 
     override fun calculateNextDate(): Long {
         val calendar: Calendar = Calendar.getInstance()
-        if (calendar.isDateInThePast()) {
-            Log.d("ZAP_TAG", "Date in the past. Updating calendar to ${(interval / 60000).toInt()} minutes." )
-            calendar.add(Calendar.MINUTE, (interval / 60000).toInt()) // Ojo al cambiar esto}
-        }
+        //if (calendar.isDateInThePast()) {
+        //    Log.d("ZAP_TAG", "Date in the past. Updating calendar to ${(interval / 60000).toInt()} minutes." )
+        calendar.add(Calendar.MINUTE, (interval / 60000).toInt()) // Ojo al cambiar esto}
+        //}
         return calendar.timeInMillis
     }
 

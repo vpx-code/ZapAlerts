@@ -12,7 +12,6 @@ import com.xvlaze.zapalerts.model.Weekly
 class BootReceiver : BroadcastReceiver() {
     override fun onReceive(c: Context, intent: Intent) {
         Log.d("ZAP_TAG", "Boot receiver on!")
-        MyAlarmManager.enableReceivers()
 
         if (Intent.ACTION_BOOT_COMPLETED == intent.action) {
             Log.d("ZAP_TAG", "Boot receiver on!")
