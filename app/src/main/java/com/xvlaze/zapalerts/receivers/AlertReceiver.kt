@@ -25,10 +25,7 @@ class AlertReceiver : BroadcastReceiver() {
     override fun onReceive(c: Context, intent: Intent) {
         Log.d("ZAP_TAG", "Alarm received!")
 
-        // TODO: CloudDB = CloudDB() o como sea
         val cloudDBRepository = CloudDBRepository(c)
-
-        // FIXME Descomentar a partir de aquí supone un problema porque no enciende el receiver o se mata. Creo que es porque no tengo la base de datos inicializada al reiniciar el teléfono.
         cloudDBRepository.getAll(object : IOnGetAllSuccessCallback {
             override fun onSuccess(res: MutableList<InterestCloudObject>) {
                 val updatedNames = arrayListOf<String>()
@@ -43,16 +40,16 @@ class AlertReceiver : BroadcastReceiver() {
                             override fun onNewsSearchResult(result: ArrayList<NewsItem>) {
                                 val lastUpdate = when (interest.frequency.toInt()) {
                                     DAILY.id -> {
-                                        Daily.getSavedDate(c)
+                                        Daily.getPreviouslySavedDate(c)
                                     }
                                     WEEKLY.id -> {
-                                        Weekly.getSavedDate(c)
+                                        Weekly.getPreviouslySavedDate(c)
                                     }
                                     REALTIME.id -> {
-                                        Realtime.getSavedDate(c)
+                                        Realtime.getPreviouslySavedDate(c)
                                     }
                                     else -> {
-                                        Realtime.getSavedDate(c)
+                                        Realtime.getPreviouslySavedDate(c)
                                     }
                                 }
 
@@ -62,6 +59,8 @@ class AlertReceiver : BroadcastReceiver() {
                                     }
                                 )
 
+
+                                // FIXME: El problema es que la lastUpdate es el momento exacto en el que suena la alarma, por lo que nunca vamos a encontrar noticias en el futuro.
                                 if (result.any { it.publishTime.toLong() * 1000 > lastUpdate }) {
                                     updatedNames.add(interest.name)
                                 }

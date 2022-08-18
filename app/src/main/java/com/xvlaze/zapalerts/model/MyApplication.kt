@@ -14,7 +14,7 @@ class MyApplication: Application() {
         OAuthTokenProvider.requestOAuthToken(this)
         CloudDB.initAGConnectCloudDB(this)
 
-        if (SharedPrefsProvider.isFirstTime(this)) {
+        //if (SharedPrefsProvider.isFirstTime(this)) {
             Log.d("ZAP_TAG", "Is first time.")
 
             Daily.updateSavedDate(this)
@@ -27,10 +27,10 @@ class MyApplication: Application() {
             MyAlarmManager.scheduleAlarm(Realtime, this)
 
             SharedPrefsProvider.setNotFirstTime(this)
-        }
+        /*}
         else {
             Log.d("ZAP_TAG", "Is not first time.")
-        }
+        }*/
     }
 
     companion object {
