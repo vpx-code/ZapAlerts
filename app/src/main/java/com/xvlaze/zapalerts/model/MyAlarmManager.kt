@@ -18,18 +18,6 @@ import kotlin.random.Random
 object MyAlarmManager {
     private var alarmManager: AlarmManager? = null
 
-    /*fun scheduleAlarm(lastSavedDate: SharedPrefsDate, c: Context) {
-        Log.d("ZAP_TAG", "Scheduling repeating alarm starting at ${lastSavedDate.getSavedDate(c).toTimeStamp()}")
-        val pi = lastSavedDate.pendingIntent
-        Log.d("ZAP_TAG", "Intent sender is: ${pi.intentSender}")
-        getInstance(c).setRepeating(
-            RTC_WAKEUP,
-            lastSavedDate.getSavedDate(c),
-            60000, // fixme lastSavedDate.interval,
-            pi
-        )
-    }*/
-
     fun scheduleAlarm(lastSavedDate: AlertType, c: Context) {
         Log.d(
             "ZAP_TAG",
@@ -57,6 +45,13 @@ object MyAlarmManager {
         Log.d(
             "ZAP_TAG",
             "Enabled receivers!"
+        )
+
+        val bootReceiver = ComponentName(MyApplication.appContext, BootReceiver::class.java)
+        MyApplication.appContext.packageManager.setComponentEnabledSetting(
+            bootReceiver,
+            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+            PackageManager.DONT_KILL_APP
         )
 
         val alertReceiver = ComponentName(MyApplication.appContext, AlertReceiver::class.java)

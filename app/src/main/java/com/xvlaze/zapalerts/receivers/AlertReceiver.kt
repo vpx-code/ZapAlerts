@@ -23,10 +23,9 @@ class AlertReceiver : BroadcastReceiver() {
     private var updatedNews = arrayListOf<NewsItem>()
 
     override fun onReceive(c: Context, intent: Intent) {
-        val cloudDBRepository = CloudDBRepository(c)
-
         Log.d("ZAP_TAG", "Alarm received!")
 
+        val cloudDBRepository = CloudDBRepository(c)
         cloudDBRepository.getAll(object : IOnGetAllSuccessCallback {
             override fun onSuccess(res: MutableList<InterestCloudObject>) {
                 val updatedNames = arrayListOf<String>()
@@ -41,34 +40,36 @@ class AlertReceiver : BroadcastReceiver() {
                             override fun onNewsSearchResult(result: ArrayList<NewsItem>) {
                                 val lastUpdate = when (interest.frequency.toInt()) {
                                     DAILY.id -> {
-                                        Daily.getSavedDate(c)
+                                        Daily.getPreviouslySavedDate(c)
                                     }
                                     WEEKLY.id -> {
-                                        Weekly.getSavedDate(c)
+                                        Weekly.getPreviouslySavedDate(c)
                                     }
                                     REALTIME.id -> {
-                                        Realtime.getSavedDate(c)
+                                        Realtime.getPreviouslySavedDate(c)
                                     }
                                     else -> {
-                                        Realtime.getSavedDate(c)
+                                        Realtime.getPreviouslySavedDate(c)
                                     }
                                 }
 
-                                updatedNews.addAll( // TODO: Se guarda bien, pero ¿ahora cómo lo pasamos? ¿Lo guardamos en un JSON o rehacemos la búsqueda al entrar?
+                                updatedNews.addAll(
                                     result.filter {
-                                        it.publishTime.toLong() < lastUpdate
+                                        it.publishTime.toLong() * 1000 >= lastUpdate
                                     }
                                 )
 
-                                if (result.any { it.publishTime.toLong() * 1000 > lastUpdate }) {
+                                if (result.any { it.publishTime.toLong() * 1000 >= lastUpdate }) {
                                     updatedNames.add(interest.name)
                                 }
-
-                                Repository(c).overwriteInterest(interest.frequency.toInt())
                             }
                         }
                     )
                 }
+
+                //Repository(c).overwriteInterest(Daily.getType())
+                //Repository(c).overwriteInterest(Weekly.getType())
+                Repository(c).saveInterest(Realtime.getType())
 
                 if (updatedNames.isNotEmpty()) {
                     showNotification(

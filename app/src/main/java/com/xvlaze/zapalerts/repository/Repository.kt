@@ -26,36 +26,18 @@ class Repository(private val c: Context) {
         when (frequency) {
             DAILY.id -> {
                 Daily.updateSavedDate(c)
-                MyAlarmManager.scheduleAlarm(Daily, c)
+                /*if (SharedPrefsProvider.isAlarmUnset(c, Daily))
+                    MyAlarmManager.scheduleAlarm(Daily, c)*/
             }
             WEEKLY.id -> {
                 Weekly.updateSavedDate(c)
-                MyAlarmManager.scheduleAlarm(Weekly, c)
+                /*if (SharedPrefsProvider.isAlarmUnset(c, Weekly))
+                    MyAlarmManager.scheduleAlarm(Weekly, c)*/
             }
             REALTIME.id -> {
                 Realtime.updateSavedDate(c)
-                MyAlarmManager.scheduleAlarm(Realtime, c)
-            }
-        }
-
-        MyAlarmManager.enableReceivers()
-    }
-
-    fun overwriteInterest(
-        frequency: Int
-    ) {
-        when (frequency) {
-            DAILY.id -> {
-                Daily.updateSavedDate(c)
-                MyAlarmManager.scheduleAlarm(Daily, c)
-            }
-            WEEKLY.id -> {
-                Weekly.updateSavedDate(c)
-                MyAlarmManager.scheduleAlarm(Weekly, c)
-            }
-            REALTIME.id -> {
-                Realtime.updateSavedDate(c)
-                MyAlarmManager.scheduleAlarm(Realtime, c)
+                /*if (SharedPrefsProvider.isAlarmUnset(c, Realtime))
+                    MyAlarmManager.scheduleAlarm(Realtime, c)*/
             }
         }
     }
