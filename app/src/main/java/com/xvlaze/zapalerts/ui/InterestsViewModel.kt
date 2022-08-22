@@ -68,7 +68,7 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun editInterest(interest: InterestCloudObject) {
         cloudDBRepository.edit(interest)
-        repository.overwriteInterest(interest.frequency.toInt())
+        repository.saveInterest(interest.frequency.toInt())
         isInterestSaved.postValue(true)
     }
 
