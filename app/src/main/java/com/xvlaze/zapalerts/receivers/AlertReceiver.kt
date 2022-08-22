@@ -55,13 +55,11 @@ class AlertReceiver : BroadcastReceiver() {
 
                                 updatedNews.addAll(
                                     result.filter {
-                                        it.publishTime.toLong() < lastUpdate
+                                        it.publishTime.toLong() * 1000 >= lastUpdate
                                     }
                                 )
 
-
-                                // FIXME: El problema es que la lastUpdate es el momento exacto en el que suena la alarma, por lo que nunca vamos a encontrar noticias en el futuro.
-                                if (result.any { it.publishTime.toLong() * 1000 > lastUpdate }) {
+                                if (result.any { it.publishTime.toLong() * 1000 >= lastUpdate }) {
                                     updatedNames.add(interest.name)
                                 }
                             }
