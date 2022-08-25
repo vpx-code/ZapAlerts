@@ -6,7 +6,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.huawei.agconnect.auth.*
 import com.huawei.agconnect.auth.VerifyCodeSettings.ACTION_REGISTER_LOGIN
-import com.huawei.hmf.tasks.OnFailureListener
 import com.huawei.hmf.tasks.Task
 import com.huawei.hmf.tasks.TaskExecutors
 import com.xvlaze.zapalerts.databinding.ActivityLoginBinding
@@ -68,7 +67,7 @@ class LoginActivity : AppCompatActivity() {
 
         AGConnectAuth.getInstance().signIn(credential).addOnSuccessListener {
             // The verification code application is successful.
-            val phoneUser = PhoneUser.Builder()
+            PhoneUser.Builder()
                 .setCountryCode(countryCode)
                 .setPhoneNumber(phoneNumber) // The value of phoneNumber must contains the country/region code and mobile number.
                 .setVerifyCode(binding.verificationCode.text.toString())
@@ -80,15 +79,9 @@ class LoginActivity : AppCompatActivity() {
                     startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                 }
                 .addOnFailureListener {
-                    Toast.makeText(
-                        this@LoginActivity,
-                        "Something went wrong, please try again",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                 }
-        }.addOnFailureListener(TaskExecutors.uiThread(), OnFailureListener {
-            val a = it
-        })
+        }
     }
 
     private fun signUp() {
