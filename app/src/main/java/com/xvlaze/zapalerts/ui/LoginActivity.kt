@@ -1,6 +1,7 @@
 package com.xvlaze.zapalerts.ui
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -8,6 +9,7 @@ import com.huawei.agconnect.auth.*
 import com.huawei.agconnect.auth.VerifyCodeSettings.ACTION_REGISTER_LOGIN
 import com.huawei.hmf.tasks.Task
 import com.huawei.hmf.tasks.TaskExecutors
+import com.xvlaze.zapalerts.R
 import com.xvlaze.zapalerts.databinding.ActivityLoginBinding
 import com.xvlaze.zapalerts.model.User
 
@@ -27,6 +29,19 @@ class LoginActivity : AppCompatActivity() {
         } else {
             binding = ActivityLoginBinding.inflate(layoutInflater)
             setContentView(binding.root)
+
+            when (resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+                Configuration.UI_MODE_NIGHT_YES -> {
+                    binding.bg.setImageResource(R.drawable.city_night)
+                }
+                Configuration.UI_MODE_NIGHT_NO -> {
+                    binding.bg.setImageResource(R.drawable.city_day)
+                }
+                Configuration.UI_MODE_NIGHT_UNDEFINED -> {
+                    binding.bg.setImageResource(R.drawable.city_day)
+                }
+            }
+
 
             binding.sendCode.setOnClickListener {
                 val settings = VerifyCodeSettings.newBuilder()
