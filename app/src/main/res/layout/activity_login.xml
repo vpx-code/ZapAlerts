@@ -7,6 +7,15 @@
     android:orientation="vertical"
     tools:context=".ui.LoginActivity">
 
+    <ImageView
+        android:id="@+id/bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
@@ -15,6 +24,7 @@
         android:layout_marginTop="24dp"
         android:fontFamily="@font/lato_light"
         android:padding="16dp"
+        android:textColor="@color/white"
         android:text="El mundo que te rodea, en tu bolsillo."
         android:textSize="64sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -37,6 +47,7 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:alpha="0.85"
             app:cardCornerRadius="12dp">
 
             <LinearLayout
@@ -49,14 +60,14 @@
                     android:id="@+id/countryPicker"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.4"
+                    android:layout_weight="0.5"
                     app:ccp_defaultNameCode="ES" />
 
                 <EditText
                     android:id="@+id/phoneNumber"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.6"
+                    android:layout_weight="0.5"
                     android:hint="Phone number"
                     android:inputType="phone"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -69,6 +80,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
+            android:alpha="0.85"
             app:cardCornerRadius="12dp">
 
             <LinearLayout
@@ -131,7 +143,7 @@
             android:layout_marginTop="12dp"
             android:gravity="center"
             android:text="Don't have an account? Sign up for free."
-            android:textColor="@color/huawei_blue"
+            android:textColor="@color/huawei_white"
             android:textStyle="italic" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
