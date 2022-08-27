@@ -22,6 +22,7 @@ import kotlin.random.Random
 class AlertReceiver : BroadcastReceiver() {
     private var updatedNews = arrayListOf<NewsItem>()
 
+    // THello World!
     override fun onReceive(c: Context, intent: Intent) {
         Log.d("ZAP_TAG", "Alarm received!")
 
