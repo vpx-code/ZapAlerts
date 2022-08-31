@@ -15,6 +15,7 @@ class BootReceiver : BroadcastReceiver() {
 
         if (Intent.ACTION_BOOT_COMPLETED == intent.action) {
             Log.d("ZAP_TAG", "Boot receiver on!")
+
             Log.d("ZAP_TAG", "[DAILY]")
             if (Daily.doesSavedDateExist(c)) {
                 Log.d("ZAP_TAG", "Saved date exists")
