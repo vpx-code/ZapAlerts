@@ -5,6 +5,8 @@ import com.xvlaze.zapalerts.model.*
 import com.xvlaze.zapalerts.util.Constants.InterestFrequency.*
 
 class Repository(private val c: Context) {
+    private val interestsManager = InterestsManager()
+
     fun doNewsSearch(
         query: String,
         language: Int,
@@ -20,7 +22,7 @@ class Repository(private val c: Context) {
         )
     }
 
-    fun saveInterest(
+    fun updateSavedDate(
         frequency: Int,
     ) {
         when (frequency) {
@@ -41,4 +43,11 @@ class Repository(private val c: Context) {
             }
         }
     }
+
+    /*fun saveInterestNew(interestToSave: InterestCloudObject) {
+        saveInterest(interestToSave.frequency.toInt())
+        interestsManager.saveInterest(interestToSave)
+    }*/
+
+    fun saveLocalCopy(interests: MutableList<InterestCloudObject>) = interestsManager.saveLocalCopy(interests)
 }

@@ -58,7 +58,7 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
                 cloudDBRepository.save(
                     interestToSave
                 )
-                repository.saveInterest(frequency)
+                repository.updateSavedDate(frequency)
                 true
             } else {
                 false
@@ -68,7 +68,7 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun editInterest(interest: InterestCloudObject) {
         cloudDBRepository.edit(interest)
-        repository.saveInterest(interest.frequency.toInt())
+        repository.updateSavedDate(interest.frequency.toInt())
         isInterestSaved.postValue(true)
     }
 
