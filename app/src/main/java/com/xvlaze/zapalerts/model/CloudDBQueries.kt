@@ -14,6 +14,7 @@ class CloudDBQueries(private val mCloudDBZone: CloudDBZone) : IDatabase {
     val interestToEdit = MutableLiveData<InterestCloudObject>()
 
     override fun getAll(callback: IOnGetAllSuccessCallback) {
+        Log.d("ZAP_TAG", "Attempting to get saved interests...")
         val result = mutableListOf<InterestCloudObject>()
         val queryTask = mCloudDBZone.executeQuery(
             CloudDBZoneQuery.where(InterestCloudObject::class.java)
@@ -23,13 +24,19 @@ class CloudDBQueries(private val mCloudDBZone: CloudDBZone) : IDatabase {
 
         queryTask
             .addOnSuccessListener { snapshot ->
+                Log.d("ZAP_TAG", "Query succeeded!")
                 val cursor: CloudDBZoneObjectList<InterestCloudObject> = snapshot.snapshotObjects
                 while (cursor.hasNext()) {
                     val baseFood = cursor.next()
                     result.add(baseFood)
                 }
+                Log.d("ZAP_TAG", "Results: ${result.size}")
                 snapshot.release()
                 callback.onSuccess(result)
+            }
+            .addOnFailureListener {
+                Log.d("ZAP_TAG", "Query failed. Reason: ${it.message}")
+                Log.d("ZAP_TAG", "Query failed. Stack trace: ${it.stackTrace}")
             }
     }
 
