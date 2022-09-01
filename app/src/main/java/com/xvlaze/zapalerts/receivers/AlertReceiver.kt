@@ -64,10 +64,19 @@ class AlertReceiver : BroadcastReceiver() {
                                 }
 
 
-                                Log.d("ZAP_TAG", "Comparing news publishing date vs. saved date, must be >=): ${convertLongToTime(result.first().publishTime.toLong() * 1000)} vs. ${convertLongToTime(lastUpdate)}")
+                                Log.d(
+                                    "ZAP_TAG",
+                                    "Comparing news publishing date vs. saved date, must be >=): ${
+                                        convertLongToTime(result.first().publishTime.toLong() * 1000)
+                                    } vs. ${convertLongToTime(lastUpdate)}"
+                                )
                                 val recent = result.filter {
+                                    it.publishTime != ""
+                                }
+                                recent.filter {
                                     it.publishTime.toLong() * 1000 >= lastUpdate
                                 }
+
                                 if (recent.isNotEmpty()) {
                                     Log.d("ZAP_TAG", "Found ${recent.size} recent news.")
                                     showNotification(

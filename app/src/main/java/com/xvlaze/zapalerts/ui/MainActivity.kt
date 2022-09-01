@@ -47,7 +47,6 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
         adapter = InterestsAdapter(arrayListOf())
         recyclerView.adapter = adapter
 
-        viewModel.getSavedInterests()
         viewModel.savedInterests.observe(this) {
             adapter = InterestsAdapter(it as ArrayList<InterestCloudObject>)
             adapter.setOnItemClickListener(object: InterestsAdapter.IOnItemClickListener {
@@ -89,22 +88,6 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
     }
 
     override fun onDismiss(p0: DialogInterface?) {
-        /*// TODO: Dudoso
-        val snackbar = Snackbar.make(
-            binding.root,
-            "Updating Interests...",
-            Snackbar.LENGTH_LONG
-        )
-
-        snackbar.apply {
-            setBackgroundTint(
-                ContextCompat.getColor(
-                    context,
-                    R.color.huawei_blue
-                )
-            )
-            show()
-        }*/
         viewModel.getSavedInterests()
     }
 
