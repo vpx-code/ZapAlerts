@@ -88,7 +88,7 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
     }
 
     override fun onDismiss(p0: DialogInterface?) {
-        viewModel.getSavedInterests()
+        viewModel.getSavedInterestsFromDB()
     }
 
     override fun onResume() {

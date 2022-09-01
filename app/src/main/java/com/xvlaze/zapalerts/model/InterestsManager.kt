@@ -1,5 +1,6 @@
 package com.xvlaze.zapalerts.model
 
+import android.util.Log
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import java.io.File
@@ -10,6 +11,7 @@ class InterestsManager {
     private val gson = GsonBuilder().setPrettyPrinting().create()
 
     fun getFile(): MutableList<InterestCloudObject>? {
+        Log.d("ZAP_TAG", "Getting saved interests from local file...")
         val reader = File(MyApplication.appContext.filesDir, "cache.json").bufferedReader()
         val typeToken: Type = object : TypeToken<MutableList<InterestCloudObject?>?>() {}.type
         return gson.fromJson<MutableList<InterestCloudObject>>(reader, typeToken)
