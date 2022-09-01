@@ -13,6 +13,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = Repository(application.applicationContext)
     val savedInterests = MutableLiveData<MutableList<InterestCloudObject>>()
 
+    // TODO: Tenemos que usar la base obligatoriamente? Creo que mejor tirar de caché excepto cuando hagamos C_UD.
     fun getSavedInterests() {
         cloudDBRepository.getAll(object : IOnGetAllSuccessCallback {
             override fun onSuccess(res: MutableList<InterestCloudObject>) {
