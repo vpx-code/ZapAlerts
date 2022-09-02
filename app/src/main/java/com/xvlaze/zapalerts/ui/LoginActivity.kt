@@ -92,9 +92,11 @@ class LoginActivity : AppCompatActivity() {
                 .addOnSuccessListener {
                     User.unionId = it.user.uid
                     startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                    finish()
                 }
                 .addOnFailureListener {
                     startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                    finish()
                 }
         }
     }
@@ -110,6 +112,7 @@ class LoginActivity : AppCompatActivity() {
             .addOnSuccessListener {
                 User.unionId = it.user.uid
                 startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                finish()
             }
             .addOnFailureListener {
                 Toast.makeText(
