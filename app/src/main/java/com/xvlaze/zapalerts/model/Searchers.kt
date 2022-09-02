@@ -23,6 +23,7 @@ abstract class Searchable<in T> {
     )
 }
 
+// FIXME: Si buscas "Lukoil" se rompe. Estamos manejando correctamente los resultados cuando son nulos?
 object NewsSearcher : Searchable<OnNewsSearchPerformedCallback>() {
     override fun search(
         query: String,

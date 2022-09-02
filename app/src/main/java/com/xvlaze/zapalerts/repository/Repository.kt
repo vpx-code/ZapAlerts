@@ -50,5 +50,6 @@ class Repository(private val c: Context) {
     }*/
 
     fun saveLocalCopy(interests: MutableList<InterestCloudObject>) = interestsManager.saveLocalCopy(interests)
-    fun getSavedInterests(): MutableList<InterestCloudObject>? = interestsManager.getFile()
+
+    fun getSavedInterests(): MutableList<InterestCloudObject> = interestsManager.getFile() ?: mutableListOf()
 }
