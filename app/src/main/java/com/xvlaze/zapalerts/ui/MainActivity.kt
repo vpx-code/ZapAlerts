@@ -48,25 +48,41 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
         recyclerView.adapter = adapter
 
         viewModel.savedInterests.observe(this) {
-            adapter = InterestsAdapter(it as ArrayList<InterestCloudObject>)
-            adapter.setOnItemClickListener(object: InterestsAdapter.IOnItemClickListener {
-                override fun onSourceClicked(position: Int) {
-                    Intent(this@MainActivity, InterestDetailActivity::class.java).apply {
-                        putExtra("name", it[position].name)
-                        startActivity(this)
-                    }
-                }
+            // TODO: Revisar al crear un elemento, borrarlo y editarlo (C___)
 
-                override fun onEditButtonClicked(position: Int) {
-                    val dialog = EditInterestFragment.newInstance(
-                        it[position].name
+
+            // TODO: Hacer una flag para este método para que cuando se elimine un interés no te eche para arriba de la lista.
+            // TODO: Cuando editas un intereés lo manda abajo de todo de la lista, no recuerdo si esto ocurría antes.
+            if (adapter.initialInterestList.isEmpty() or
+                !it.map { el2 ->
+                    el2.id
+                }
+                    .containsAll(
+                        adapter.initialInterestList.map { el1 ->
+                            el1.id
+                        }
                     )
-                    dialog.show(supportFragmentManager, "Edit Interest Fragment")
-                }
-            })
-            recyclerView.adapter = adapter
+            ) {
+                adapter = InterestsAdapter(it as ArrayList<InterestCloudObject>)
+                adapter.setOnItemClickListener(object : InterestsAdapter.IOnItemClickListener {
+                    override fun onSourceClicked(position: Int) {
+                        Intent(this@MainActivity, InterestDetailActivity::class.java).apply {
+                            putExtra("name", it[position].name)
+                            startActivity(this)
+                        }
+                    }
 
-            binding.searchview.setOnQueryTextListener(object: SearchView.OnQueryTextListener,
+                    override fun onEditButtonClicked(position: Int) {
+                        val dialog = EditInterestFragment.newInstance(
+                            it[position].name
+                        )
+                        dialog.show(supportFragmentManager, "Edit Interest Fragment")
+                    }
+                })
+                recyclerView.adapter = adapter
+            }
+
+            binding.searchview.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
                 androidx.appcompat.widget.SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     adapter.getFilter().filter(query)
