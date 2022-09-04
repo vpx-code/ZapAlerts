@@ -14,7 +14,6 @@ import com.xvlaze.zapalerts.adapters.InterestsAdapter
 import com.xvlaze.zapalerts.databinding.ActivityMainBinding
 import com.xvlaze.zapalerts.model.InterestCloudObject
 
-
 class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
     private lateinit var binding: ActivityMainBinding
     private val viewModel: MainViewModel by viewModels()
@@ -48,11 +47,6 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
         recyclerView.adapter = adapter
 
         viewModel.savedInterests.observe(this) {
-            // TODO: Revisar al crear un elemento, borrarlo y editarlo (C___)
-
-            // TODO: Hacer una flag para este método para que cuando se elimine un interés no te eche para arriba de la lista.
-            // TODO: Cuando editas un intereés lo manda abajo de todo de la lista, no recuerdo si esto ocurría antes.
-
             val newIds = it.map { el2 ->
                 el2.id
             }
