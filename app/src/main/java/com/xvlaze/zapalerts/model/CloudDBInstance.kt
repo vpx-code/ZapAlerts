@@ -54,7 +54,7 @@ class CloudDB(context: Context) {
 interface IDatabase {
     fun getAll(callback: IOnGetAllSuccessCallback)
     fun isInterestUnique(name: String): Boolean
-    fun saveInterest(interest: InterestCloudObject)
+    fun saveInterest(interest: InterestCloudObject, callback: IOnSaveInterestSuccessCallback)
     fun editInterest(interest: InterestCloudObject)
     fun deleteInterest(interest: InterestCloudObject)
     fun getInterestByName(name: String, callback: IOnGetByNameSuccessCallback)

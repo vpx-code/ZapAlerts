@@ -50,18 +50,19 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
         viewModel.savedInterests.observe(this) {
             // TODO: Revisar al crear un elemento, borrarlo y editarlo (C___)
 
-
             // TODO: Hacer una flag para este método para que cuando se elimine un interés no te eche para arriba de la lista.
             // TODO: Cuando editas un intereés lo manda abajo de todo de la lista, no recuerdo si esto ocurría antes.
-            if (adapter.initialInterestList.isEmpty() or
-                !it.map { el2 ->
-                    el2.id
-                }
-                    .containsAll(
-                        adapter.initialInterestList.map { el1 ->
-                            el1.id
-                        }
-                    )
+
+            val newIds = it.map { el2 ->
+                el2.id
+            }
+
+            val adapterIds = adapter.initialInterestList.map { el1 ->
+                el1.id
+            }
+
+            if (adapterIds.isEmpty() or
+                (newIds != adapterIds)
             ) {
                 adapter = InterestsAdapter(it as ArrayList<InterestCloudObject>)
                 adapter.setOnItemClickListener(object : InterestsAdapter.IOnItemClickListener {

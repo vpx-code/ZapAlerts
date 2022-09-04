@@ -7,9 +7,6 @@ import com.huawei.hms.searchkit.bean.NewsItem
 import com.xvlaze.zapalerts.model.*
 import com.xvlaze.zapalerts.repository.CloudDBRepository
 import com.xvlaze.zapalerts.repository.Repository
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
 
 class InterestsViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = Repository(application.applicationContext)
@@ -53,30 +50,21 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
         interestToSave.language = language.toString()
         interestToSave.unionId = User.unionId
 
-        runBlocking {
-            val isInterestUnique: Deferred<Boolean> = async {
-                when {
-                    isInterestUnique(searchQuery) -> {
-                        cloudDBRepository.save(
-                            interestToSave
-                        )
-                        // Saves all interests (including the added one) to a local copy.
-                        cloudDBRepository.getAll(object : IOnGetAllSuccessCallback {
-                            override fun onSuccess(res: MutableList<InterestCloudObject>) {
-                                repository.saveLocalCopy(res)
-                            }
-                        })
-                        repository.updateSavedDate(frequency)
-                        true
-                    }
-                    else -> {
-                        false
-                    }
+        cloudDBRepository.save(
+            interestToSave,
+            object : IOnSaveInterestSuccessCallback {
+                override fun onSuccess(isCompleted: Boolean) {
+                    // Saves all interests (including the added one) to a local copy.
+                    cloudDBRepository.getAll(object : IOnGetAllSuccessCallback {
+                        override fun onSuccess(res: MutableList<InterestCloudObject>) {
+                            repository.saveLocalCopy(res)
+                            repository.updateSavedDate(frequency)
+                            isInterestSaved.postValue(true)
+                        }
+                    })
                 }
             }
-
-            isInterestSaved.postValue(isInterestUnique.await())
-        }
+        )
     }
 
     fun editInterest(interest: InterestCloudObject) {

@@ -14,7 +14,7 @@ class CloudDBQueries(private val mCloudDBZone: CloudDBZone) : IDatabase {
     val interestToEdit = MutableLiveData<InterestCloudObject>()
 
     override fun getAll(callback: IOnGetAllSuccessCallback) {
-        Log.d("ZAP_TAG", "Attempting to get saved interests...")
+        Log.d("ZAP_TAG", "Attempting to get saved interests from Database...")
         val result = mutableListOf<InterestCloudObject>()
         val queryTask = mCloudDBZone.executeQuery(
             CloudDBZoneQuery.where(InterestCloudObject::class.java)
@@ -89,7 +89,11 @@ class CloudDBQueries(private val mCloudDBZone: CloudDBZone) : IDatabase {
         interestsList.postValue(baseFoodListLocal)
     }
 
-    override fun saveInterest(interest: InterestCloudObject) {
+    override fun saveInterest(
+        interest: InterestCloudObject,
+        callback: IOnSaveInterestSuccessCallback
+    ) {
+        Log.d("ZAP_TAG", "Saving interest ${interest.name} to database...")
         getMaxId()
             .addOnSuccessListener { number ->
                 var nextID = 1
@@ -98,6 +102,16 @@ class CloudDBQueries(private val mCloudDBZone: CloudDBZone) : IDatabase {
                 }
                 interest.id = nextID
                 mCloudDBZone.executeUpsert(interest)
+                    .addOnSuccessListener {
+                        Log.d("ZAP_TAG", "Saved!")
+                        callback.onSuccess(true)
+                    }
+                    .addOnFailureListener {
+                        callback.onSuccess(false)
+                    }
+            }
+            .addOnFailureListener {
+                callback.onSuccess(false)
             }
     }
 
@@ -153,4 +167,8 @@ interface IOnGetAllSuccessCallback {
 
 interface IOnGetByNameSuccessCallback {
     fun onSuccess(res: InterestCloudObject)
+}
+
+interface IOnSaveInterestSuccessCallback {
+    fun onSuccess(isCompleted: Boolean)
 }
