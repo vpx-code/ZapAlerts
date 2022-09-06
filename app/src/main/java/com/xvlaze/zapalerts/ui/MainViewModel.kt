@@ -23,7 +23,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             Log.d("ZAP_TAG", "Fetched interests list from database.")
         }
         else {
-            Log.d("ZAP_TAG", "Fetched interests list from local file.")
+            Log.d("ZAP_TAG", "Fetched interests list from local file. List size is ${list.size}")
             savedInterests.postValue(list)
         }
     }
