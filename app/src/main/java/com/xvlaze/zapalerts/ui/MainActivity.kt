@@ -14,7 +14,6 @@ import com.xvlaze.zapalerts.adapters.InterestsAdapter
 import com.xvlaze.zapalerts.databinding.ActivityMainBinding
 import com.xvlaze.zapalerts.model.InterestCloudObject
 
-
 class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
     private lateinit var binding: ActivityMainBinding
     private val viewModel: MainViewModel by viewModels()
@@ -47,27 +46,38 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
         adapter = InterestsAdapter(arrayListOf())
         recyclerView.adapter = adapter
 
-        viewModel.getSavedInterests()
         viewModel.savedInterests.observe(this) {
-            adapter = InterestsAdapter(it as ArrayList<InterestCloudObject>)
-            adapter.setOnItemClickListener(object: InterestsAdapter.IOnItemClickListener {
-                override fun onSourceClicked(position: Int) {
-                    Intent(this@MainActivity, InterestDetailActivity::class.java).apply {
-                        putExtra("name", it[position].name)
-                        startActivity(this)
+            val newIds = it.map { el2 ->
+                el2.id
+            }
+
+            val adapterIds = adapter.initialInterestList.map { el1 ->
+                el1.id
+            }
+
+            if (adapterIds.isEmpty() or
+                (newIds != adapterIds)
+            ) {
+                adapter = InterestsAdapter(it as ArrayList<InterestCloudObject>)
+                adapter.setOnItemClickListener(object : InterestsAdapter.IOnItemClickListener {
+                    override fun onSourceClicked(position: Int) {
+                        Intent(this@MainActivity, InterestDetailActivity::class.java).apply {
+                            putExtra("name", it[position].name)
+                            startActivity(this)
+                        }
                     }
-                }
 
-                override fun onEditButtonClicked(position: Int) {
-                    val dialog = EditInterestFragment.newInstance(
-                        it[position].name
-                    )
-                    dialog.show(supportFragmentManager, "Edit Interest Fragment")
-                }
-            })
-            recyclerView.adapter = adapter
+                    override fun onEditButtonClicked(position: Int) {
+                        val dialog = EditInterestFragment.newInstance(
+                            it[position].name
+                        )
+                        dialog.show(supportFragmentManager, "Edit Interest Fragment")
+                    }
+                })
+                recyclerView.adapter = adapter
+            }
 
-            binding.searchview.setOnQueryTextListener(object: SearchView.OnQueryTextListener,
+            binding.searchview.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
                 androidx.appcompat.widget.SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     adapter.getFilter().filter(query)
@@ -89,23 +99,7 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
     }
 
     override fun onDismiss(p0: DialogInterface?) {
-        /*// TODO: Dudoso
-        val snackbar = Snackbar.make(
-            binding.root,
-            "Updating Interests...",
-            Snackbar.LENGTH_LONG
-        )
-
-        snackbar.apply {
-            setBackgroundTint(
-                ContextCompat.getColor(
-                    context,
-                    R.color.huawei_blue
-                )
-            )
-            show()
-        }*/
-        viewModel.getSavedInterests()
+        viewModel.getSavedInterestsFromDB()
     }
 
     override fun onResume() {

@@ -22,13 +22,13 @@ class AlertsAdapter(private val newsList: ArrayList<NewsItem>): RecyclerView.Ada
 
     override fun onBindViewHolder(holder: TimesViewHolder, position: Int) {
         val new = newsList[position]
+        val netDate = Date(new.publishTime.toLong() * 1000)
+        holder.binding.date.text = sdf.format(netDate)
+        holder.binding.source.text = "Leer más en ${getDomainName(new.clickUrl)}"
         holder.binding.headline.text = new.title
             .replace("&#39;", "'")
             .replace("&quot;", "\"")
             .replace("&amp;", "&")
-        val netDate = Date(new.publishTime.toLong() * 1000)
-        holder.binding.date.text = sdf.format(netDate)
-        holder.binding.source.text = "Leer más en ${getDomainName(new.clickUrl)}"
     }
 
     override fun getItemCount(): Int = newsList.size
@@ -41,11 +41,14 @@ class AlertsAdapter(private val newsList: ArrayList<NewsItem>): RecyclerView.Ada
         this.listener = listener
     }
 
-    @Throws(URISyntaxException::class)
-    fun getDomainName(url: String?): String {
-        val uri = URI(url)
-        val domain: String = uri.host
-        return if (domain.startsWith("www.")) domain.substring(4) else domain
+    private fun getDomainName(url: String?): String {
+        return try {
+            val uri = URI(url)
+            val domain: String = uri.host
+            if (domain.startsWith("www.")) domain.substring(4) else domain
+        } catch (ex: URISyntaxException) {
+            ""
+        }
     }
 
     class TimesViewHolder(
