@@ -4,9 +4,8 @@ import android.content.Context
 import com.xvlaze.zapalerts.model.*
 
 class CloudDBRepository(c: Context) {
-    private val cloudDBInstance = CloudDB(c)
+    private val cloudDBInstance = MyApplication.cloudDB
     private var cloudDBQueries: CloudDBQueries
-
     init {
         cloudDBInstance.createObjectType()
         cloudDBInstance.openCloudDbZone()

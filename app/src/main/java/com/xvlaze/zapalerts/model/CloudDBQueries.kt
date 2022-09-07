@@ -10,29 +10,38 @@ import com.huawei.hmf.tasks.Task
 
 class CloudDBQueries(private val mCloudDBZone: CloudDBZone) : IDatabase {
 
-    val interestsList = MutableLiveData<MutableList<InterestCloudObject>>()
-    val interestToEdit = MutableLiveData<InterestCloudObject>()
+    private val interestsList = MutableLiveData<MutableList<InterestCloudObject>>()
+    private val interestToEdit = MutableLiveData<InterestCloudObject>()
+    private var attempt = 1
 
     override fun getAll(callback: IOnGetAllSuccessCallback) {
-        Log.d("ZAP_TAG", "Attempting to get saved interests from Database...")
+        Log.d("ZAP_TAG", "Attempting to get saved interests from Database. Attempt $attempt")
         val result = mutableListOf<InterestCloudObject>()
         val queryTask = mCloudDBZone.executeQuery(
             CloudDBZoneQuery.where(InterestCloudObject::class.java)
                 .equalTo("unionId", User.unionId),
             CloudDBZoneQuery.CloudDBZoneQueryPolicy.POLICY_QUERY_FROM_CLOUD_ONLY
         )
-
         queryTask
             .addOnSuccessListener { snapshot ->
                 Log.d("ZAP_TAG", "Query succeeded!")
-                val cursor: CloudDBZoneObjectList<InterestCloudObject> = snapshot.snapshotObjects
+                val cursor: CloudDBZoneObjectList<InterestCloudObject> =
+                    snapshot.snapshotObjects
                 while (cursor.hasNext()) {
                     val baseFood = cursor.next()
                     result.add(baseFood)
                 }
                 Log.d("ZAP_TAG", "Results: ${result.size}")
                 snapshot.release()
-                callback.onSuccess(result)
+                if (result.isEmpty() && attempt < 3) {
+                    Log.d("ZAP_TAG", "Result was empty.")
+                    attempt++
+                    getAll(callback)
+                } else {
+                    Log.d("ZAP_TAG", "Result was populated or exceeded attempts! Calling callback...")
+                    attempt = 0
+                    callback.onSuccess(result)
+                }
             }
             .addOnFailureListener {
                 Log.d("ZAP_TAG", "Query failed. Reason: ${it.message}")
