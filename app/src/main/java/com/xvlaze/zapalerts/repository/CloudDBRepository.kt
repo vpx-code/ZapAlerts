@@ -1,9 +1,8 @@
 package com.xvlaze.zapalerts.repository
 
-import android.content.Context
 import com.xvlaze.zapalerts.model.*
 
-class CloudDBRepository(c: Context) {
+class CloudDBRepository {
     private val cloudDBInstance = MyApplication.cloudDB
     private var cloudDBQueries: CloudDBQueries
     init {

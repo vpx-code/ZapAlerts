@@ -28,7 +28,7 @@ class AlertReceiver : BroadcastReceiver() {
     override fun onReceive(c: Context, intent: Intent) {
         Log.d("ZAP_TAG", "Alarm received!")
 
-        val cloudDBRepository = CloudDBRepository(c)
+        val cloudDBRepository = CloudDBRepository()
         cloudDBRepository.getAll(object : IOnGetAllSuccessCallback {
             override fun onSuccess(res: MutableList<InterestCloudObject>) {
                 var interestList = res

@@ -88,9 +88,11 @@ class LoginActivity : AppCompatActivity() {
                 .setVerifyCode(binding.verificationCode.text.toString())
                 .build()
 
-            AGConnectAuth.getInstance().signIn(credential)
+            User.unionId = AGConnectAuth.getInstance().currentUser.uid
+
+            AGConnectAuth.getInstance().signIn(credential) // Fixes initial list is empty after sign in problem! :)
                 .addOnSuccessListener {
-                    User.unionId = it.user.uid
+                    //User.unionId = AGConnectAuth.getInstance().currentUser.uid
                     startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                     finish()
                 }
