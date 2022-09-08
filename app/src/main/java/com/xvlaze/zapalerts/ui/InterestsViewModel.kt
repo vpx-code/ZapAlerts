@@ -11,7 +11,7 @@ import com.xvlaze.zapalerts.repository.Repository
 class InterestsViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = Repository(application.applicationContext)
 
-    private val cloudDBRepository = CloudDBRepository(application.applicationContext)
+    private val cloudDBRepository = CloudDBRepository()
 
     val searchResults = MutableLiveData<ArrayList<NewsItem>>()
     val isInterestSaved = MutableLiveData<Boolean>()
