@@ -10,14 +10,13 @@ import com.xvlaze.zapalerts.repository.CloudDBRepository
 import com.xvlaze.zapalerts.repository.Repository
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
-    private val cloudDBRepository = CloudDBRepository(application.applicationContext)
+    private val cloudDBRepository = CloudDBRepository()
     private val repository = Repository(application.applicationContext)
     val savedInterests = MutableLiveData<MutableList<InterestCloudObject>>()
 
     fun getSavedInterests() {
         val list = repository.getSavedInterests()
         if (list.isEmpty()) {
-            // TODO: Si el usuario le da a borrar datos se lo carga y ha de matar el proceso y volver a entrar.
             Log.d("ZAP_TAG", "Local file list was empty. Fetching it from database...")
             getSavedInterestsFromDB()
             Log.d("ZAP_TAG", "Fetched interests list from database.")

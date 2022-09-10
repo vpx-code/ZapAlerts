@@ -12,7 +12,11 @@ class MyApplication: Application() {
         appContext = applicationContext
         SearchKitInstance.init(this, clientId)
         OAuthTokenProvider.requestOAuthToken(this)
+
         CloudDB.initAGConnectCloudDB(this)
+        cloudDB = CloudDB(this)
+        cloudDB.createObjectType()
+        cloudDB.openCloudDbZone()
 
         //if (SharedPrefsProvider.isFirstTime(this)) {
             Log.d("ZAP_TAG", "Is first time.")
@@ -35,5 +39,6 @@ class MyApplication: Application() {
 
     companion object {
         lateinit var appContext: Context
+        lateinit var cloudDB: CloudDB
     }
 }
