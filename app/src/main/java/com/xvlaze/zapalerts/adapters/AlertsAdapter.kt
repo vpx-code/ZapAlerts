@@ -21,7 +21,7 @@ class AlertsAdapter(private val newsList: ArrayList<NewsItem>): RecyclerView.Ada
     }
 
     override fun onBindViewHolder(holder: TimesViewHolder, position: Int) {
-        val new = newsList[position]
+        val new = newsList[position] // FIXME: Fallo Lukoil: A veces el número es "". Investigar.
         val netDate = Date(new.publishTime.toLong() * 1000)
         holder.binding.date.text = sdf.format(netDate)
         holder.binding.source.text = "Leer más en ${getDomainName(new.clickUrl)}"
