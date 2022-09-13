@@ -6,12 +6,14 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.xvlaze.zapalerts.model.IOnGetAllSuccessCallback
 import com.xvlaze.zapalerts.model.InterestCloudObject
+import com.xvlaze.zapalerts.repository.AccountRepository
 import com.xvlaze.zapalerts.repository.CloudDBRepository
 import com.xvlaze.zapalerts.repository.Repository
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val cloudDBRepository = CloudDBRepository()
     private val repository = Repository(application.applicationContext)
+    private val accountRepository = AccountRepository()
     val savedInterests = MutableLiveData<MutableList<InterestCloudObject>>()
 
     fun getSavedInterests() {
@@ -35,4 +37,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             }
         })
     }
+
+    fun signOut() = accountRepository.signOut()
 }

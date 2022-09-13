@@ -6,4 +6,5 @@ import com.xvlaze.zapalerts.model.IOnUserSignInCallback
 
 class AccountRepository {
     fun signIn(data: Intent?, callback: IOnUserSignInCallback) = AccountModel.signIn(data, callback)
+    fun signOut() = AccountModel.signOut()
 }
