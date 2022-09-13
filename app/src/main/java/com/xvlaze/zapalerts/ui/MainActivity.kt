@@ -96,6 +96,14 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
                 startActivity(this)
             }
         }
+
+        binding.signOut.setOnClickListener {
+            viewModel.signOut()
+            finish()
+            Intent(this, LoginActivity::class.java).apply {
+                startActivity(this)
+            }
+        }
     }
 
     override fun onDismiss(p0: DialogInterface?) {

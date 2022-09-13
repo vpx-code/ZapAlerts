@@ -24,6 +24,11 @@ object AccountModel {
             callback.onSuccess(false)
         }
     }
+
+    fun signOut() {
+        AGConnectAuth.getInstance().signOut()
+        User.reset()
+    }
 }
 
 interface IOnUserSignInCallback {

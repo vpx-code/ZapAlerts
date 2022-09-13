@@ -3,6 +3,7 @@ package com.xvlaze.zapalerts.ui
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.huawei.agconnect.auth.AGConnectAuth
@@ -56,7 +57,15 @@ class LoginActivity : AppCompatActivity() {
         if (requestCode == 100) {
             viewModel.signIn(data)
             viewModel.isSignInSuccessful.observe(this) {
-
+                if (it) {
+                    finish()
+                    Intent(this, LoginActivity::class.java).apply {
+                        startActivity(this)
+                    }
+                }
+                else {
+                    Toast.makeText(this@LoginActivity, "Something went wrong, please try again later.", Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
