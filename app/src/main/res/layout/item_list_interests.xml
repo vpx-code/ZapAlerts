@@ -35,7 +35,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
-                    android:fontFamily="@font/lato_black"
+                    android:fontFamily="@font/lato_light"
                     android:maxLines="1"
                     android:text="Loading..."
                     android:textSize="32sp"

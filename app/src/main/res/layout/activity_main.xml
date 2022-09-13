@@ -12,18 +12,20 @@
         android:layout_height="200dp"
         android:fitsSystemWindows="true"
         android:theme="@style/ThemeOverlay.MaterialComponents.Dark">
+
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsingToolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:collapsedTitleGravity="center"
-            app:collapsedTitleTextAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
-            android:fitsSystemWindows="true"
-            app:contentScrim="#1E1E1E"
-            app:title="Tus Intereses"
             android:ellipsize="end"
+            android:fitsSystemWindows="true"
             android:fontFamily="@font/lato_light"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
+            app:collapsedTitleGravity="left"
+            app:collapsedTitleTextAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+            app:contentScrim="#111111"
+            app:expandedTitleGravity="center"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+            app:title="Tus Intereses">
 
             <ImageView
                 android:layout_width="match_parent"
@@ -40,7 +42,18 @@
                 android:contentInsetStart="0dp"
                 android:contentInsetStartWithNavigation="0dp"
                 android:popupTheme="@style/ThemeOverlay.MaterialComponents.Light"
-                app:layout_collapseMode="pin" />
+                app:layout_collapseMode="pin">
+                <Button
+                    android:id="@+id/signOut"
+                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:gravity="center_vertical"
+                    android:text="LOG OUT"
+                    android:textColor="@color/hwid_auth_button_color_red"
+                    android:textStyle="bold" />
+            </Toolbar>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -51,47 +64,38 @@
         android:padding="16dp"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/searchview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="6dp"
-        android:background="@drawable/rounded"
-        android:backgroundTint="#A83A3A3A"
-        android:drawableStart="@drawable/ic_search"
-        android:hint="Busca un Interés"
-        android:paddingHorizontal="12dp"
-        android:paddingVertical="8dp"
-        />
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/searchview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="6dp"
+            android:background="@drawable/rounded"
+            android:backgroundTint="#A83A3A3A"
+            android:drawableStart="@drawable/ic_search"
+            app:defaultQueryHint="Penis Pump"
+            app:queryHint="Escribe aquí para buscar"
+            app:iconifiedByDefault="false"
+            android:paddingHorizontal="4dp"
+            android:paddingVertical="8dp" />
 
         <View
             android:id="@+id/divider2"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:paddingHorizontal="8dp"
             android:layout_marginTop="12dp"
             android:layout_marginBottom="8dp"
-            android:background="?android:attr/listDivider" />
+            android:background="?android:attr/listDivider"
+            android:paddingHorizontal="8dp" />
 
         <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:overScrollMode="never"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_list_interests" />
-</LinearLayout>
-    <Button
-        android:id="@+id/signOut"
-        style="@style/Widget.AppCompat.Button.Borderless.Colored"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:text="LOG OUT"
-        android:textColor="@color/hwid_auth_button_color_red"
-        android:layout_gravity="end"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            android:id="@+id/recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:overScrollMode="never"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_list_interests" />
+    </LinearLayout>
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
