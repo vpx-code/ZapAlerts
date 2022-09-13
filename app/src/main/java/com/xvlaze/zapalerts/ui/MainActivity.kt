@@ -2,14 +2,11 @@ package com.xvlaze.zapalerts.ui
 
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
 import android.widget.SearchView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.xvlaze.zapalerts.R
 import com.xvlaze.zapalerts.adapters.InterestsAdapter
 import com.xvlaze.zapalerts.databinding.ActivityMainBinding
 import com.xvlaze.zapalerts.model.InterestCloudObject
@@ -25,9 +22,11 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val upperBlob = binding.upperBlob
-        val lowerBlob = binding.lowerBlob
-        when (resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+        // TODO: Esto lo voy a quitar creo, pero hay que retocar la imagen de la ciudad y la paleta.
+
+        //val upperBlob = binding.upperBlob
+        //val lowerBlob = binding.lowerBlob
+        /*when (resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
             Configuration.UI_MODE_NIGHT_YES -> {
                 upperBlob.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.blob_night))
                 lowerBlob.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.blob_night))
@@ -40,7 +39,7 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
                 upperBlob.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.blob))
                 lowerBlob.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.blob))
             }
-        }
+        }*/
 
         recyclerView = binding.recycler
         adapter = InterestsAdapter(arrayListOf())
