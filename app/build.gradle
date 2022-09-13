@@ -64,7 +64,7 @@ dependencies {
     implementation 'com.huawei.hms:searchkit:5.0.4.303'
     implementation 'com.huawei.agconnect:agconnect-cloud-database:1.5.3.300'
     implementation 'com.huawei.hms:hwid:6.4.0.301'
-    implementation "com.huawei.agconnect:agconnect-auth-huawei:1.7.0.300"
+    implementation "com.huawei.agconnect:agconnect-auth-huawei:1.7.1.300"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'

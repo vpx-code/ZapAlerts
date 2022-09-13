@@ -22,6 +22,16 @@
         android:layout_height="match_parent"
         android:padding="16dp">
 
+        <Button
+            android:id="@+id/signOut"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="LOG OUT"
+            android:textColor="@color/hwid_auth_button_color_red"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:id="@+id/title"
             android:layout_width="match_parent"
