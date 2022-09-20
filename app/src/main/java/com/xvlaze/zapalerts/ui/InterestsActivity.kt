@@ -1,7 +1,6 @@
 package com.xvlaze.zapalerts.ui
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
@@ -29,7 +28,7 @@ class InterestsActivity : AppCompatActivity() {
         binding = ActivityInterestsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val upperBlob = binding.upperBlob
+        /*val upperBlob = binding.upperBlob
         val lowerBlob = binding.lowerBlob
         when (resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
             Configuration.UI_MODE_NIGHT_YES -> {
@@ -44,8 +43,9 @@ class InterestsActivity : AppCompatActivity() {
                 upperBlob.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.blob))
                 lowerBlob.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.blob))
             }
-        }
+        }*/
 
+        binding.preview.visibility = View.INVISIBLE
         binding.progress.visibility = View.INVISIBLE
         val recyclerView = binding.recycler
         adapter = AlertsAdapter(arrayListOf())
@@ -68,7 +68,7 @@ class InterestsActivity : AppCompatActivity() {
                     putFabOnSearchMode()
                 } else {
                     fab.setOnClickListener {
-                        binding.settings.visibility = View.GONE
+                        // FIXME: Tengo que mirar esto, porque puede dar un caso de uso erróneo al buscar un texto vacío, editar opciones etc.
                         binding.progress.visibility = View.VISIBLE
                         val imm: InputMethodManager =
                             getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
@@ -112,7 +112,7 @@ class InterestsActivity : AppCompatActivity() {
                                         else -> {
                                             val snackbar = Snackbar.make(
                                                 binding.root,
-                                                "Ya tienes este interés guardado. Por favor, cambia la búsqueda y vuelve a intentarlo.",
+                                                getString(R.string.already_saved),
                                                 Snackbar.LENGTH_LONG
                                             )
 
@@ -148,6 +148,7 @@ class InterestsActivity : AppCompatActivity() {
             val imm: InputMethodManager =
                 getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
             imm.showSoftInput(binding.searchview, InputMethodManager.SHOW_IMPLICIT)
+            binding.preview.visibility = View.VISIBLE
         }
     }
 
