@@ -112,7 +112,7 @@ class InterestsActivity : AppCompatActivity() {
                                         else -> {
                                             val snackbar = Snackbar.make(
                                                 binding.root,
-                                                "Ya tienes este interés guardado. Por favor, cambia la búsqueda y vuelve a intentarlo.",
+                                                getString(R.string.already_saved),
                                                 Snackbar.LENGTH_LONG
                                             )
 

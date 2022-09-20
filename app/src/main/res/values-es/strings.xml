@@ -65,7 +65,8 @@
     <string name="frequency">Frecuencia</string>
     <string name="language">Idioma</string>
     <string name="country">País</string>
-    <string name="loading">Cargando...</string>
+    <string name="loading">Cargando…</string>
     <string name="latest_updates">Consultar últimas novedades</string>
     <string name="read_more_at">"Leer más en "</string>
+    <string name="already_saved">Ya tienes este interés guardado. Por favor, cambia la búsqueda y vuelve a intentarlo.</string>
 </resources>
