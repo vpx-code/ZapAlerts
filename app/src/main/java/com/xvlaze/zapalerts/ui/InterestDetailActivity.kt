@@ -1,13 +1,10 @@
 package com.xvlaze.zapalerts.ui
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import com.xvlaze.zapalerts.R
 import com.xvlaze.zapalerts.adapters.AlertsAdapter
 import com.xvlaze.zapalerts.databinding.ActivityInterestDetailBinding
 
@@ -20,7 +17,7 @@ class InterestDetailActivity : AppCompatActivity() {
         binding = ActivityInterestDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val upperBlob = binding.upperBlob
+        /*val upperBlob = binding.upperBlob
         val lowerBlob = binding.lowerBlob
         when (resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
             Configuration.UI_MODE_NIGHT_YES -> {
@@ -35,14 +32,14 @@ class InterestDetailActivity : AppCompatActivity() {
                 upperBlob.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.blob))
                 lowerBlob.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.blob))
             }
-        }
+        }*/
 
         val recyclerView = binding.recycler
         var adapter = AlertsAdapter(arrayListOf())
         recyclerView.adapter = adapter
 
         val name = intent.getStringExtra("name")
-        binding.title.text = name
+        binding.collapsingToolbar.title = name
 
         viewModel.searchInterest(name!!)
         viewModel.foundInterest.observe(this) {
