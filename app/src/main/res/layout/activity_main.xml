@@ -25,7 +25,7 @@
             app:contentScrim="#111111"
             app:expandedTitleGravity="center"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
-            app:title="Tus Intereses">
+            app:title="@string/your_interests">
 
             <ImageView
                 android:layout_width="match_parent"
@@ -50,7 +50,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
                     android:gravity="center_vertical"
-                    android:text="LOG OUT"
+                    android:text="@string/log_out"
                     android:textColor="@color/hwid_auth_button_color_red"
                     android:textStyle="bold" />
             </Toolbar>
@@ -73,7 +73,7 @@
             android:backgroundTint="#A83A3A3A"
             android:drawableStart="@drawable/ic_search"
             app:defaultQueryHint="Penis Pump"
-            app:queryHint="Escribe aquí para buscar"
+            app:queryHint="@string/type_here_search"
             app:iconifiedByDefault="false"
             android:paddingHorizontal="4dp"
             android:paddingVertical="8dp" />
@@ -96,14 +96,13 @@
             tools:listitem="@layout/item_list_interests" />
     </LinearLayout>
 
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:contentDescription="Add Alert"
+        android:contentDescription="@string/add_alert"
         android:src="@drawable/ic_baseline_add_alert_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

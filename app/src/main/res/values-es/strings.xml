@@ -54,4 +54,19 @@
         <item>Portugués</item>
         <item>Checo</item>
     </string-array>
+    <string name="log_out">CERRAR SESIÓN</string>
+    <string name="add_alert">Añadir Alerta</string>
+    <string name="type_here_search">Escribe aquí para buscar</string>
+    <string name="your_interests">Tus Intereses</string>
+    <string name="add_interest">Añadir un Interés</string>
+    <string name="search_your_interests">Busca lo que te interesa</string>
+    <string name="preview">Vista previa de resultados:</string>
+    <string name="customise">Personalizar</string>
+    <string name="frequency">Frecuencia</string>
+    <string name="language">Idioma</string>
+    <string name="country">País</string>
+    <string name="loading">Cargando…</string>
+    <string name="latest_updates">Consultar últimas novedades</string>
+    <string name="read_more_at">"Leer más en "</string>
+    <string name="already_saved">Ya tienes este interés guardado. Por favor, cambia la búsqueda y vuelve a intentarlo.</string>
 </resources>
