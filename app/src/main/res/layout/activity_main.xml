@@ -39,7 +39,7 @@
                 android:id="@+id/toolBarLayout"
                 android:layout_width="match_parent"
                 android:layout_height="?actionBarSize"
-                android:contentInsetStart="0dp"
+                android:contentInsetStart="8dp"
                 android:contentInsetStartWithNavigation="0dp"
                 android:popupTheme="@style/ThemeOverlay.MaterialComponents.Light"
                 app:layout_collapseMode="pin">

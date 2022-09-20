@@ -40,7 +40,7 @@
                 android:id="@+id/toolBarLayout"
                 android:layout_width="match_parent"
                 android:layout_height="?actionBarSize"
-                android:contentInsetStart="0dp"
+                android:contentInsetStart="8dp"
                 android:contentInsetStartWithNavigation="0dp"
                 android:popupTheme="@style/ThemeOverlay.MaterialComponents.Light"
                 app:layout_collapseMode="pin" />
@@ -60,12 +60,14 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="6dp"
             android:layout_marginBottom="8dp"
+            android:inputType="text"
             android:background="@drawable/rounded"
             android:backgroundTint="#A8E5E5E5"
             android:drawableStart="@drawable/ic_search"
             android:hint="@string/search_your_interests"
             android:paddingHorizontal="12dp"
-            android:paddingVertical="8dp" />
+            android:paddingVertical="8dp"
+            android:importantForAutofill="no" />
 
         <View
             android:id="@+id/divider2"
