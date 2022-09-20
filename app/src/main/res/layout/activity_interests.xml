@@ -26,7 +26,7 @@
             app:contentScrim="#111111"
             app:expandedTitleGravity="center"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
-            app:title="Add Interest">
+            app:title="@string/add_interest">
 
             <ImageView
                 android:layout_width="match_parent"
@@ -63,7 +63,7 @@
             android:background="@drawable/rounded"
             android:backgroundTint="#A8E5E5E5"
             android:drawableStart="@drawable/ic_search"
-            android:hint="Search your Interests"
+            android:hint="@string/search_your_interests"
             android:paddingHorizontal="12dp"
             android:paddingVertical="8dp" />
 
@@ -88,7 +88,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:text="preview"
+            android:text="@string/preview"
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@id/settings" />
 
@@ -119,7 +119,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:contentDescription="add_alert"
+        android:contentDescription="@string/add_alert"
         android:src="@drawable/ic_baseline_check_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
