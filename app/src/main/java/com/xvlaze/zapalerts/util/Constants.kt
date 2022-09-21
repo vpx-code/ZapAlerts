@@ -8,7 +8,7 @@ object Constants {
     const val fullUrl = "$baseUrl$subdomains"
     const val hostHeaderValue = "oauth-login.cloud.huawei.com"
     const val contentTypeHeaderValue = "application/x-www-form-urlencoded"
-    const val maxElements = 10
+    const val maxElements = 50
 
     enum class InterestFrequency(val id: Int) {
         DAILY(0),
