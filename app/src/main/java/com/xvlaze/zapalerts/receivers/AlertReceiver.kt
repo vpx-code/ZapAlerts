@@ -11,17 +11,24 @@ import android.media.RingtoneManager
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationCompat.GROUP_ALERT_SUMMARY
 import com.huawei.hms.searchkit.bean.NewsItem
 import com.xvlaze.zapalerts.model.*
+import com.xvlaze.zapalerts.model.MyApplication.Companion.appContext
 import com.xvlaze.zapalerts.repository.CloudDBRepository
 import com.xvlaze.zapalerts.repository.Repository
-import com.xvlaze.zapalerts.ui.MainActivity
+import com.xvlaze.zapalerts.ui.InterestDetailActivity
 import com.xvlaze.zapalerts.util.Constants.InterestFrequency.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.random.Random
 
 class AlertReceiver : BroadcastReceiver() {
+    private val summaryID = 0
+    private val groupKey = "com.xvlaze.zapalerts.ALERT_GROUP"
+    private val channelID = "channel_name" // The id of the channel.
+    private val notificationManager = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
     private var updatedNews = arrayListOf<NewsItem>()
 
     // FIXME: Cuando no hay internet se rompe la app porque intenta acceder a una lista de intereses que no existe. Omitir alarma en ese caso.
@@ -37,6 +44,7 @@ class AlertReceiver : BroadcastReceiver() {
                     interestList = InterestsManager().getFile()!!
                 }
                 val updatedNames = arrayListOf<String>()
+
 
                 Log.d("ZAP_TAG", "Number of interests to process: ${interestList.size}")
                 for (interest in interestList) {
@@ -63,17 +71,16 @@ class AlertReceiver : BroadcastReceiver() {
                                     }
                                 }
 
-
                                 Log.d(
                                     "ZAP_TAG",
                                     "Comparing news publishing date vs. saved date, must be >=): ${
                                         convertLongToTime(result.first().publishTime.toLong() * 1000)
                                     } vs. ${convertLongToTime(lastUpdate)}"
                                 )
-                                val recent = result.filter {
+                                var recent = result.filter {
                                     it.publishTime != ""
                                 }
-                                recent.filter {
+                                recent = recent.filter {
                                     it.publishTime.toLong() * 1000 >= lastUpdate
                                 }
 
@@ -81,6 +88,7 @@ class AlertReceiver : BroadcastReceiver() {
                                     Log.d("ZAP_TAG", "Found ${recent.size} recent news.")
                                     showNotification(
                                         c,
+                                        interest.name,
                                         recent.random().title,
                                         recent.size,
                                         Random.nextInt()
@@ -90,29 +98,53 @@ class AlertReceiver : BroadcastReceiver() {
                         }
                     )
                 }
-
-                //Repository(c).overwriteInterest(Daily.getType())
-                //Repository(c).overwriteInterest(Weekly.getType())
+                //showSummaryNotification(c, 10)
                 Repository(c).updateSavedDate(Realtime.getType())
             }
         })
     }
 
+    private fun showSummaryNotification(
+        context: Context,
+        updates: Int
+    ) {
+        val summaryNotification = NotificationCompat.Builder(context, channelID)
+            .setContentTitle("New updates on your topics!")
+            .setContentText("$updates new updates")
+            .setSmallIcon(R.drawable.sym_def_app_icon)
+            .setGroup(groupKey)
+            .setGroupSummary(true)
+            .build()
+
+        val name: CharSequence = "Zap Alerts Notification Channel" // The user-visible name of the channel.
+        val importance = NotificationManager.IMPORTANCE_HIGH
+        val mChannel = NotificationChannel(channelID, name, importance)
+        notificationManager.createNotificationChannel(mChannel)
+        notificationManager.notify(
+            Random.nextInt(),
+            summaryNotification
+        )
+    }
 
     private fun showNotification(
         context: Context,
+        interestName: String,
         message: String?,
         updates: Int,
         reqCode: Int
     ) {
+
+        val intent = Intent(
+            context,
+            InterestDetailActivity::class.java
+        )
+        intent.putExtra("name", interestName)
+
         val pendingIntent =
             PendingIntent.getActivity(
                 context,
                 reqCode,
-                Intent(
-                    context,
-                    MainActivity::class.java
-                ), // TODO: Añadir extra con los updated o bien recalcular en Main pasando una flag.
+                intent,
                 when {
                     Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
                         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
@@ -120,18 +152,22 @@ class AlertReceiver : BroadcastReceiver() {
                     else -> PendingIntent.FLAG_IMMUTABLE
                 }
             )
-        val channelID = "channel_name" // The id of the channel.
+
         val notificationBuilder: NotificationCompat.Builder =
             NotificationCompat.Builder(context, channelID)
                 .setSmallIcon(R.mipmap.sym_def_app_icon)
                 .setContentTitle(message)
                 .setContentText("And $updates more updates.")
                 .setAutoCancel(true)
+                .setGroup(groupKey)
+                .setGroupAlertBehavior(GROUP_ALERT_SUMMARY)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setContentIntent(pendingIntent)
+
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val name: CharSequence = "Channel Name" // The user-visible name of the channel.
+
+        val name: CharSequence = "Zap Alerts Notification Channel" // The user-visible name of the channel.
         val importance = NotificationManager.IMPORTANCE_HIGH
         val mChannel = NotificationChannel(channelID, name, importance)
         notificationManager.createNotificationChannel(mChannel)

@@ -110,7 +110,7 @@ object Weekly : AlertType {
 
 object Realtime : AlertType {
     override val code = 2
-    override val interval: Long = 60000 * 10 // Ojo al cambiar esto. 5 minutos para realtime.
+    override val interval: Long = 60000 * 5 // Ojo al cambiar esto. 5 minutos para realtime.
     override fun getType(): Int = code
     private var firstRingTime: Long = 0
 
