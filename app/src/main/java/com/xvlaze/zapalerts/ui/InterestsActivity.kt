@@ -28,23 +28,6 @@ class InterestsActivity : AppCompatActivity() {
         binding = ActivityInterestsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        /*val upperBlob = binding.upperBlob
-        val lowerBlob = binding.lowerBlob
-        when (resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
-            Configuration.UI_MODE_NIGHT_YES -> {
-                upperBlob.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.blob_night))
-                lowerBlob.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.blob_night))
-            }
-            Configuration.UI_MODE_NIGHT_NO -> {
-                upperBlob.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.blob))
-                lowerBlob.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.blob))
-            }
-            Configuration.UI_MODE_NIGHT_UNDEFINED -> {
-                upperBlob.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.blob))
-                lowerBlob.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.blob))
-            }
-        }*/
-
         binding.preview.visibility = View.INVISIBLE
         binding.progress.visibility = View.INVISIBLE
         val recyclerView = binding.recycler
@@ -68,8 +51,9 @@ class InterestsActivity : AppCompatActivity() {
                     putFabOnSearchMode()
                 } else {
                     fab.setOnClickListener {
-                        // FIXME: Tengo que mirar esto, porque puede dar un caso de uso erróneo al buscar un texto vacío, editar opciones etc.
                         binding.progress.visibility = View.VISIBLE
+                        binding.preview.visibility = View.VISIBLE
+
                         val imm: InputMethodManager =
                             getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
                         imm.hideSoftInputFromWindow(binding.searchview.applicationWindowToken, 0)
@@ -80,6 +64,7 @@ class InterestsActivity : AppCompatActivity() {
                         )
 
                         viewModel.searchResults.observe(this@InterestsActivity) {
+                            binding.settings.toggle()
                             binding.progress.visibility = View.INVISIBLE
                             adapter = AlertsAdapter(it)
                             adapter.setOnItemClickListener(object :
@@ -106,6 +91,7 @@ class InterestsActivity : AppCompatActivity() {
                                 viewModel.isInterestUnique(searchQuery.toString())
                                 viewModel.isInterestSaved.observe(this@InterestsActivity) { isSaveSuccessful ->
                                     when {
+                                        // TODO: Is Interest Unique?
                                         isSaveSuccessful -> {
                                             finish()
                                         }
