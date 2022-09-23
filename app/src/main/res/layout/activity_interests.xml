@@ -62,7 +62,7 @@
             android:layout_marginBottom="8dp"
             android:inputType="text"
             android:background="@drawable/rounded"
-            android:backgroundTint="#A8E5E5E5"
+            android:backgroundTint="@color/search_bar"
             android:drawableStart="@drawable/ic_search"
             android:hint="@string/search_your_interests"
             android:paddingHorizontal="12dp"
