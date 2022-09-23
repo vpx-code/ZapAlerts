@@ -60,10 +60,6 @@ class SettingsView @JvmOverloads constructor(
             ArrayAdapter.createFromResource(context, R.array.languages, (R.layout.spinner_item))
         langAdapter.setDropDownViewResource(R.layout.spinner_item)
         langSpinner.adapter = langAdapter
-        /*viewModel.getPreferredLanguage()
-        viewModel.preferredLanguage.observe(this) {
-            langSpinner.setSelection(it)
-        }*/
         langSpinner.setSelection(0)
     }
 
