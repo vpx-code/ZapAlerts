@@ -1,26 +1,23 @@
 package com.xvlaze.zapalerts.model
 
-import android.content.Context
-import com.android.volley.RequestQueue
 import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
 import com.google.gson.Gson
 import com.xvlaze.zapalerts.util.Constants
 
 object OAuthTokenProvider {
 
-    fun requestOAuthToken(c: Context) {
+    fun requestOAuthToken() {
         val oauthRequest : StringRequest = object : StringRequest( // TODO: Necesitaría crear un JSON Object en una data calss y convertirlo aquí. Eso significaría cambiarlo a JSONObjectREquest
             Method.POST,
             Constants.fullUrl,
             {
-                MyRequestQueue.getInstance(c).cache.clear()
+                MyRequestQueue.getInstance().cache.clear()
                 val gson = Gson()
                 val response: TokenResponse = gson.fromJson(it, TokenResponse::class.java)
-                SharedPrefsProvider.setOAuthToken(response.access_token, c)
+                SharedPrefsProvider.setOAuthToken(response.access_token)
             },
             {
-                SharedPrefsProvider.setOAuthToken("", c)
+                SharedPrefsProvider.setOAuthToken("")
             })
         {
             override fun getParams(): MutableMap<String, String> {
@@ -39,9 +36,9 @@ object OAuthTokenProvider {
             }
         }
 
-        MyRequestQueue.getInstance(c).add(oauthRequest)
+        MyRequestQueue.getInstance().add(oauthRequest)
     }
 
-    fun getOAuthTokenFromSharedPrefs(c: Context) : String =
-        SharedPrefsProvider.getOAuthToken(c) ?: ""
+    fun getOAuthTokenFromSharedPrefs() : String =
+        SharedPrefsProvider.getOAuthToken() ?: ""
 }

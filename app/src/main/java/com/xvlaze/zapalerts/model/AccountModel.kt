@@ -16,6 +16,7 @@ object AccountModel {
                 .addOnSuccessListener { signInResult ->
                     val user = signInResult.user
                     User.unionId = user.uid
+                    SharedPrefsProvider.setUserUid(user.uid)
                     callback.onSuccess(true)
                 }.addOnFailureListener {
                     callback.onSuccess(false)
@@ -28,6 +29,7 @@ object AccountModel {
     fun signOut() {
         AGConnectAuth.getInstance().signOut()
         User.reset()
+        SharedPrefsProvider.deleteUserUid()
     }
 }
 

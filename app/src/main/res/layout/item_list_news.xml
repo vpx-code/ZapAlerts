@@ -45,7 +45,8 @@
                 android:text="NEW!"
                 android:textColor="#ffffff"
                 android:textSize="24sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:visibility="invisible" />
 
             <TextView
                 android:id="@+id/headline"
