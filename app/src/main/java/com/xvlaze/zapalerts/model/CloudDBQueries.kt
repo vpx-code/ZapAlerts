@@ -34,7 +34,10 @@ class CloudDBQueries(private val mCloudDBZone: CloudDBZone) : IDatabase {
                     attempt++
                     getAll(callback)
                 } else {
-                    Log.d("ZAP_TAG", "Result was populated or exceeded attempts! Calling callback...")
+                    Log.d(
+                        "ZAP_TAG",
+                        "Result was populated or exceeded attempts! Calling callback..."
+                    )
                     attempt = 0
                     callback.onSuccess(result)
                 }
@@ -45,35 +48,11 @@ class CloudDBQueries(private val mCloudDBZone: CloudDBZone) : IDatabase {
             }
     }
 
-    // TODO: Mirar si realmente funciona.
-    override fun isInterestUnique(name: String): Boolean {
-        val queryTask = mCloudDBZone.executeQuery(
-            CloudDBZoneQuery.where(InterestCloudObject::class.java)
-                .equalTo("unionId", SharedPrefsProvider.getUserUid())
-                .equalTo("name", name),
-            CloudDBZoneQuery.CloudDBZoneQueryPolicy.POLICY_QUERY_FROM_CLOUD_ONLY
-        )
-        val baseFoodListLocal = mutableListOf<InterestCloudObject>()
-
-        queryTask
-            .addOnSuccessListener { snapshot ->
-                val cursor: CloudDBZoneObjectList<InterestCloudObject> =
-                    snapshot.snapshotObjects
-                try {
-                    while (cursor.hasNext()) {
-                        val baseFood = cursor.next()
-                        baseFoodListLocal.add(baseFood)
-                    }
-                } catch (exception: Exception) {
-                    Log.w("BaseFoodRepository", "getAllbaseFoods error: ${exception.message}")
-                }
-
-                snapshot.release()
-            }
-            .addOnFailureListener {
-            }
-
-        return baseFoodListLocal.isEmpty()
+    override fun isInterestUnique(
+        name: String,
+        interestList: MutableList<InterestCloudObject>
+    ): Boolean {
+        return interestList.none { it -> it.name.lowercase().trim() == name.lowercase().trim() }
     }
 
     override fun saveInterest(
@@ -111,8 +90,14 @@ class CloudDBQueries(private val mCloudDBZone: CloudDBZone) : IDatabase {
         )
     }
 
-    override fun editInterest(interest: InterestCloudObject) {
+    override fun editInterest(interest: InterestCloudObject, callback: IOnSaveInterestSuccessCallback) {
         mCloudDBZone.executeUpsert(interest)
+            .addOnSuccessListener {
+                callback.onSuccess(true)
+            }
+            .addOnFailureListener {
+                callback.onSuccess(false)
+            }
     }
 
     override fun deleteInterest(interest: InterestCloudObject) {
@@ -120,7 +105,10 @@ class CloudDBQueries(private val mCloudDBZone: CloudDBZone) : IDatabase {
     }
 
     override fun getInterestByName(name: String, callback: IOnGetByNameSuccessCallback) {
-        Log.d("ZAP_TAG", "About to query. CloudDBZone is ${mCloudDBZone.cloudDBZoneConfig.cloudDBZoneName} and interest name is $name")
+        Log.d(
+            "ZAP_TAG",
+            "About to query. CloudDBZone is ${mCloudDBZone.cloudDBZoneConfig.cloudDBZoneName} and interest name is $name"
+        )
         val queryTask2 = mCloudDBZone.executeQuery(
             CloudDBZoneQuery.where(InterestCloudObject::class.java)
                 .equalTo("unionId", SharedPrefsProvider.getUserUid())
