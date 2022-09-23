@@ -23,33 +23,41 @@ class Repository(private val c: Context) {
     }
 
     fun updateSavedDate(
-        frequency: Int,
+        frequency: Int
     ) {
         when (frequency) {
             DAILY.id -> {
                 Daily.updateSavedDate(c)
-                /*if (SharedPrefsProvider.isAlarmUnset(c, Daily))
-                    MyAlarmManager.scheduleAlarm(Daily, c)*/
             }
             WEEKLY.id -> {
                 Weekly.updateSavedDate(c)
-                /*if (SharedPrefsProvider.isAlarmUnset(c, Weekly))
-                    MyAlarmManager.scheduleAlarm(Weekly, c)*/
             }
             REALTIME.id -> {
                 Realtime.updateSavedDate(c)
-                /*if (SharedPrefsProvider.isAlarmUnset(c, Realtime))
-                    MyAlarmManager.scheduleAlarm(Realtime, c)*/
             }
         }
     }
 
-    /*fun saveInterestNew(interestToSave: InterestCloudObject) {
-        saveInterest(interestToSave.frequency.toInt())
-        interestsManager.saveInterest(interestToSave)
-    }*/
-
     fun saveLocalCopy(interests: MutableList<InterestCloudObject>) = interestsManager.saveLocalCopy(interests)
 
     fun getSavedInterests(): MutableList<InterestCloudObject> = interestsManager.getFile() ?: mutableListOf()
+
+    fun getSavedDate(
+        frequency: Int
+    ): Long? {
+        return when (frequency) {
+            DAILY.id -> {
+                Daily.getSavedDate(c)
+            }
+            WEEKLY.id -> {
+                Weekly.getSavedDate(c)
+            }
+            REALTIME.id -> {
+                Realtime.getSavedDate(c)
+            }
+            else -> {
+                null
+            }
+        }
+    }
 }

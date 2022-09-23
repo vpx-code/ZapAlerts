@@ -11,7 +11,7 @@ class MyApplication: Application() {
         super.onCreate()
         appContext = applicationContext
         SearchKitInstance.init(this, clientId)
-        OAuthTokenProvider.requestOAuthToken(this)
+        OAuthTokenProvider.requestOAuthToken()
 
         CloudDB.initAGConnectCloudDB(this)
         cloudDB = CloudDB(this)
@@ -30,7 +30,7 @@ class MyApplication: Application() {
             Realtime.updateSavedDate(this)
             MyAlarmManager.scheduleAlarm(Realtime, this)
 
-            SharedPrefsProvider.setNotFirstTime(this)
+            SharedPrefsProvider.setNotFirstTime()
         /*}
         else {
             Log.d("ZAP_TAG", "Is not first time.")

@@ -1,6 +1,7 @@
 package com.xvlaze.zapalerts.receivers
 
 import android.R
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -13,132 +14,178 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.GROUP_ALERT_SUMMARY
 import com.huawei.hms.searchkit.bean.NewsItem
+import com.xvlaze.zapalerts.BuildConfig
 import com.xvlaze.zapalerts.model.*
 import com.xvlaze.zapalerts.model.MyApplication.Companion.appContext
 import com.xvlaze.zapalerts.repository.CloudDBRepository
 import com.xvlaze.zapalerts.repository.Repository
 import com.xvlaze.zapalerts.ui.InterestDetailActivity
+import com.xvlaze.zapalerts.util.Constants
 import com.xvlaze.zapalerts.util.Constants.InterestFrequency.*
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.random.Random
+import kotlin.random.Random.Default.nextInt
 
 class AlertReceiver : BroadcastReceiver() {
     private val summaryID = 0
     private val groupKey = "com.xvlaze.zapalerts.ALERT_GROUP"
-    private val channelID = "channel_name" // The id of the channel.
-    private val notificationManager = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    private val notificationManager =
+        appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    private val channelID = "channel_name"
 
-    private var updatedNews = arrayListOf<NewsItem>()
+    private val notificationsList = ArrayList<Notification>()
 
-    // FIXME: Cuando no hay internet se rompe la app porque intenta acceder a una lista de intereses que no existe. Omitir alarma en ese caso.
+    init {
+        val name: CharSequence = "Zap Alerts Notification Channel"
+        val importance = NotificationManager.IMPORTANCE_HIGH
+        val mChannel = NotificationChannel(channelID, name, importance)
+        notificationManager.createNotificationChannel(mChannel)
+
+        CloudDB.initAGConnectCloudDB(appContext.applicationContext)
+        MyApplication.cloudDB = CloudDB(appContext.applicationContext)
+        MyApplication.cloudDB.createObjectType()
+        MyApplication.cloudDB.openCloudDbZone()
+    }
+
     override fun onReceive(c: Context, intent: Intent) {
         Log.d("ZAP_TAG", "Alarm received!")
 
-        val cloudDBRepository = CloudDBRepository()
-        cloudDBRepository.getAll(object : IOnGetAllSuccessCallback {
-            override fun onSuccess(res: MutableList<InterestCloudObject>) {
-                var interestList = res
-                if (interestList.isEmpty()) {
-                    Log.d("ZAP_TAG", "Cannot access DB, using cache...")
-                    interestList = InterestsManager().getFile()!!
-                }
-                val updatedNames = arrayListOf<String>()
+        // SOLO DEBUG
+        if (BuildConfig.DEBUG && Constants.DEBUG) {
+            createAlertNotification(
+                c,
+                "Apple",
+                "This is a test notification about Apple",
+                99,
+                1
+            )
+            createAlertNotification(
+                c,
+                "Tesla",
+                "This is a test notification about Tesla",
+                99,
+                2
+            )
+            createAlertNotification(
+                c,
+                "Amazon",
+                "This is a test notification about Amazon",
+                99,
+                3
+            )
 
+            var i = 1
+            for (not in notificationsList) {
+                notificationManager.notify(i, not)
+                i++
+            }
+            notifySummaryNotification(c)
+        } else {
+            val cloudDBRepository = CloudDBRepository()
+            cloudDBRepository.getAll(object : IOnGetAllSuccessCallback {
+                override fun onSuccess(res: MutableList<InterestCloudObject>) {
+                    var interestList = res
+                    if (interestList.isEmpty()) {
+                        Log.d("ZAP_TAG", "Cannot access DB, using cache...")
+                        interestList = InterestsManager().getFile()
+                            ?: mutableListOf() // If this is null, we are in big trouble.
+                    }
 
-                Log.d("ZAP_TAG", "Number of interests to process: ${interestList.size}")
-                for (interest in interestList) {
-                    Log.d("ZAP_TAG", "Processing interest ${interest.name}")
-                    NewsSearcher.search(
-                        interest.name,
-                        interest.language.toInt(),
-                        interest.country.toInt(),
-                        c,
-                        object : OnNewsSearchPerformedCallback {
-                            override fun onNewsSearchResult(result: ArrayList<NewsItem>) {
-                                val lastUpdate = when (interest.frequency.toInt()) {
-                                    DAILY.id -> {
-                                        Daily.getPreviouslySavedDate(c)
-                                    }
-                                    WEEKLY.id -> {
-                                        Weekly.getPreviouslySavedDate(c)
-                                    }
-                                    REALTIME.id -> {
-                                        Realtime.getPreviouslySavedDate(c)
-                                    }
-                                    else -> {
-                                        Realtime.getPreviouslySavedDate(c)
-                                    }
-                                }
+                    Log.d("ZAP_TAG", "Number of interests to process: ${interestList.size}")
+                    for (interest in interestList) {
+                        Log.d("ZAP_TAG", "Processing interest ${interest.name}")
+                        NewsSearcher.search(
+                            interest.name,
+                            interest.language.toInt(),
+                            interest.country.toInt(),
+                            c,
+                            object : OnNewsSearchPerformedCallback {
+                                override fun onNewsSearchResult(result: ArrayList<NewsItem>) {
+                                    if (result.isNotEmpty()) {
+                                        val lastUpdate = when (interest.frequency.toInt()) {
+                                            DAILY.id -> {
+                                                Daily.getPreviouslySavedDate(c)
+                                            }
+                                            WEEKLY.id -> {
+                                                Weekly.getPreviouslySavedDate(c)
+                                            }
+                                            REALTIME.id -> {
+                                                Realtime.getPreviouslySavedDate(c)
+                                            }
+                                            else -> {
+                                                Realtime.getPreviouslySavedDate(c)
+                                            }
+                                        }
 
-                                Log.d(
-                                    "ZAP_TAG",
-                                    "Comparing news publishing date vs. saved date, must be >=): ${
-                                        convertLongToTime(result.first().publishTime.toLong() * 1000)
-                                    } vs. ${convertLongToTime(lastUpdate)}"
-                                )
-                                var recent = result.filter {
-                                    it.publishTime != ""
-                                }
-                                recent = recent.filter {
-                                    it.publishTime.toLong() * 1000 >= lastUpdate
-                                }
+                                        Log.d(
+                                            "ZAP_TAG",
+                                            "Comparing news publishing date vs. saved date, must be >=): ${
+                                                convertLongToTime(result.first().publishTime.toLong() * 1000)
+                                            } vs. ${convertLongToTime(lastUpdate)}"
+                                        )
+                                        var recent = result.filter {
+                                            it.publishTime != ""
+                                        }
+                                        recent = recent.filter {
+                                            it.publishTime.toLong() * 1000 >= lastUpdate
+                                        }
 
-                                if (recent.isNotEmpty()) {
-                                    Log.d("ZAP_TAG", "Found ${recent.size} recent news.")
-                                    showNotification(
-                                        c,
-                                        interest.name,
-                                        recent.random().title,
-                                        recent.size,
-                                        Random.nextInt()
-                                    )
+                                        if (recent.isNotEmpty()) {
+                                            Log.d("ZAP_TAG", "Found ${recent.size} recent news.")
+                                            createAlertNotification(
+                                                c,
+                                                interest.name,
+                                                recent.random().title,
+                                                recent.size,
+                                                nextInt()
+                                            )
+                                        }
+                                    }
                                 }
                             }
+                        )
+                    }
+
+                    if (notificationsList.isNotEmpty()) {
+                        notificationsList.forEach { not ->
+                            notificationManager.notify(nextInt(), not)
                         }
-                    )
+                        notifySummaryNotification(c)
+                        notificationsList.clear()
+                    }
+                    Repository(c).updateSavedDate(Realtime.getType())
                 }
-                //showSummaryNotification(c, 10)
-                Repository(c).updateSavedDate(Realtime.getType())
-            }
-        })
+            })
+        }
     }
 
-    private fun showSummaryNotification(
-        context: Context,
-        updates: Int
-    ) {
+
+    private fun notifySummaryNotification(context: Context) {
+        Log.d("ZAP_TAG", "Notifying summary...")
         val summaryNotification = NotificationCompat.Builder(context, channelID)
-            .setContentTitle("New updates on your topics!")
-            .setContentText("$updates new updates")
-            .setSmallIcon(R.drawable.sym_def_app_icon)
+            .setContentTitle("New Updates on your Interests!")
+            .setContentText("Touch and browse your interest list.")
+            .setSmallIcon(R.mipmap.sym_def_app_icon)
             .setGroup(groupKey)
             .setGroupSummary(true)
             .build()
 
-        val name: CharSequence = "Zap Alerts Notification Channel" // The user-visible name of the channel.
-        val importance = NotificationManager.IMPORTANCE_HIGH
-        val mChannel = NotificationChannel(channelID, name, importance)
-        notificationManager.createNotificationChannel(mChannel)
-        notificationManager.notify(
-            Random.nextInt(),
-            summaryNotification
-        )
+        notificationManager.notify(summaryID, summaryNotification) // id must be constant!
     }
 
-    private fun showNotification(
+    private fun createAlertNotification(
         context: Context,
         interestName: String,
         message: String?,
         updates: Int,
         reqCode: Int
     ) {
-
         val intent = Intent(
             context,
             InterestDetailActivity::class.java
         )
         intent.putExtra("name", interestName)
+        intent.putExtra("fromNotification", true)
 
         val pendingIntent =
             PendingIntent.getActivity(
@@ -153,29 +200,26 @@ class AlertReceiver : BroadcastReceiver() {
                 }
             )
 
-        val notificationBuilder: NotificationCompat.Builder =
+        val updatesStringNumber = updates - 1
+        val notificationDescription = if (updatesStringNumber == 0) {
+            "Touch and browse your interest list."
+        } else {
+            "And $updatesStringNumber more updates."
+        }
+
+        val alertNotification: Notification =
             NotificationCompat.Builder(context, channelID)
                 .setSmallIcon(R.mipmap.sym_def_app_icon)
                 .setContentTitle(message)
-                .setContentText("And $updates more updates.")
+                .setContentText(notificationDescription)
                 .setAutoCancel(true)
                 .setGroup(groupKey)
                 .setGroupAlertBehavior(GROUP_ALERT_SUMMARY)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setContentIntent(pendingIntent)
+                .build()
 
-        val notificationManager =
-            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-        val name: CharSequence = "Zap Alerts Notification Channel" // The user-visible name of the channel.
-        val importance = NotificationManager.IMPORTANCE_HIGH
-        val mChannel = NotificationChannel(channelID, name, importance)
-        notificationManager.createNotificationChannel(mChannel)
-        notificationManager.notify(
-            reqCode,
-            notificationBuilder.build()
-        )
-        Log.d("ZAP_TAG", "showNotification: $reqCode")
+        notificationsList.add(alertNotification)
     }
 
     private fun convertLongToTime(time: Long): String {
