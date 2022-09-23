@@ -14,7 +14,7 @@ class Repository(private val c: Context) {
         callback: OnNewsSearchPerformedCallback
     ) {
         NewsSearcher.search(
-            query,
+            query.trim(),
             language,
             country,
             c,
