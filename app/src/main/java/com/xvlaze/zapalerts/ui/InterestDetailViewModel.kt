@@ -1,6 +1,7 @@
 package com.xvlaze.zapalerts.ui
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.huawei.hms.searchkit.bean.NewsItem
@@ -15,8 +16,10 @@ class InterestDetailViewModel(application: Application) : AndroidViewModel(appli
     private val cloudDBRepository = CloudDBRepository()
     val foundInterest = MutableLiveData<InterestCloudObject>()
     val searchResults = MutableLiveData<ArrayList<NewsItem>>()
+    val savedDate = MutableLiveData<Long?>()
 
     fun doSearch(searchQuery: String, language: Int, country: Int) {
+        Log.d("ZAP_TAG", "ViewModel: Searching for Interest $searchQuery")
         repository.doNewsSearch(
             searchQuery,
             language,
@@ -30,10 +33,22 @@ class InterestDetailViewModel(application: Application) : AndroidViewModel(appli
     }
 
     fun searchInterest(name: String) {
-        cloudDBRepository.getByName(name, object: IOnGetByNameSuccessCallback {
+        cloudDBRepository.getByName(name, object : IOnGetByNameSuccessCallback {
             override fun onSuccess(res: InterestCloudObject) {
+                Log.d("ZAP_TAG", "Cloud object returned was $res.name")
                 foundInterest.postValue(res)
             }
         })
+    }
+
+    fun getSavedDate(frequency: Int, fromNotification: Boolean) {
+        savedDate.postValue(
+            when {
+                fromNotification -> {
+                    repository.getSavedDate(frequency)
+                }
+                else -> null
+            }
+        )
     }
 }

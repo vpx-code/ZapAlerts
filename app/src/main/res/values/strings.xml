@@ -69,4 +69,6 @@
     <string name="latest_updates">Check latest updates</string>
     <string name="read_more_at">"Read more at "</string>
     <string name="already_saved">You have already saved this interest. Please change your search terms and try again.</string>
+    <string name="something_wrong">Something went wrong, please try again later.</string>
+    <string name="title">The world around you, in your pocket.</string>
 </resources>

@@ -1,6 +1,8 @@
 package com.xvlaze.zapalerts.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.huawei.hms.searchkit.bean.NewsItem
@@ -12,12 +14,13 @@ import java.net.URISyntaxException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class AlertsAdapter(private val newsList: ArrayList<NewsItem>) :
+class AlertsAdapter(private val newsList: ArrayList<NewsItem>, private val savedDate: Long? = null) :
     RecyclerView.Adapter<AlertsAdapter.TimesViewHolder>() {
     private lateinit var listener: IOnItemClickListener
     private val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm")
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimesViewHolder {
+        Log.d("ZAP_TAG", "Entering AlertsAdapter")
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = ItemListNewsBinding.inflate(layoutInflater, parent, false)
         return TimesViewHolder(binding, listener)
@@ -26,6 +29,11 @@ class AlertsAdapter(private val newsList: ArrayList<NewsItem>) :
     override fun onBindViewHolder(holder: TimesViewHolder, position: Int) {
         val new = newsList[position] // FIXME: Fallo Lukoil: A veces el número es "". Investigar.
         val netDate = Date(new.publishTime.toLong() * 1000)
+
+        if ((savedDate != null) && (new.publishTime.toLong() * 1000 > savedDate)) {
+            holder.binding.newFlag.visibility = View.VISIBLE
+        }
+
         holder.binding.date.text = sdf.format(netDate)
         holder.binding.source.text = buildString {
             append(appContext.getString(R.string.read_more_at))
