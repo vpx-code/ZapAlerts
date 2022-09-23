@@ -104,9 +104,9 @@ class InterestsActivity : AppCompatActivity() {
                                     binding.settings.getCountry()
                                 )
                                 viewModel.isInterestUnique(searchQuery.toString())
-                                viewModel.isInterestSaved.observe(this@InterestsActivity) { isSaveSuccessful ->
+                                viewModel.isInterestUnique.observe(this@InterestsActivity) { isInterestUnique ->
                                     when {
-                                        isSaveSuccessful -> {
+                                        isInterestUnique -> {
                                             finish()
                                         }
                                         else -> {

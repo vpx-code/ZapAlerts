@@ -13,7 +13,7 @@ class CloudDBRepository {
 
     fun getAll(callback: IOnGetAllSuccessCallback) = cloudDBQueries.getAll(callback)
     fun getByName(name: String, callback: IOnGetByNameSuccessCallback) = cloudDBQueries.getInterestByName(name, callback)
-    fun isInterestUnique(name: String) = cloudDBQueries.isInterestUnique(name)
+    fun isInterestUnique(name: String, callback: IOnSaveInterestSuccessCallback) = cloudDBQueries.isInterestUnique(name, callback)
     fun save(interest: InterestCloudObject, callback: IOnSaveInterestSuccessCallback) = cloudDBQueries.saveInterest(interest, callback)
     fun edit(interest: InterestCloudObject) = cloudDBQueries.editInterest(interest)
     fun delete(interest: InterestCloudObject) = cloudDBQueries.deleteInterest(interest)
