@@ -6,7 +6,7 @@ import android.util.Log
 import com.huawei.hms.searchkit.SearchKitInstance
 import com.xvlaze.zapalerts.util.Constants.clientId
 
-class MyApplication: Application() {
+class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         appContext = applicationContext
@@ -18,23 +18,17 @@ class MyApplication: Application() {
         cloudDB.createObjectType()
         cloudDB.openCloudDbZone()
 
-        //if (SharedPrefsProvider.isFirstTime(this)) {
-            Log.d("ZAP_TAG", "Is first time.")
+        Log.d("ZAP_TAG", "Is first time.")
 
-            Daily.updateSavedDate(this)
-            MyAlarmManager.scheduleAlarm(Daily, this)
+        Daily.updateSavedDate(this)
+        MyAlarmManager.scheduleAlarm(Daily, this)
 
-            Weekly.updateSavedDate(this)
-            MyAlarmManager.scheduleAlarm(Weekly, this)
+        Weekly.updateSavedDate(this)
+        MyAlarmManager.scheduleAlarm(Weekly, this)
 
-            Realtime.updateSavedDate(this)
-            MyAlarmManager.scheduleAlarm(Realtime, this)
+        Realtime.updateSavedDate(this)
+        MyAlarmManager.scheduleAlarm(Realtime, this)
 
-            SharedPrefsProvider.setNotFirstTime()
-        /*}
-        else {
-            Log.d("ZAP_TAG", "Is not first time.")
-        }*/
     }
 
     companion object {
