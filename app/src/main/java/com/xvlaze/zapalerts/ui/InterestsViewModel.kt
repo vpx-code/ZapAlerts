@@ -15,6 +15,7 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
 
     val searchResults = MutableLiveData<ArrayList<NewsItem>>()
     val isInterestSaved = MutableLiveData<Boolean>()
+    val isInterestUnique = MutableLiveData<Boolean>()
     val interestToEdit = MutableLiveData<InterestCloudObject>()
 
     fun doSearch(
@@ -34,8 +35,13 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
         )
     }
 
-    fun isInterestUnique(searchQuery: String): Boolean =
-        cloudDBRepository.isInterestUnique(searchQuery)
+    fun isInterestUnique(searchQuery: String) {
+        cloudDBRepository.isInterestUnique(searchQuery, object : IOnSaveInterestSuccessCallback {
+            override fun onSuccess(isCompleted: Boolean) {
+                isInterestUnique.postValue(isCompleted)
+            }
+        })
+    }
 
     fun saveInterest(
         searchQuery: String,
