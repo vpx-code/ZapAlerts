@@ -45,14 +45,16 @@ class CloudDBQueries(private val mCloudDBZone: CloudDBZone) : IDatabase {
             }
     }
 
-    // TODO: Mirar si realmente funciona.
-    override fun isInterestUnique(name: String): Boolean {
+    override fun isInterestUnique(
+        name: String,
+    callback: IOnSaveInterestSuccessCallback) {
         val queryTask = mCloudDBZone.executeQuery(
             CloudDBZoneQuery.where(InterestCloudObject::class.java)
                 .equalTo("unionId", SharedPrefsProvider.getUserUid())
                 .equalTo("name", name),
             CloudDBZoneQuery.CloudDBZoneQueryPolicy.POLICY_QUERY_FROM_CLOUD_ONLY
         )
+        Log.d("ZAP_TAG", "User UID is ${SharedPrefsProvider.getUserUid()}")
         val baseFoodListLocal = mutableListOf<InterestCloudObject>()
 
         queryTask
@@ -67,13 +69,13 @@ class CloudDBQueries(private val mCloudDBZone: CloudDBZone) : IDatabase {
                 } catch (exception: Exception) {
                     Log.w("BaseFoodRepository", "getAllbaseFoods error: ${exception.message}")
                 }
-
                 snapshot.release()
+                /* FIXME: Esto no es correcto, porque detecta amAzOn y Amazon como únicas. Es obligatorio coger todos los intereses del backend O BIEN
+                *   Conseguir la lista local de intereses y hacer un contains para encontrar el interes. Como guardamos en cache, no es posible que algo este en la base
+                *    sin estar en el archivo antes.
+                */
+                callback.onSuccess(baseFoodListLocal.isEmpty() || baseFoodListLocal.first().name.lowercase() != name.lowercase())
             }
-            .addOnFailureListener {
-            }
-
-        return baseFoodListLocal.isEmpty()
     }
 
     override fun saveInterest(
