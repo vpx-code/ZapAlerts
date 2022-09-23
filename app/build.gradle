@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'org.jetbrains.kotlin.plugin.serialization' version '1.6.21'
     id 'com.huawei.agconnect'
+    id 'newrelic'
 }
 
 android {
@@ -62,6 +63,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
     implementation 'com.huawei.agconnect:agconnect-core:1.6.4.300'
     implementation 'com.huawei.hms:searchkit:5.0.4.303'
+    implementation 'com.newrelic.agent.android:android-agent:6.8.0'
     implementation 'com.huawei.agconnect:agconnect-cloud-database:1.5.3.300'
     implementation 'com.huawei.hms:hwid:6.4.0.301'
     implementation "com.huawei.agconnect:agconnect-auth-huawei:1.7.1.300"
