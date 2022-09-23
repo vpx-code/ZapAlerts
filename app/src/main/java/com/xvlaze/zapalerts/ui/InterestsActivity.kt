@@ -82,35 +82,23 @@ class InterestsActivity : AppCompatActivity() {
                                 )
                             )
                             fab.setOnClickListener {
-                                viewModel.saveInterest(
-                                    searchQuery.toString(),
-                                    binding.settings.getFrequency(),
-                                    binding.settings.getLang(),
-                                    binding.settings.getCountry()
-                                )
                                 viewModel.isInterestUnique(searchQuery.toString())
-                                viewModel.isInterestSaved.observe(this@InterestsActivity) { isSaveSuccessful ->
+                                viewModel.isInterestUnique.observe(this@InterestsActivity) { isInterestUnique ->
                                     when {
-                                        // TODO: Is Interest Unique?
-                                        isSaveSuccessful -> {
-                                            finish()
+                                        isInterestUnique -> {
+                                            viewModel.saveInterest(
+                                                searchQuery.toString(),
+                                                binding.settings.getFrequency(),
+                                                binding.settings.getLang(),
+                                                binding.settings.getCountry()
+                                            )
+                                            viewModel.isInterestSaved.observe(this@InterestsActivity) { isInterestSaved ->
+                                                if (!isInterestSaved) showSnackbar(R.string.something_wrong)
+                                                finish()
+                                            }
                                         }
                                         else -> {
-                                            val snackbar = Snackbar.make(
-                                                binding.root,
-                                                getString(R.string.already_saved),
-                                                Snackbar.LENGTH_LONG
-                                            )
-
-                                            snackbar.apply {
-                                                setBackgroundTint(
-                                                    ContextCompat.getColor(
-                                                        this@InterestsActivity,
-                                                        R.color.danger
-                                                    )
-                                                )
-                                                show()
-                                            }
+                                            showSnackbar(R.string.already_saved)
                                         }
                                     }
                                 }
@@ -142,4 +130,22 @@ class InterestsActivity : AppCompatActivity() {
         Intent(Intent.ACTION_VIEW, Uri.parse(selectedItem)).apply {
             startActivity(this)
         }
+
+    private fun showSnackbar(resId: Int) {
+        val snackbar = Snackbar.make(
+            binding.root,
+            getString(resId),
+            Snackbar.LENGTH_LONG
+        )
+
+        snackbar.apply {
+            setBackgroundTint(
+                ContextCompat.getColor(
+                    this@InterestsActivity,
+                    R.color.danger
+                )
+            )
+            show()
+        }
+    }
 }

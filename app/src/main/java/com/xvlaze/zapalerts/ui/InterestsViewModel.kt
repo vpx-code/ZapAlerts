@@ -10,11 +10,11 @@ import com.xvlaze.zapalerts.repository.Repository
 
 class InterestsViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = Repository(application.applicationContext)
-
     private val cloudDBRepository = CloudDBRepository()
 
     val searchResults = MutableLiveData<ArrayList<NewsItem>>()
     val isInterestSaved = MutableLiveData<Boolean>()
+    val isInterestUnique = MutableLiveData<Boolean>()
     val interestToEdit = MutableLiveData<InterestCloudObject>()
 
     fun doSearch(
@@ -34,8 +34,14 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
         )
     }
 
-    fun isInterestUnique(searchQuery: String): Boolean =
-        cloudDBRepository.isInterestUnique(searchQuery)
+    fun isInterestUnique(searchQuery: String) {
+        isInterestUnique.postValue(
+            cloudDBRepository.isInterestUnique(
+                searchQuery,
+                repository.getSavedInterests()
+            )
+        )
+    }
 
     fun saveInterest(
         searchQuery: String,
@@ -44,7 +50,7 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
         country: Int
     ) {
         val interestToSave = InterestCloudObject()
-        interestToSave.name = searchQuery
+        interestToSave.name = searchQuery.trim()
         interestToSave.frequency = frequency.toString()
         interestToSave.country = country.toString()
         interestToSave.language = language.toString()
