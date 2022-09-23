@@ -52,6 +52,8 @@ class InterestsActivity : AppCompatActivity() {
                 } else {
                     fab.setOnClickListener {
                         binding.progress.visibility = View.VISIBLE
+                        binding.preview.visibility = View.VISIBLE
+
                         val imm: InputMethodManager =
                             getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
                         imm.hideSoftInputFromWindow(binding.searchview.applicationWindowToken, 0)
@@ -62,6 +64,7 @@ class InterestsActivity : AppCompatActivity() {
                         )
 
                         viewModel.searchResults.observe(this@InterestsActivity) {
+                            binding.settings.toggle()
                             binding.progress.visibility = View.INVISIBLE
                             adapter = AlertsAdapter(it)
                             adapter.setOnItemClickListener(object :
