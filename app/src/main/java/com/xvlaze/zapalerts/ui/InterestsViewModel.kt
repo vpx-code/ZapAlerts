@@ -73,8 +73,11 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun editInterest(interest: InterestCloudObject) {
-        cloudDBRepository.edit(interest)
-        isInterestSaved.postValue(isInterestUnique(interest.name))
+        cloudDBRepository.edit(interest, object : IOnSaveInterestSuccessCallback {
+            override fun onSuccess(isCompleted: Boolean) {
+                isInterestSaved.postValue(isCompleted)
+            }
+        })
     }
 
     fun deleteInterest(interest: InterestCloudObject) {

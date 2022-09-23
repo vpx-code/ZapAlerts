@@ -59,7 +59,7 @@ interface IDatabase {
     ): Boolean
 
     fun saveInterest(interest: InterestCloudObject, callback: IOnSaveInterestSuccessCallback)
-    fun editInterest(interest: InterestCloudObject)
+    fun editInterest(interest: InterestCloudObject, callback: IOnSaveInterestSuccessCallback)
     fun deleteInterest(interest: InterestCloudObject)
     fun getInterestByName(name: String, callback: IOnGetByNameSuccessCallback)
 }
