@@ -62,7 +62,6 @@ object Daily : AlertType {
         editor.apply()
     }
 
-    // TODO: Changed this!! Default used to be 0.
     override fun getSavedDate(c: Context): Long {
         val sharedPrefs = c.getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
         val savedDate = sharedPrefs.getLong("nextDailyDate", System.currentTimeMillis())
