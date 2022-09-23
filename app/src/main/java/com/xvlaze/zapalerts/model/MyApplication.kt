@@ -4,12 +4,18 @@ import android.app.Application
 import android.content.Context
 import android.util.Log
 import com.huawei.hms.searchkit.SearchKitInstance
+import com.newrelic.agent.android.NewRelic
 import com.xvlaze.zapalerts.util.Constants.clientId
 
 class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         appContext = applicationContext
+
+        NewRelic.withApplicationToken(
+            "REDACTED_NEWRELIC_TOKEN"
+        ).start(appContext);
+
         SearchKitInstance.init(this, clientId)
         OAuthTokenProvider.requestOAuthToken()
 
