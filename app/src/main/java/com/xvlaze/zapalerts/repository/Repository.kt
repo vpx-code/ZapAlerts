@@ -5,6 +5,8 @@ import com.xvlaze.zapalerts.model.*
 import com.xvlaze.zapalerts.util.Constants.InterestFrequency.*
 
 class Repository(private val c: Context) {
+    private val interestsManager = InterestsManager()
+
     fun doNewsSearch(
         query: String,
         language: Int,
@@ -20,42 +22,41 @@ class Repository(private val c: Context) {
         )
     }
 
-    fun saveInterest(
-        frequency: Int,
-    ) {
-        when (frequency) {
-            DAILY.id -> {
-                Daily.updateSavedDate(c)
-                MyAlarmManager.scheduleAlarm(Daily, c)
-            }
-            WEEKLY.id -> {
-                Weekly.updateSavedDate(c)
-                MyAlarmManager.scheduleAlarm(Weekly, c)
-            }
-            REALTIME.id -> {
-                Realtime.updateSavedDate(c)
-                MyAlarmManager.scheduleAlarm(Realtime, c)
-            }
-        }
-
-        MyAlarmManager.enableReceivers()
-    }
-
-    fun overwriteInterest(
+    fun updateSavedDate(
         frequency: Int
     ) {
         when (frequency) {
             DAILY.id -> {
                 Daily.updateSavedDate(c)
-                MyAlarmManager.scheduleAlarm(Daily, c)
             }
             WEEKLY.id -> {
                 Weekly.updateSavedDate(c)
-                MyAlarmManager.scheduleAlarm(Weekly, c)
             }
             REALTIME.id -> {
                 Realtime.updateSavedDate(c)
-                MyAlarmManager.scheduleAlarm(Realtime, c)
+            }
+        }
+    }
+
+    fun saveLocalCopy(interests: MutableList<InterestCloudObject>) = interestsManager.saveLocalCopy(interests)
+
+    fun getSavedInterests(): MutableList<InterestCloudObject> = interestsManager.getFile() ?: mutableListOf()
+
+    fun getSavedDate(
+        frequency: Int
+    ): Long? {
+        return when (frequency) {
+            DAILY.id -> {
+                Daily.getSavedDate(c)
+            }
+            WEEKLY.id -> {
+                Weekly.getSavedDate(c)
+            }
+            REALTIME.id -> {
+                Realtime.getSavedDate(c)
+            }
+            else -> {
+                null
             }
         }
     }

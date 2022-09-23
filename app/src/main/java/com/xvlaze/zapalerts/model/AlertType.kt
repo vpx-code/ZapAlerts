@@ -2,6 +2,8 @@ package com.xvlaze.zapalerts.model
 
 import android.content.Context
 import android.util.Log
+import com.xvlaze.zapalerts.BuildConfig
+import com.xvlaze.zapalerts.util.Constants
 import com.xvlaze.zapalerts.util.Extensions.isDateInThePast
 import com.xvlaze.zapalerts.util.Extensions.toTimeStamp
 import java.util.*
@@ -9,20 +11,9 @@ import java.util.*
 interface AlertType {
     val code: Int
     val interval: Long
-    /*val pendingIntent: PendingIntent = PendingIntent.getBroadcast(
-        MyApplication.appContext,
-        Random.nextInt(),
-        Intent(MyApplication.appContext, AlertReceiver::class.java),
-        when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            }
-            else -> PendingIntent.FLAG_UPDATE_CURRENT
-        }
-    )*/
-
     fun getType(): Int
     fun calculateNextDate(): Long
+    fun getPreviouslySavedDate(c: Context): Long
     fun updateSavedDate(c: Context)
     fun getSavedDate(c: Context): Long
     fun hasDatePassed(c: Context): Boolean {
@@ -51,6 +42,15 @@ object Daily : AlertType {
         return calendar.timeInMillis
     }
 
+    override fun getPreviouslySavedDate(c: Context): Long {
+        val sharedPrefs = c.getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
+        Log.d(
+            "ZAP_TAG",
+            "Getting previously saved date: ${sharedPrefs.getLong("lastDailyDate", 0)}"
+        )
+        return sharedPrefs.getLong("lastDailyDate", 0)
+    }
+
     override fun updateSavedDate(c: Context) {
         val sharedPrefs = c.getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
         val editor = sharedPrefs.edit()
@@ -62,13 +62,15 @@ object Daily : AlertType {
         editor.apply()
     }
 
+    // TODO: Changed this!! Default used to be 0.
     override fun getSavedDate(c: Context): Long {
         val sharedPrefs = c.getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
+        val savedDate = sharedPrefs.getLong("nextDailyDate", System.currentTimeMillis())
         Log.d(
             "ZAP_TAG",
-            "Getting saved date: ${sharedPrefs.getLong("nextDailyDate", 0)}"
+            "Getting saved date: $savedDate"
         )
-        return sharedPrefs.getLong("nextDailyDate", 0)
+        return savedDate
     }
 }
 
@@ -86,6 +88,15 @@ object Weekly : AlertType {
         return calendar.timeInMillis
     }
 
+    override fun getPreviouslySavedDate(c: Context): Long {
+        val sharedPrefs = c.getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
+        Log.d(
+            "ZAP_TAG",
+            "Getting previously saved date: ${sharedPrefs.getLong("lastWeeklyDate", 0)}"
+        )
+        return sharedPrefs.getLong("lastWeeklyDate", 0)
+    }
+
     override fun updateSavedDate(c: Context) {
         val sharedPrefs = c.getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
         val editor = sharedPrefs.edit()
@@ -101,34 +112,47 @@ object Weekly : AlertType {
 
 object Realtime : AlertType {
     override val code = 2
-    override val interval: Long = 60000*5 // Ojo al cambiar esto. 5 minutos para realtime.
+    override val interval: Long = if (BuildConfig.DEBUG && Constants.DEBUG) 60000 else 60000 * 5 // Ojo al cambiar esto. 5 minutos para realtime.
     override fun getType(): Int = code
     private var firstRingTime: Long = 0
 
+    override fun getPreviouslySavedDate(c: Context): Long {
+        val sharedPrefs = c.getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
+        Log.d(
+            "ZAP_TAG",
+            "Getting previously saved date: ${sharedPrefs.getLong("lastRealtimeDate", 0)}"
+        )
+        return sharedPrefs.getLong("lastRealtimeDate", 0)
+    }
+
     override fun calculateNextDate(): Long {
         val calendar: Calendar = Calendar.getInstance()
-        if (calendar.isDateInThePast()) {
-            Log.d("ZAP_TAG", "Date in the past. Updating calendar to ${(interval / 60000).toInt()} minutes." )
-            calendar.add(Calendar.MINUTE, (interval / 60000).toInt()) // Ojo al cambiar esto}
-        }
+        //if (calendar.isDateInThePast()) {
+        //    Log.d("ZAP_TAG", "Date in the past. Updating calendar to ${(interval / 60000).toInt()} minutes." )
+        calendar.add(Calendar.MINUTE, (interval / 60000).toInt()) // Ojo al cambiar esto}
+        //}
         return calendar.timeInMillis
     }
 
     override fun updateSavedDate(c: Context) {
-        Log.d("ZAP_TAG", "Updating saved date to ${calculateNextDate()}")
+        val nextDate = calculateNextDate()
+        Log.d("ZAP_TAG", "Updating saved date to $nextDate")
         val sharedPrefs = c.getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
         val editor = sharedPrefs.edit()
-        editor.putLong("nextRealtimeDate", calculateNextDate())
+        editor.putLong("lastRealtimeDate", System.currentTimeMillis())
+        editor.putLong("nextRealtimeDate", nextDate)
         editor.apply()
     }
+
 
     override fun getSavedDate(c: Context): Long {
         val sharedPrefs = c.getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
         return sharedPrefs.getLong("nextRealtimeDate", 0)
     }
-
+    @Deprecated("Not using this anymore")
     fun getFirstRingTime(): Long = firstRingTime
-    fun setFirstRingTine(time: Long) {
+    @Deprecated("Not using this anymore")
+    fun setFirstRingTime(time: Long) {
         firstRingTime = time
     }
 }

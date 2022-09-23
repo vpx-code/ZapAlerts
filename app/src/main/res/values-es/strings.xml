@@ -54,4 +54,29 @@
         <item>Portugués</item>
         <item>Checo</item>
     </string-array>
+    <string name="help">Ayuda</string>
+    <string name="log_out">Cerrar sesión</string>
+    <string name="add_alert">Añadir Alerta</string>
+    <string name="type_here_search">Escribe aquí para buscar</string>
+    <string name="your_interests">Tus Intereses</string>
+    <string name="add_interest">Añadir un Interés</string>
+    <string name="search_your_interests">Busca lo que te interesa</string>
+    <string name="preview">Vista previa de resultados:</string>
+    <string name="customise">Personalizar</string>
+    <string name="frequency">Frecuencia</string>
+    <string name="language">Idioma</string>
+    <string name="country">País</string>
+    <string name="loading">Cargando…</string>
+    <string name="latest_updates">Consultar últimas novedades</string>
+    <string name="read_more_at">"Leer más en "</string>
+    <string name="already_saved">Ya tienes este interés guardado. Por favor, cambia la búsqueda y vuelve a intentarlo.</string>
+    <string name="something_wrong">Algo ha ido mal, por favor, inténtalo de nuevo más tarde.</string>
+    <string name="title">El mundo que te rodea, en tu bolsillo.</string>
+    <string name="logout_sure">¿Quieres cerrar la sesión?</string>
+    <string name="yes">Sí</string>
+    <string name="no">No</string>
+    <string name="settings_prompt">Para estar siempre actualizado, activa el Inicio de aplicaciones y desactiva el optimizador de batería para esta app.\n\nUna vez toques el botón de Ajustes, escribe en la barra de búsqueda \"Inicio de Aplicaciones\" y asegúrate de que Zap Alerts NO ESTÉ SELECCIONADO (Gestionar automáticamente).\n\nVuelve a la pantalla inicial de Ajustes y busca "Optimización de batería", selecciona \"Todas las aplicaciones\" en el desplegable, busca Zap Alerts y asegúrate que NO PERMITIR esté marcado.</string>
+    <string name="settings">Ajustes</string>
+    <string name="later">Más tarde</string>
+    <string name="come_back">Siempre puedes volver a este menú pulsando en el menú de arriba a la derecha.</string>
 </resources>

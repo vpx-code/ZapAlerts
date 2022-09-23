@@ -1,35 +1,47 @@
 package com.xvlaze.zapalerts.model
 
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import com.huawei.agconnect.cloud.database.CloudDBZone
 import com.huawei.agconnect.cloud.database.CloudDBZoneObjectList
 import com.huawei.agconnect.cloud.database.CloudDBZoneQuery
-import com.huawei.agconnect.cloud.database.CloudDBZoneSnapshot
 import com.huawei.hmf.tasks.Task
 
 class CloudDBQueries(private val mCloudDBZone: CloudDBZone) : IDatabase {
 
-    val interestsList = MutableLiveData<MutableList<InterestCloudObject>>()
-    val interestToEdit = MutableLiveData<InterestCloudObject>()
+    private var attempt = 1
 
     override fun getAll(callback: IOnGetAllSuccessCallback) {
+        Log.d("ZAP_TAG", "Attempting to get saved interests from Database. Attempt $attempt")
         val result = mutableListOf<InterestCloudObject>()
         val queryTask = mCloudDBZone.executeQuery(
             CloudDBZoneQuery.where(InterestCloudObject::class.java)
-                .equalTo("unionId", User.unionId),
+                .equalTo("unionId", SharedPrefsProvider.getUserUid()),
             CloudDBZoneQuery.CloudDBZoneQueryPolicy.POLICY_QUERY_FROM_CLOUD_ONLY
         )
-
         queryTask
             .addOnSuccessListener { snapshot ->
-                val cursor: CloudDBZoneObjectList<InterestCloudObject> = snapshot.snapshotObjects
+                Log.d("ZAP_TAG", "Query succeeded!")
+                val cursor: CloudDBZoneObjectList<InterestCloudObject> =
+                    snapshot.snapshotObjects
                 while (cursor.hasNext()) {
                     val baseFood = cursor.next()
                     result.add(baseFood)
                 }
+                Log.d("ZAP_TAG", "Results: ${result.size}")
                 snapshot.release()
-                callback.onSuccess(result)
+                if (result.isEmpty() && attempt < 3) {
+                    Log.d("ZAP_TAG", "Result was empty.")
+                    attempt++
+                    getAll(callback)
+                } else {
+                    Log.d("ZAP_TAG", "Result was populated or exceeded attempts! Calling callback...")
+                    attempt = 0
+                    callback.onSuccess(result)
+                }
+            }
+            .addOnFailureListener {
+                Log.d("ZAP_TAG", "Query failed. Reason: ${it.message}")
+                Log.d("ZAP_TAG", "Query failed. Stack trace: ${it.stackTrace}")
             }
     }
 
@@ -37,7 +49,7 @@ class CloudDBQueries(private val mCloudDBZone: CloudDBZone) : IDatabase {
     override fun isInterestUnique(name: String): Boolean {
         val queryTask = mCloudDBZone.executeQuery(
             CloudDBZoneQuery.where(InterestCloudObject::class.java)
-                .equalTo("unionId", User.unionId)
+                .equalTo("unionId", SharedPrefsProvider.getUserUid())
                 .equalTo("name", name),
             CloudDBZoneQuery.CloudDBZoneQueryPolicy.POLICY_QUERY_FROM_CLOUD_ONLY
         )
@@ -64,25 +76,11 @@ class CloudDBQueries(private val mCloudDBZone: CloudDBZone) : IDatabase {
         return baseFoodListLocal.isEmpty()
     }
 
-    private fun getAllBaseFoodsResultHandler(snapshot: CloudDBZoneSnapshot<InterestCloudObject>) {
-        val cursor: CloudDBZoneObjectList<InterestCloudObject> = snapshot.snapshotObjects
-        val baseFoodListLocal = mutableListOf<InterestCloudObject>()
-
-        try {
-            while (cursor.hasNext()) {
-                val baseFood = cursor.next()
-                baseFoodListLocal.add(baseFood)
-            }
-        } catch (exception: Exception) {
-            Log.w("BaseFoodRepository", "getAllbaseFoods error: ${exception.message}")
-        }
-
-        snapshot.release()
-
-        interestsList.postValue(baseFoodListLocal)
-    }
-
-    override fun saveInterest(interest: InterestCloudObject) {
+    override fun saveInterest(
+        interest: InterestCloudObject,
+        callback: IOnSaveInterestSuccessCallback
+    ) {
+        Log.d("ZAP_TAG", "Saving interest ${interest.name} to database...")
         getMaxId()
             .addOnSuccessListener { number ->
                 var nextID = 1
@@ -91,6 +89,16 @@ class CloudDBQueries(private val mCloudDBZone: CloudDBZone) : IDatabase {
                 }
                 interest.id = nextID
                 mCloudDBZone.executeUpsert(interest)
+                    .addOnSuccessListener {
+                        Log.d("ZAP_TAG", "Saved!")
+                        callback.onSuccess(true)
+                    }
+                    .addOnFailureListener {
+                        callback.onSuccess(false)
+                    }
+            }
+            .addOnFailureListener {
+                callback.onSuccess(false)
             }
     }
 
@@ -112,16 +120,18 @@ class CloudDBQueries(private val mCloudDBZone: CloudDBZone) : IDatabase {
     }
 
     override fun getInterestByName(name: String, callback: IOnGetByNameSuccessCallback) {
+        Log.d("ZAP_TAG", "About to query. CloudDBZone is ${mCloudDBZone.cloudDBZoneConfig.cloudDBZoneName} and interest name is $name")
         val queryTask2 = mCloudDBZone.executeQuery(
             CloudDBZoneQuery.where(InterestCloudObject::class.java)
-                .equalTo("unionId", User.unionId)
+                .equalTo("unionId", SharedPrefsProvider.getUserUid())
                 .equalTo("name", name),
-            CloudDBZoneQuery.CloudDBZoneQueryPolicy.POLICY_QUERY_FROM_CLOUD_ONLY
+            CloudDBZoneQuery.CloudDBZoneQueryPolicy.POLICY_QUERY_DEFAULT
         )
 
         val baseFoodListLocal = mutableListOf<InterestCloudObject>()
         queryTask2
             .addOnSuccessListener { snapshot ->
+                Log.d("ZAP_TAG", "Query successful.")
                 val cursor: CloudDBZoneObjectList<InterestCloudObject> =
                     snapshot.snapshotObjects
 
@@ -130,12 +140,15 @@ class CloudDBQueries(private val mCloudDBZone: CloudDBZone) : IDatabase {
                         val baseFood = cursor.next()
                         baseFoodListLocal.add(baseFood)
                     }
-                    interestToEdit.postValue(baseFoodListLocal.first())
                 } catch (exception: Exception) {
                     Log.w("BaseFoodRepository", "getAllbaseFoods error: ${exception.message}")
                 }
+                Log.d("ZAP_TAG", "Object to send to callback is ${baseFoodListLocal.first()}")
                 snapshot.release()
                 callback.onSuccess(baseFoodListLocal.first())
+            }
+            .addOnFailureListener {
+                Log.d("ZAP_TAG", "Query failed. Reason: ${it.message}")
             }
     }
 }
@@ -146,4 +159,8 @@ interface IOnGetAllSuccessCallback {
 
 interface IOnGetByNameSuccessCallback {
     fun onSuccess(res: InterestCloudObject)
+}
+
+interface IOnSaveInterestSuccessCallback {
+    fun onSuccess(isCompleted: Boolean)
 }

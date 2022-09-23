@@ -1,114 +1,73 @@
 package com.xvlaze.zapalerts.ui
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.huawei.agconnect.auth.*
-import com.huawei.agconnect.auth.VerifyCodeSettings.ACTION_REGISTER_LOGIN
-import com.huawei.hmf.tasks.OnFailureListener
-import com.huawei.hmf.tasks.Task
-import com.huawei.hmf.tasks.TaskExecutors
+import com.huawei.agconnect.auth.AGConnectAuth
+import com.huawei.hms.support.hwid.HuaweiIdAuthManager
+import com.huawei.hms.support.hwid.request.HuaweiIdAuthParams
+import com.huawei.hms.support.hwid.request.HuaweiIdAuthParamsHelper
+import com.xvlaze.zapalerts.R
 import com.xvlaze.zapalerts.databinding.ActivityLoginBinding
 import com.xvlaze.zapalerts.model.User
 
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
-
-    private lateinit var countryCode: String
-    private lateinit var phoneNumber: String
+    private val viewModel: LoginViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         if (AGConnectAuth.getInstance().currentUser != null) {
             User.unionId = AGConnectAuth.getInstance().currentUser.uid
             startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+            finish()
         } else {
             binding = ActivityLoginBinding.inflate(layoutInflater)
             setContentView(binding.root)
-
-            binding.sendCode.setOnClickListener {
-                val settings = VerifyCodeSettings.newBuilder()
-                    .action(ACTION_REGISTER_LOGIN)
-                    .sendInterval(30)
-                    .build()
-
-                val task: Task<VerifyCodeResult> =
-                    PhoneAuthProvider.requestVerifyCode(
-                        binding.countryPicker.selectedCountryCode,
-                        binding.phoneNumber.text.toString(),
-                        settings
-                    )
-
-                task.addOnSuccessListener(TaskExecutors.uiThread()) {
-                    countryCode = binding.countryPicker.selectedCountryCode
-                    phoneNumber = binding.phoneNumber.text.toString()
-
-                    binding.signUp.setOnClickListener {
-                        signUp()
-                    }
-
-                    binding.signIn.setOnClickListener {
-                        signIn()
-                    }
+            when (resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+                Configuration.UI_MODE_NIGHT_YES -> {
+                    binding.bg.setImageResource(R.drawable.city_night)
                 }
+                Configuration.UI_MODE_NIGHT_NO -> {
+                    binding.bg.setImageResource(R.drawable.city_day)
+                }
+                Configuration.UI_MODE_NIGHT_UNDEFINED -> {
+                    binding.bg.setImageResource(R.drawable.city_day)
+                }
+            }
+            binding.signIn.setOnClickListener {
+                val authParams =
+                    HuaweiIdAuthParamsHelper(HuaweiIdAuthParams.DEFAULT_AUTH_REQUEST_PARAM).setAccessToken()
+                        .createParams()
+                val service = HuaweiIdAuthManager.getService(this, authParams)
+                startActivityForResult(service.signInIntent, 100)
             }
         }
     }
 
-    private fun signIn() {
-        val credential = PhoneAuthProvider.credentialWithVerifyCode(
-            countryCode,
-            phoneNumber,
-            null,
-            binding.verificationCode.text.toString()
-        )
-
-        AGConnectAuth.getInstance().signIn(credential).addOnSuccessListener {
-            // The verification code application is successful.
-            val phoneUser = PhoneUser.Builder()
-                .setCountryCode(countryCode)
-                .setPhoneNumber(phoneNumber) // The value of phoneNumber must contains the country/region code and mobile number.
-                .setVerifyCode(binding.verificationCode.text.toString())
-                .build()
-
-            AGConnectAuth.getInstance().signIn(credential)
-                .addOnSuccessListener {
-                    User.unionId = it.user.uid
-                    startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+    override fun onActivityResult(
+        requestCode: Int,
+        resultCode: Int,
+        data: Intent?
+    ) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 100) {
+            viewModel.signIn(data)
+            viewModel.isSignInSuccessful.observe(this) {
+                if (it) {
+                    Intent(this, LoginActivity::class.java).apply {
+                        startActivity(this)
+                    }
+                    finish()
                 }
-                .addOnFailureListener {
-                    Toast.makeText(
-                        this@LoginActivity,
-                        "Something went wrong, please try again",
-                        Toast.LENGTH_LONG
-                    ).show()
+                else {
+                    Toast.makeText(this@LoginActivity, getString(R.string.something_wrong), Toast.LENGTH_LONG).show()
                 }
-        }.addOnFailureListener(TaskExecutors.uiThread(), OnFailureListener {
-            val a = it
-        })
-    }
-
-    private fun signUp() {
-        val phoneUser = PhoneUser.Builder()
-            .setCountryCode(countryCode)
-            .setPhoneNumber(phoneNumber) // The value of phoneNumber must contains the country/region code and mobile number.
-            .setVerifyCode(binding.verificationCode.text.toString())
-            .build()
-
-        AGConnectAuth.getInstance().createUser(phoneUser)
-            .addOnSuccessListener {
-                User.unionId = it.user.uid
-                startActivity(Intent(this@LoginActivity, MainActivity::class.java))
             }
-            .addOnFailureListener {
-                Toast.makeText(
-                    this@LoginActivity,
-                    "Something went wrong, please try again",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
+        }
     }
 }

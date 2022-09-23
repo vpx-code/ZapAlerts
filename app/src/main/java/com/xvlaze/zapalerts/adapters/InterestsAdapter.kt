@@ -26,7 +26,7 @@ class InterestsAdapter(private val interestsList: ArrayList<InterestCloudObject>
             if (constraint == null || constraint.isEmpty()) {
                 initialInterestList.let { filteredList.addAll(it) }
             } else {
-                val query = constraint.toString().trim().toLowerCase()
+                val query = constraint.toString().trim().lowercase(Locale.ROOT)
                 initialInterestList.forEach {
                     if (it.name.lowercase(Locale.ROOT).contains(query)) {
                         filteredList.add(it)
@@ -46,8 +46,6 @@ class InterestsAdapter(private val interestsList: ArrayList<InterestCloudObject>
             }
         }
     }
-
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): InterestsViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)

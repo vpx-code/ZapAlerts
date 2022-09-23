@@ -1,6 +1,7 @@
 package com.xvlaze.zapalerts.receivers
 
 import android.R
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -11,90 +12,186 @@ import android.media.RingtoneManager
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationCompat.GROUP_ALERT_SUMMARY
 import com.huawei.hms.searchkit.bean.NewsItem
+import com.xvlaze.zapalerts.BuildConfig
 import com.xvlaze.zapalerts.model.*
+import com.xvlaze.zapalerts.model.MyApplication.Companion.appContext
 import com.xvlaze.zapalerts.repository.CloudDBRepository
 import com.xvlaze.zapalerts.repository.Repository
-import com.xvlaze.zapalerts.ui.MainActivity
+import com.xvlaze.zapalerts.ui.InterestDetailActivity
+import com.xvlaze.zapalerts.util.Constants
 import com.xvlaze.zapalerts.util.Constants.InterestFrequency.*
-import kotlin.random.Random
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.random.Random.Default.nextInt
 
 class AlertReceiver : BroadcastReceiver() {
-    private var updatedNews = arrayListOf<NewsItem>()
+    private val summaryID = 0
+    private val groupKey = "com.xvlaze.zapalerts.ALERT_GROUP"
+    private val notificationManager =
+        appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    private val channelID = "channel_name"
+
+    private val notificationsList = ArrayList<Notification>()
+
+    init {
+        val name: CharSequence = "Zap Alerts Notification Channel"
+        val importance = NotificationManager.IMPORTANCE_HIGH
+        val mChannel = NotificationChannel(channelID, name, importance)
+        notificationManager.createNotificationChannel(mChannel)
+
+        CloudDB.initAGConnectCloudDB(appContext.applicationContext)
+        MyApplication.cloudDB = CloudDB(appContext.applicationContext)
+        MyApplication.cloudDB.createObjectType()
+        MyApplication.cloudDB.openCloudDbZone()
+    }
 
     override fun onReceive(c: Context, intent: Intent) {
-        val cloudDBRepository = CloudDBRepository(c)
-
         Log.d("ZAP_TAG", "Alarm received!")
 
-        cloudDBRepository.getAll(object : IOnGetAllSuccessCallback {
-            override fun onSuccess(res: MutableList<InterestCloudObject>) {
-                val updatedNames = arrayListOf<String>()
+        // SOLO DEBUG
+        if (BuildConfig.DEBUG && Constants.DEBUG) {
+            createAlertNotification(
+                c,
+                "Apple",
+                "This is a test notification about Apple",
+                99,
+                1
+            )
+            createAlertNotification(
+                c,
+                "Tesla",
+                "This is a test notification about Tesla",
+                99,
+                2
+            )
+            createAlertNotification(
+                c,
+                "Amazon",
+                "This is a test notification about Amazon",
+                99,
+                3
+            )
 
-                for (interest in res) {
-                    NewsSearcher.search(
-                        interest.name,
-                        interest.language.toInt(),
-                        interest.country.toInt(),
-                        c,
-                        object : OnNewsSearchPerformedCallback {
-                            override fun onNewsSearchResult(result: ArrayList<NewsItem>) {
-                                val lastUpdate = when (interest.frequency.toInt()) {
-                                    DAILY.id -> {
-                                        Daily.getSavedDate(c)
-                                    }
-                                    WEEKLY.id -> {
-                                        Weekly.getSavedDate(c)
-                                    }
-                                    REALTIME.id -> {
-                                        Realtime.getSavedDate(c)
-                                    }
-                                    else -> {
-                                        Realtime.getSavedDate(c)
-                                    }
-                                }
-
-                                updatedNews.addAll( // TODO: Se guarda bien, pero ¿ahora cómo lo pasamos? ¿Lo guardamos en un JSON o rehacemos la búsqueda al entrar?
-                                    result.filter {
-                                        it.publishTime.toLong() < lastUpdate
-                                    }
-                                )
-
-                                if (result.any { it.publishTime.toLong() * 1000 > lastUpdate }) {
-                                    updatedNames.add(interest.name)
-                                }
-
-                                Repository(c).overwriteInterest(interest.frequency.toInt())
-                            }
-                        }
-                    )
-                }
-
-                if (updatedNames.isNotEmpty()) {
-                    showNotification(
-                        c,
-                        "${updatedNews.random().title} and more.",
-                        Random.nextInt()
-                    )
-                }
+            var i = 1
+            for (not in notificationsList) {
+                notificationManager.notify(i, not)
+                i++
             }
-        })
+            notifySummaryNotification(c)
+        } else {
+            val cloudDBRepository = CloudDBRepository()
+            cloudDBRepository.getAll(object : IOnGetAllSuccessCallback {
+                override fun onSuccess(res: MutableList<InterestCloudObject>) {
+                    var interestList = res
+                    if (interestList.isEmpty()) {
+                        Log.d("ZAP_TAG", "Cannot access DB, using cache...")
+                        interestList = InterestsManager().getFile()
+                            ?: mutableListOf() // If this is null, we are in big trouble.
+                    }
+
+                    Log.d("ZAP_TAG", "Number of interests to process: ${interestList.size}")
+                    for (interest in interestList) {
+                        Log.d("ZAP_TAG", "Processing interest ${interest.name}")
+                        NewsSearcher.search(
+                            interest.name,
+                            interest.language.toInt(),
+                            interest.country.toInt(),
+                            c,
+                            object : OnNewsSearchPerformedCallback {
+                                override fun onNewsSearchResult(result: ArrayList<NewsItem>) {
+                                    if (result.isNotEmpty()) {
+                                        val lastUpdate = when (interest.frequency.toInt()) {
+                                            DAILY.id -> {
+                                                Daily.getPreviouslySavedDate(c)
+                                            }
+                                            WEEKLY.id -> {
+                                                Weekly.getPreviouslySavedDate(c)
+                                            }
+                                            REALTIME.id -> {
+                                                Realtime.getPreviouslySavedDate(c)
+                                            }
+                                            else -> {
+                                                Realtime.getPreviouslySavedDate(c)
+                                            }
+                                        }
+
+                                        Log.d(
+                                            "ZAP_TAG",
+                                            "Comparing news publishing date vs. saved date, must be >=): ${
+                                                convertLongToTime(result.first().publishTime.toLong() * 1000)
+                                            } vs. ${convertLongToTime(lastUpdate)}"
+                                        )
+                                        var recent = result.filter {
+                                            it.publishTime != ""
+                                        }
+                                        recent = recent.filter {
+                                            it.publishTime.toLong() * 1000 >= lastUpdate
+                                        }
+
+                                        if (recent.isNotEmpty()) {
+                                            Log.d("ZAP_TAG", "Found ${recent.size} recent news.")
+                                            createAlertNotification(
+                                                c,
+                                                interest.name,
+                                                recent.random().title,
+                                                recent.size,
+                                                nextInt()
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        )
+                    }
+
+                    if (notificationsList.isNotEmpty()) {
+                        notificationsList.forEach { not ->
+                            notificationManager.notify(nextInt(), not)
+                        }
+                        notifySummaryNotification(c)
+                        notificationsList.clear()
+                    }
+                    Repository(c).updateSavedDate(Realtime.getType())
+                }
+            })
+        }
     }
 
 
-    private fun showNotification(
+    private fun notifySummaryNotification(context: Context) {
+        Log.d("ZAP_TAG", "Notifying summary...")
+        val summaryNotification = NotificationCompat.Builder(context, channelID)
+            .setContentTitle("New Updates on your Interests!")
+            .setContentText("Touch and browse your interest list.")
+            .setSmallIcon(R.mipmap.sym_def_app_icon)
+            .setGroup(groupKey)
+            .setGroupSummary(true)
+            .build()
+
+        notificationManager.notify(summaryID, summaryNotification) // id must be constant!
+    }
+
+    private fun createAlertNotification(
         context: Context,
+        interestName: String,
         message: String?,
+        updates: Int,
         reqCode: Int
     ) {
+        val intent = Intent(
+            context,
+            InterestDetailActivity::class.java
+        )
+        intent.putExtra("name", interestName)
+        intent.putExtra("fromNotification", true)
+
         val pendingIntent =
             PendingIntent.getActivity(
                 context,
                 reqCode,
-                Intent(
-                    context,
-                    MainActivity::class.java
-                ), // TODO: Añadir extra con los updated o bien recalcular en Main pasando una flag.
+                intent,
                 when {
                     Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
                         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
@@ -102,25 +199,32 @@ class AlertReceiver : BroadcastReceiver() {
                     else -> PendingIntent.FLAG_IMMUTABLE
                 }
             )
-        val channelID = "channel_name" // The id of the channel.
-        val notificationBuilder: NotificationCompat.Builder =
+
+        val updatesStringNumber = updates - 1
+        val notificationDescription = if (updatesStringNumber == 0) {
+            "Touch and browse your interest list."
+        } else {
+            "And $updatesStringNumber more updates."
+        }
+
+        val alertNotification: Notification =
             NotificationCompat.Builder(context, channelID)
                 .setSmallIcon(R.mipmap.sym_def_app_icon)
-                .setContentTitle("${updatedNews.random().title} and more.")
-                .setContentText("And ${updatedNews.size} more updates.")
+                .setContentTitle(message)
+                .setContentText(notificationDescription)
                 .setAutoCancel(true)
+                .setGroup(groupKey)
+                .setGroupAlertBehavior(GROUP_ALERT_SUMMARY)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setContentIntent(pendingIntent)
-        val notificationManager =
-            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val name: CharSequence = "Channel Name" // The user-visible name of the channel.
-        val importance = NotificationManager.IMPORTANCE_HIGH
-        val mChannel = NotificationChannel(channelID, name, importance)
-        notificationManager.createNotificationChannel(mChannel)
-        notificationManager.notify(
-            reqCode,
-            notificationBuilder.build()
-        )
-        Log.d("ZAP_TAG", "showNotification: $reqCode")
+                .build()
+
+        notificationsList.add(alertNotification)
+    }
+
+    private fun convertLongToTime(time: Long): String {
+        val date = Date(time)
+        val format = SimpleDateFormat("dd.MM.yyyy HH:mm:ss")
+        return format.format(date)
     }
 }

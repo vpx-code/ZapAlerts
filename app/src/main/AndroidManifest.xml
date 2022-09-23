@@ -46,9 +46,8 @@
         </receiver>
         <receiver
             android:name=".receivers.AlertReceiver"
-            android:enabled="false"
+            android:enabled="true"
             android:exported="false" />
-
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
