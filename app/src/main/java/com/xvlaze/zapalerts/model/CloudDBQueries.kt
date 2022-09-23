@@ -34,7 +34,10 @@ class CloudDBQueries(private val mCloudDBZone: CloudDBZone) : IDatabase {
                     attempt++
                     getAll(callback)
                 } else {
-                    Log.d("ZAP_TAG", "Result was populated or exceeded attempts! Calling callback...")
+                    Log.d(
+                        "ZAP_TAG",
+                        "Result was populated or exceeded attempts! Calling callback..."
+                    )
                     attempt = 0
                     callback.onSuccess(result)
                 }
@@ -47,35 +50,9 @@ class CloudDBQueries(private val mCloudDBZone: CloudDBZone) : IDatabase {
 
     override fun isInterestUnique(
         name: String,
-    callback: IOnSaveInterestSuccessCallback) {
-        val queryTask = mCloudDBZone.executeQuery(
-            CloudDBZoneQuery.where(InterestCloudObject::class.java)
-                .equalTo("unionId", SharedPrefsProvider.getUserUid())
-                .equalTo("name", name),
-            CloudDBZoneQuery.CloudDBZoneQueryPolicy.POLICY_QUERY_FROM_CLOUD_ONLY
-        )
-        Log.d("ZAP_TAG", "User UID is ${SharedPrefsProvider.getUserUid()}")
-        val baseFoodListLocal = mutableListOf<InterestCloudObject>()
-
-        queryTask
-            .addOnSuccessListener { snapshot ->
-                val cursor: CloudDBZoneObjectList<InterestCloudObject> =
-                    snapshot.snapshotObjects
-                try {
-                    while (cursor.hasNext()) {
-                        val baseFood = cursor.next()
-                        baseFoodListLocal.add(baseFood)
-                    }
-                } catch (exception: Exception) {
-                    Log.w("BaseFoodRepository", "getAllbaseFoods error: ${exception.message}")
-                }
-                snapshot.release()
-                /* FIXME: Esto no es correcto, porque detecta amAzOn y Amazon como únicas. Es obligatorio coger todos los intereses del backend O BIEN
-                *   Conseguir la lista local de intereses y hacer un contains para encontrar el interes. Como guardamos en cache, no es posible que algo este en la base
-                *    sin estar en el archivo antes.
-                */
-                callback.onSuccess(baseFoodListLocal.isEmpty() || baseFoodListLocal.first().name.lowercase() != name.lowercase())
-            }
+        interestList: MutableList<InterestCloudObject>
+    ): Boolean {
+        return interestList.none { it -> it.name.lowercase().trim() == name.lowercase().trim() }
     }
 
     override fun saveInterest(
@@ -122,7 +99,10 @@ class CloudDBQueries(private val mCloudDBZone: CloudDBZone) : IDatabase {
     }
 
     override fun getInterestByName(name: String, callback: IOnGetByNameSuccessCallback) {
-        Log.d("ZAP_TAG", "About to query. CloudDBZone is ${mCloudDBZone.cloudDBZoneConfig.cloudDBZoneName} and interest name is $name")
+        Log.d(
+            "ZAP_TAG",
+            "About to query. CloudDBZone is ${mCloudDBZone.cloudDBZoneConfig.cloudDBZoneName} and interest name is $name"
+        )
         val queryTask2 = mCloudDBZone.executeQuery(
             CloudDBZoneQuery.where(InterestCloudObject::class.java)
                 .equalTo("unionId", SharedPrefsProvider.getUserUid())

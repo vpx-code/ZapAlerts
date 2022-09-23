@@ -28,23 +28,6 @@ class InterestsActivity : AppCompatActivity() {
         binding = ActivityInterestsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        /*val upperBlob = binding.upperBlob
-        val lowerBlob = binding.lowerBlob
-        when (resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
-            Configuration.UI_MODE_NIGHT_YES -> {
-                upperBlob.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.blob_night))
-                lowerBlob.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.blob_night))
-            }
-            Configuration.UI_MODE_NIGHT_NO -> {
-                upperBlob.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.blob))
-                lowerBlob.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.blob))
-            }
-            Configuration.UI_MODE_NIGHT_UNDEFINED -> {
-                upperBlob.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.blob))
-                lowerBlob.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.blob))
-            }
-        }*/
-
         binding.preview.visibility = View.INVISIBLE
         binding.progress.visibility = View.INVISIBLE
         val recyclerView = binding.recycler
@@ -68,7 +51,6 @@ class InterestsActivity : AppCompatActivity() {
                     putFabOnSearchMode()
                 } else {
                     fab.setOnClickListener {
-                        // FIXME: Tengo que mirar esto, porque puede dar un caso de uso erróneo al buscar un texto vacío, editar opciones etc.
                         binding.progress.visibility = View.VISIBLE
                         val imm: InputMethodManager =
                             getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
@@ -97,34 +79,23 @@ class InterestsActivity : AppCompatActivity() {
                                 )
                             )
                             fab.setOnClickListener {
-                                viewModel.saveInterest(
-                                    searchQuery.toString(),
-                                    binding.settings.getFrequency(),
-                                    binding.settings.getLang(),
-                                    binding.settings.getCountry()
-                                )
                                 viewModel.isInterestUnique(searchQuery.toString())
                                 viewModel.isInterestUnique.observe(this@InterestsActivity) { isInterestUnique ->
                                     when {
                                         isInterestUnique -> {
-                                            finish()
+                                            viewModel.saveInterest(
+                                                searchQuery.toString(),
+                                                binding.settings.getFrequency(),
+                                                binding.settings.getLang(),
+                                                binding.settings.getCountry()
+                                            )
+                                            viewModel.isInterestSaved.observe(this@InterestsActivity) { isInterestSaved ->
+                                                if (!isInterestSaved) showSnackbar(R.string.something_wrong)
+                                                finish()
+                                            }
                                         }
                                         else -> {
-                                            val snackbar = Snackbar.make(
-                                                binding.root,
-                                                getString(R.string.already_saved),
-                                                Snackbar.LENGTH_LONG
-                                            )
-
-                                            snackbar.apply {
-                                                setBackgroundTint(
-                                                    ContextCompat.getColor(
-                                                        this@InterestsActivity,
-                                                        R.color.danger
-                                                    )
-                                                )
-                                                show()
-                                            }
+                                            showSnackbar(R.string.already_saved)
                                         }
                                     }
                                 }
@@ -156,4 +127,22 @@ class InterestsActivity : AppCompatActivity() {
         Intent(Intent.ACTION_VIEW, Uri.parse(selectedItem)).apply {
             startActivity(this)
         }
+
+    private fun showSnackbar(resId: Int) {
+        val snackbar = Snackbar.make(
+            binding.root,
+            getString(resId),
+            Snackbar.LENGTH_LONG
+        )
+
+        snackbar.apply {
+            setBackgroundTint(
+                ContextCompat.getColor(
+                    this@InterestsActivity,
+                    R.color.danger
+                )
+            )
+            show()
+        }
+    }
 }
