@@ -68,7 +68,7 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun editInterest(interest: InterestCloudObject) {
         cloudDBRepository.edit(interest)
-        isInterestSaved.postValue(true)
+        isInterestSaved.postValue(isInterestUnique(interest.name))
     }
 
     fun deleteInterest(interest: InterestCloudObject) {
