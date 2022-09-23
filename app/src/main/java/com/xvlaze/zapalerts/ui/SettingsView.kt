@@ -13,11 +13,13 @@ class SettingsView @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs) {
 
     private val isCollapsible: Boolean
-    private var isCustomizeMenuVisible = false
+    private var isCustomizeMenuVisible = true
 
     private lateinit var freqSpinner: Spinner
     private lateinit var countrySpinner: Spinner
     private lateinit var langSpinner: Spinner
+    private val dropdownMenu: LinearLayout
+    private val dropdownArrow: ImageView
 
     init {
         val view = LayoutInflater
@@ -27,20 +29,12 @@ class SettingsView @JvmOverloads constructor(
         isCollapsible = styledAttributes.getBoolean(R.styleable.SettingsView_isCollapsible, true)
         styledAttributes.recycle()
 
-        val dropdownArrow = view.findViewById<ImageView>(R.id.arrowIcon)
+        dropdownArrow = view.findViewById<ImageView>(R.id.arrowIcon)
         dropdownArrow.visibility = if (isCollapsible) View.VISIBLE else View.GONE
-
-        val dropdownMenu = findViewById<LinearLayout>(R.id.customize_dropdown)
+        dropdownMenu = findViewById<LinearLayout>(R.id.customize_dropdown)
 
         findViewById<TextView>(R.id.customize_option).setOnClickListener {
-            if (isCustomizeMenuVisible) {
-                dropdownMenu.visibility = View.GONE
-                dropdownArrow.setImageResource(R.drawable.ic_baseline_keyboard_arrow_down_24)
-            } else {
-                dropdownMenu.visibility = View.VISIBLE
-                dropdownArrow.setImageResource(R.drawable.ic_baseline_keyboard_arrow_up_24)
-            }
-            isCustomizeMenuVisible = !isCustomizeMenuVisible
+            toggle()
         }
         initializeSpinners()
     }
@@ -76,11 +70,9 @@ class SettingsView @JvmOverloads constructor(
     fun setFreqSelection(selection: Int) {
         freqSpinner.setSelection(selection)
     }
-
     fun setCountrySelection(selection: Int) {
         countrySpinner.setSelection(selection)
     }
-
     fun setLangSelection(selection: Int) {
         langSpinner.setSelection(selection)
     }
@@ -88,4 +80,15 @@ class SettingsView @JvmOverloads constructor(
     fun getFrequency(): Int = freqSpinner.selectedItemPosition
     fun getCountry(): Int = countrySpinner.selectedItemPosition
     fun getLang(): Int = langSpinner.selectedItemPosition
+
+    fun toggle() {
+        if (isCustomizeMenuVisible) {
+            dropdownMenu.visibility = View.GONE
+            dropdownArrow.setImageResource(R.drawable.ic_baseline_keyboard_arrow_down_24)
+        } else {
+            dropdownMenu.visibility = View.VISIBLE
+            dropdownArrow.setImageResource(R.drawable.ic_baseline_keyboard_arrow_up_24)
+        }
+        isCustomizeMenuVisible = !isCustomizeMenuVisible
+    }
 }
