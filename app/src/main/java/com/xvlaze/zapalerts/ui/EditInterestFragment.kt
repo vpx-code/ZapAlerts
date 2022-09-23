@@ -50,7 +50,6 @@ class EditInterestFragment : DialogFragment() {
                 viewModel.editInterest(
                     interest
                 )
-
                 viewModel.isInterestSaved.observe(requireActivity()) { isSaveSuccessful ->
                     if (isSaveSuccessful) {
                         Snackbar.make(
