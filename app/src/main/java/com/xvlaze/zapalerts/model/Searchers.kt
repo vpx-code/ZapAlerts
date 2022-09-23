@@ -43,7 +43,7 @@ object NewsSearcher : Searchable<OnNewsSearchPerformedCallback>() {
         commonSearchRequest.setPs(Constants.maxElements)
         commonSearchRequest.setPn(1)
         val searchKitInstance = SearchKitInstance.getInstance()
-        val token = OAuthTokenProvider.getOAuthTokenFromSharedPrefs(c)
+        val token = OAuthTokenProvider.getOAuthTokenFromSharedPrefs()
         SearchKitInstance.instance.setInstanceCredential(token)
         val newsSearchResponse = searchKitInstance.newsSearcher.search(commonSearchRequest)
         var results = arrayListOf<NewsItem>()
@@ -56,13 +56,14 @@ object NewsSearcher : Searchable<OnNewsSearchPerformedCallback>() {
                     distinctBy { it.clickUrl }
                     sortByDescending { it.publishTime }
                 }
-            }
-            else {
+            } else {
                 Log.d("ZAP_TAG", "Search response was empty.")
             }
-        }
-        else {
-            Log.d("ZAP_TAG", "Search response was null. Weird thing! Let's pretend nothing happened...")
+        } else {
+            Log.d(
+                "ZAP_TAG",
+                "Search response was null. Weird thing! Let's pretend nothing happened..."
+            )
         }
         callback.onNewsSearchResult(results)
     }

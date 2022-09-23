@@ -58,7 +58,6 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
                     cloudDBRepository.getAll(object : IOnGetAllSuccessCallback {
                         override fun onSuccess(res: MutableList<InterestCloudObject>) {
                             repository.saveLocalCopy(res)
-                            repository.updateSavedDate(frequency)
                             isInterestSaved.postValue(true)
                         }
                     })
@@ -69,7 +68,6 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun editInterest(interest: InterestCloudObject) {
         cloudDBRepository.edit(interest)
-        repository.updateSavedDate(interest.frequency.toInt())
         isInterestSaved.postValue(true)
     }
 

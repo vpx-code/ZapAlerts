@@ -24,6 +24,7 @@ class LoginActivity : AppCompatActivity() {
         if (AGConnectAuth.getInstance().currentUser != null) {
             User.unionId = AGConnectAuth.getInstance().currentUser.uid
             startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+            finish()
         } else {
             binding = ActivityLoginBinding.inflate(layoutInflater)
             setContentView(binding.root)
@@ -58,13 +59,13 @@ class LoginActivity : AppCompatActivity() {
             viewModel.signIn(data)
             viewModel.isSignInSuccessful.observe(this) {
                 if (it) {
-                    finish()
                     Intent(this, LoginActivity::class.java).apply {
                         startActivity(this)
                     }
+                    finish()
                 }
                 else {
-                    Toast.makeText(this@LoginActivity, "Something went wrong, please try again later.", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@LoginActivity, getString(R.string.something_wrong), Toast.LENGTH_LONG).show()
                 }
             }
         }

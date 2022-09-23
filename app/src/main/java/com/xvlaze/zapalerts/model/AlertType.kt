@@ -2,6 +2,8 @@ package com.xvlaze.zapalerts.model
 
 import android.content.Context
 import android.util.Log
+import com.xvlaze.zapalerts.BuildConfig
+import com.xvlaze.zapalerts.util.Constants
 import com.xvlaze.zapalerts.util.Extensions.isDateInThePast
 import com.xvlaze.zapalerts.util.Extensions.toTimeStamp
 import java.util.*
@@ -110,7 +112,7 @@ object Weekly : AlertType {
 
 object Realtime : AlertType {
     override val code = 2
-    override val interval: Long = 60000 * 5 // Ojo al cambiar esto. 5 minutos para realtime.
+    override val interval: Long = if (BuildConfig.DEBUG && Constants.DEBUG) 60000 else 60000 * 5 // Ojo al cambiar esto. 5 minutos para realtime.
     override fun getType(): Int = code
     private var firstRingTime: Long = 0
 
@@ -147,8 +149,9 @@ object Realtime : AlertType {
         val sharedPrefs = c.getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
         return sharedPrefs.getLong("nextRealtimeDate", 0)
     }
-
+    @Deprecated("Not using this anymore")
     fun getFirstRingTime(): Long = firstRingTime
+    @Deprecated("Not using this anymore")
     fun setFirstRingTime(time: Long) {
         firstRingTime = time
     }
