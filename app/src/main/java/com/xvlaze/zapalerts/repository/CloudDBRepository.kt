@@ -18,6 +18,6 @@ class CloudDBRepository {
         interestList
     )
     fun save(interest: InterestCloudObject, callback: IOnSaveInterestSuccessCallback) = cloudDBQueries.saveInterest(interest, callback)
-    fun edit(interest: InterestCloudObject) = cloudDBQueries.editInterest(interest)
+    fun edit(interest: InterestCloudObject, callback: IOnSaveInterestSuccessCallback) = cloudDBQueries.editInterest(interest, callback)
     fun delete(interest: InterestCloudObject) = cloudDBQueries.deleteInterest(interest)
 }

@@ -90,8 +90,14 @@ class CloudDBQueries(private val mCloudDBZone: CloudDBZone) : IDatabase {
         )
     }
 
-    override fun editInterest(interest: InterestCloudObject) {
+    override fun editInterest(interest: InterestCloudObject, callback: IOnSaveInterestSuccessCallback) {
         mCloudDBZone.executeUpsert(interest)
+            .addOnSuccessListener {
+                callback.onSuccess(true)
+            }
+            .addOnFailureListener {
+                callback.onSuccess(false)
+            }
     }
 
     override fun deleteInterest(interest: InterestCloudObject) {
