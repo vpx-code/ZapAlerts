@@ -15,6 +15,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = Repository(application.applicationContext)
     private val accountRepository = AccountRepository()
     val savedInterests = MutableLiveData<MutableList<InterestCloudObject>>()
+    val isFirstTime = MutableLiveData<Boolean>()
 
     fun getSavedInterests() {
         val list = repository.getSavedInterests()
@@ -39,4 +40,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun signOut() = accountRepository.signOut()
+
+    fun isFirstTime() = isFirstTime.postValue(accountRepository.isFirstTime())
+    fun notFirstTimeAnymore() = accountRepository.notFirstTimeAnymore()
 }

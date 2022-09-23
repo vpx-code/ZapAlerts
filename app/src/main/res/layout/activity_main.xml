@@ -28,9 +28,10 @@
             app:title="@string/your_interests">
 
             <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:contentDescription="@string/app_name"
+                android:fitsSystemWindows="true"
                 android:scaleType="centerCrop"
                 android:src="@drawable/city_night"
                 app:layout_collapseMode="parallax" />
@@ -41,18 +42,8 @@
                 android:layout_height="?actionBarSize"
                 android:contentInsetStart="8dp"
                 android:contentInsetStartWithNavigation="0dp"
-                android:popupTheme="@style/ThemeOverlay.MaterialComponents.Light"
+                android:popupTheme="@style/Theme.AppCompat.DayNight"
                 app:layout_collapseMode="pin">
-                <Button
-                    android:id="@+id/signOut"
-                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:gravity="center_vertical"
-                    android:text="@string/log_out"
-                    android:textColor="@color/hwid_auth_button_color_red"
-                    android:textStyle="bold" />
             </Toolbar>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
@@ -70,9 +61,8 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="6dp"
             android:background="@drawable/rounded"
-            android:backgroundTint="#A83A3A3A"
+            android:backgroundTint="@color/search_bar"
             android:drawableStart="@drawable/ic_search"
-            app:defaultQueryHint="Penis Pump"
             app:queryHint="@string/type_here_search"
             app:iconifiedByDefault="false"
             android:paddingHorizontal="4dp"
