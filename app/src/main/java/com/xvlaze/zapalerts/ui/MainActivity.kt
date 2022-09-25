@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.Html
 import android.view.Menu
+import android.view.View
 import android.widget.SearchView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -87,6 +88,12 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
         recyclerView.adapter = adapter
 
         viewModel.savedInterests.observe(this) {
+            binding.emptyView.visibility = if (it.isEmpty()) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
+
             val newIds = it.map { el2 ->
                 el2.id
             }
