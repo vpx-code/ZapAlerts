@@ -43,8 +43,7 @@
                 android:contentInsetStart="8dp"
                 android:contentInsetStartWithNavigation="0dp"
                 android:popupTheme="@style/Theme.AppCompat.DayNight"
-                app:layout_collapseMode="pin">
-            </Toolbar>
+                app:layout_collapseMode="pin" />
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -63,10 +62,10 @@
             android:background="@drawable/rounded"
             android:backgroundTint="@color/search_bar"
             android:drawableStart="@drawable/ic_search"
-            app:queryHint="@string/type_here_search"
-            app:iconifiedByDefault="false"
             android:paddingHorizontal="4dp"
-            android:paddingVertical="8dp" />
+            android:paddingVertical="8dp"
+            app:iconifiedByDefault="false"
+            app:queryHint="@string/type_here_search" />
 
         <View
             android:id="@+id/divider2"
@@ -76,6 +75,29 @@
             android:layout_marginBottom="8dp"
             android:background="?android:attr/listDivider"
             android:paddingHorizontal="8dp" />
+
+        <LinearLayout
+            android:id="@+id/empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:orientation="vertical">
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/animationView"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                app:lottie_url="https://assets7.lottiefiles.com/packages/lf20_heejrebm.json"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"/>
+            <TextView
+                android:layout_width="190dp"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:layout_gravity="center_horizontal"
+                android:textSize="20sp"
+                android:fontFamily="@font/lato_light"
+                android:text="@string/empty_message"/>
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler"
