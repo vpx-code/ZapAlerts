@@ -79,4 +79,5 @@
     <string name="settings">Ajustes</string>
     <string name="later">Más tarde</string>
     <string name="come_back">Siempre puedes volver a este menú pulsando en el menú de arriba a la derecha.</string>
+    <string name="empty_message">Aún no hay intereses guardados. ¡Toca el botón de la campana y añade unos cuantos!</string>
 </resources>
