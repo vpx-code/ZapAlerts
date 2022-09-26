@@ -22,7 +22,7 @@
             android:fontFamily="@font/lato_light"
             app:collapsedTitleGravity="left"
             app:collapsedTitleTextAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
-            app:contentScrim="#111111"
+            app:contentScrim="@color/scrim"
             app:expandedTitleGravity="center"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
             app:title="@string/your_interests">
@@ -33,7 +33,7 @@
                 android:contentDescription="@string/app_name"
                 android:fitsSystemWindows="true"
                 android:scaleType="centerCrop"
-                android:src="@drawable/city_night"
+                android:src="@drawable/image_1"
                 app:layout_collapseMode="parallax" />
 
             <Toolbar
