@@ -7,12 +7,12 @@
         <item name="colorPrimaryVariant">@color/huawei_white2</item>
         <item name="colorOnPrimary">@color/black</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/huawei_blue</item>
+        <item name="colorSecondary">@color/more_blue</item>
         <item name="colorSecondaryVariant">#004D9E</item>
-        <item name="colorOnSecondary">@color/huawei_white</item>
+        <item name="colorOnSecondary">@color/huawei_white3</item>
 
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" >#171717</item>
+        <item name="android:statusBarColor" >#002A57</item>
     </style>
 
     <style name="CustomCardview" parent="CardView">
