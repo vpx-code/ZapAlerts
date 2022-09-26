@@ -12,7 +12,7 @@
         <item name="colorOnSecondary">@color/huawei_white3</item>
 
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" >#002A57</item>
+        <item name="android:statusBarColor" >#191815</item>
     </style>
 
     <style name="CustomCardview" parent="CardView">
