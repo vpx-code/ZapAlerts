@@ -60,6 +60,9 @@ object NewsSearcher : Searchable<OnNewsSearchPerformedCallback>() {
                 Log.d("ZAP_TAG", "Search response was empty.")
             }
         } else {
+            /*
+            FIXME: Vigilar con esto. Por qué a veces se rompe la app? Como lo podemos reproducir? Qué pasa con las summary?
+             */
             Log.d(
                 "ZAP_TAG",
                 "Search response was null. Weird thing! Let's pretend nothing happened..."
