@@ -3,10 +3,12 @@ package com.xvlaze.zapalerts.ui
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.xvlaze.zapalerts.adapters.AlertsAdapter
 import com.xvlaze.zapalerts.databinding.ActivityInterestDetailBinding
+import com.xvlaze.zapalerts.util.Extensions.toTimeStamp
 
 class InterestDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityInterestDetailBinding
@@ -37,8 +39,10 @@ class InterestDetailActivity : AppCompatActivity() {
                 viewModel.getSavedDate(foundInterest.frequency.toInt(), fromNotification)
                 viewModel.savedDate.observe(this) { savedDate ->
                     adapter = if (savedDate == null) {
+                        Log.d("ZAP_TAG", "About to load Adapter. Saved Date was null.")
                         AlertsAdapter(response)
                     } else {
+                        Log.d("ZAP_TAG", "About to load Adapter. Saved Date is ${savedDate!!.toTimeStamp()}")
                         AlertsAdapter(response, savedDate)
                     }
 

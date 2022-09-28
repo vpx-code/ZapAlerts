@@ -21,11 +21,11 @@ object MyAlarmManager {
     fun scheduleAlarm(lastSavedDate: AlertType, c: Context) {
         Log.d(
             "ZAP_TAG",
-            "Scheduling repeating alarm starting at ${lastSavedDate.getSavedDate(c).toTimeStamp()}"
+            "Scheduling repeating alarm starting at ${lastSavedDate.getSavedDate().toTimeStamp()}"
         )
         getInstance(c).setRepeating(
             RTC_WAKEUP,
-            lastSavedDate.getSavedDate(c),
+            lastSavedDate.getSavedDate(),
             lastSavedDate.interval,
             PendingIntent.getBroadcast(
                 MyApplication.appContext,
@@ -73,7 +73,7 @@ object MyAlarmManager {
         )
     }
 
-    fun getInstance(c: Context): AlarmManager {
+    private fun getInstance(c: Context): AlarmManager {
         if (alarmManager == null) {
             alarmManager = c.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         }

@@ -75,7 +75,7 @@
     <string name="logout_sure">¿Quieres cerrar la sesión?</string>
     <string name="yes">Sí</string>
     <string name="no">No</string>
-    <string name="settings_prompt">Para estar siempre actualizado, activa el Inicio de aplicaciones y desactiva el optimizador de batería para esta app.\n\nUna vez toques el botón de Ajustes, escribe en la barra de búsqueda \"Inicio de Aplicaciones\" y asegúrate de que Zap Alerts NO ESTÉ SELECCIONADO (Gestionar automáticamente).\n\nVuelve a la pantalla inicial de Ajustes y busca "Optimización de batería", selecciona \"Todas las aplicaciones\" en el desplegable, busca Zap Alerts y asegúrate que NO PERMITIR esté marcado.</string>
+    <string name="settings_prompt">Para estar siempre actualizado, activa el Inicio de aplicaciones y desactiva el optimizador de batería para esta app.\n\nUna vez toques el botón de Ajustes, escribe en la barra de búsqueda \"Inicio de Aplicaciones\" y asegúrate de que Cyan NO ESTÉ SELECCIONADO (Gestionar automáticamente).\n\nVuelve a la pantalla inicial de Ajustes y busca "Optimización de batería", selecciona \"Todas las aplicaciones\" en el desplegable, busca Zap Alerts y asegúrate que NO PERMITIR esté marcado.</string>
     <string name="settings">Ajustes</string>
     <string name="later">Más tarde</string>
     <string name="come_back">Siempre puedes volver a este menú pulsando en el menú de arriba a la derecha.</string>

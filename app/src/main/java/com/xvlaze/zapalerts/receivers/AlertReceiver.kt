@@ -18,12 +18,10 @@ import com.xvlaze.zapalerts.BuildConfig
 import com.xvlaze.zapalerts.model.*
 import com.xvlaze.zapalerts.model.MyApplication.Companion.appContext
 import com.xvlaze.zapalerts.repository.CloudDBRepository
-import com.xvlaze.zapalerts.repository.Repository
 import com.xvlaze.zapalerts.ui.InterestDetailActivity
 import com.xvlaze.zapalerts.util.Constants
 import com.xvlaze.zapalerts.util.Constants.InterestFrequency.*
-import java.text.SimpleDateFormat
-import java.util.*
+import com.xvlaze.zapalerts.util.Extensions.toTimeStamp
 import kotlin.random.Random.Default.nextInt
 
 class AlertReceiver : BroadcastReceiver() {
@@ -49,6 +47,13 @@ class AlertReceiver : BroadcastReceiver() {
 
     override fun onReceive(c: Context, intent: Intent) {
         Log.d("ZAP_TAG", "Alarm received!")
+
+        val lastDailyDate = Daily.getPreviouslySavedDate()
+        val lastWeeklyDate = Weekly.getPreviouslySavedDate()
+        val lastRealtimeDate = Realtime.getPreviouslySavedDate()
+
+        val savedDateCandidates = mutableListOf<Long>()
+
 
         // SOLO DEBUG
         if (BuildConfig.DEBUG && Constants.DEBUG) {
@@ -104,24 +109,24 @@ class AlertReceiver : BroadcastReceiver() {
                                     if (result.isNotEmpty()) {
                                         val lastUpdate = when (interest.frequency.toInt()) {
                                             DAILY.id -> {
-                                                Daily.getPreviouslySavedDate(c)
+                                                lastDailyDate
                                             }
                                             WEEKLY.id -> {
-                                                Weekly.getPreviouslySavedDate(c)
+                                                lastWeeklyDate
                                             }
                                             REALTIME.id -> {
-                                                Realtime.getPreviouslySavedDate(c)
+                                                lastRealtimeDate
                                             }
                                             else -> {
-                                                Realtime.getPreviouslySavedDate(c)
+                                                lastRealtimeDate
                                             }
                                         }
 
                                         Log.d(
                                             "ZAP_TAG",
-                                            "Comparing news publishing date vs. saved date, must be >=): ${
-                                                convertLongToTime(result.first().publishTime.toLong() * 1000)
-                                            } vs. ${convertLongToTime(lastUpdate)}"
+                                            "Comparing news publishing date vs. last saved date, must be >=): ${
+                                                (result.first().publishTime.toLong() * 1000).toTimeStamp()
+                                            } >=? ${lastUpdate.toTimeStamp()}"
                                         )
                                         var recent = result.filter {
                                             it.publishTime != ""
@@ -132,6 +137,9 @@ class AlertReceiver : BroadcastReceiver() {
 
                                         if (recent.isNotEmpty()) {
                                             Log.d("ZAP_TAG", "Found ${recent.size} recent news.")
+
+                                            savedDateCandidates.add(recent.map { it.publishTime }.max().toLong() * 1000)
+
                                             createAlertNotification(
                                                 c,
                                                 interest.name,
@@ -153,7 +161,11 @@ class AlertReceiver : BroadcastReceiver() {
                         notifySummaryNotification(c)
                         notificationsList.clear()
                     }
-                    Repository(c).updateSavedDate(Realtime.getType())
+
+                    if (savedDateCandidates.isNotEmpty()) {
+                        Realtime.setSavedDate(savedDateCandidates.max())
+                        savedDateCandidates.clear()
+                    }
                 }
             })
         }
@@ -220,11 +232,5 @@ class AlertReceiver : BroadcastReceiver() {
                 .build()
 
         notificationsList.add(alertNotification)
-    }
-
-    private fun convertLongToTime(time: Long): String {
-        val date = Date(time)
-        val format = SimpleDateFormat("dd.MM.yyyy HH:mm:ss")
-        return format.format(date)
     }
 }
