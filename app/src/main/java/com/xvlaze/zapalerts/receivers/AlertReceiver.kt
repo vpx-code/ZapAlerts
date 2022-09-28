@@ -1,6 +1,5 @@
 package com.xvlaze.zapalerts.receivers
 
-import android.R
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -15,6 +14,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.GROUP_ALERT_SUMMARY
 import com.huawei.hms.searchkit.bean.NewsItem
 import com.xvlaze.zapalerts.BuildConfig
+import com.xvlaze.zapalerts.R
 import com.xvlaze.zapalerts.model.*
 import com.xvlaze.zapalerts.model.MyApplication.Companion.appContext
 import com.xvlaze.zapalerts.repository.CloudDBRepository
@@ -138,7 +138,8 @@ class AlertReceiver : BroadcastReceiver() {
                                         if (recent.isNotEmpty()) {
                                             Log.d("ZAP_TAG", "Found ${recent.size} recent news.")
 
-                                            savedDateCandidates.add(recent.map { it.publishTime }.max().toLong() * 1000)
+                                            savedDateCandidates.add(recent.map { it.publishTime }
+                                                .max().toLong() * 1000)
 
                                             createAlertNotification(
                                                 c,
@@ -177,7 +178,7 @@ class AlertReceiver : BroadcastReceiver() {
         val summaryNotification = NotificationCompat.Builder(context, channelID)
             .setContentTitle("New Updates on your Interests!")
             .setContentText("Touch and browse your interest list.")
-            .setSmallIcon(R.mipmap.sym_def_app_icon)
+            .setSmallIcon(R.mipmap.ic_launcher_round)
             .setGroup(groupKey)
             .setGroupSummary(true)
             .build()
@@ -221,13 +222,17 @@ class AlertReceiver : BroadcastReceiver() {
 
         val alertNotification: Notification =
             NotificationCompat.Builder(context, channelID)
-                .setSmallIcon(R.mipmap.sym_def_app_icon)
+                .setSmallIcon(R.mipmap.ic_launcher_round)
                 .setContentTitle(message)
                 .setContentText(notificationDescription)
                 .setAutoCancel(true)
                 .setGroup(groupKey)
                 .setGroupAlertBehavior(GROUP_ALERT_SUMMARY)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .setStyle(
+                    NotificationCompat.BigTextStyle()
+                        .bigText(message)
+                )
                 .setContentIntent(pendingIntent)
                 .build()
 
