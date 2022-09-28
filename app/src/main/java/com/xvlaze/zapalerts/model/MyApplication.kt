@@ -26,15 +26,14 @@ class MyApplication : Application() {
 
         Log.d("ZAP_TAG", "Is first time.")
 
-        Daily.updateSavedDate(this)
+        Daily.updateSavedDate()
         MyAlarmManager.scheduleAlarm(Daily, this)
 
-        Weekly.updateSavedDate(this)
+        Weekly.updateSavedDate()
         MyAlarmManager.scheduleAlarm(Weekly, this)
 
-        Realtime.updateSavedDate(this)
+        Realtime.updateSavedDate()
         MyAlarmManager.scheduleAlarm(Realtime, this)
-
     }
 
     companion object {

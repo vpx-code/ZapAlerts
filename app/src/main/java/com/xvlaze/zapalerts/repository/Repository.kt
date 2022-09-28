@@ -27,13 +27,13 @@ class Repository(private val c: Context) {
     ) {
         when (frequency) {
             DAILY.id -> {
-                Daily.updateSavedDate(c)
+                Daily.updateSavedDate()
             }
             WEEKLY.id -> {
-                Weekly.updateSavedDate(c)
+                Weekly.updateSavedDate()
             }
             REALTIME.id -> {
-                Realtime.updateSavedDate(c)
+                Realtime.updateSavedDate()
             }
         }
     }
@@ -47,13 +47,13 @@ class Repository(private val c: Context) {
     ): Long? {
         return when (frequency) {
             DAILY.id -> {
-                Daily.getSavedDate(c)
+                Daily.getSavedDate()
             }
             WEEKLY.id -> {
-                Weekly.getSavedDate(c)
+                Weekly.getSavedDate()
             }
             REALTIME.id -> {
-                Realtime.getSavedDate(c)
+                Realtime.getSavedDate()
             }
             else -> {
                 null
