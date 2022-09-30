@@ -107,7 +107,7 @@ class CloudDBQueries(private val mCloudDBZone: CloudDBZone) : IDatabase {
     override fun getInterestByName(name: String, callback: IOnGetByNameSuccessCallback) {
         Log.d(
             "ZAP_TAG",
-            "About to query. CloudDBZone is ${mCloudDBZone.cloudDBZoneConfig.cloudDBZoneName} and interest name is $name"
+            "About to query. CloudDBZone is ${mCloudDBZone.cloudDBZoneConfig.cloudDBZoneName} and interest name is $name. UID is ${SharedPrefsProvider.getUserUid()}"
         )
         val queryTask2 = mCloudDBZone.executeQuery(
             CloudDBZoneQuery.where(InterestCloudObject::class.java)
@@ -131,6 +131,11 @@ class CloudDBQueries(private val mCloudDBZone: CloudDBZone) : IDatabase {
                 } catch (exception: Exception) {
                     Log.w("BaseFoodRepository", "getAllbaseFoods error: ${exception.message}")
                 }
+
+                if (baseFoodListLocal.isEmpty()) {
+                    Log.d("ZAP_TAG", "Query was empty. Could not get interest. User UID: ${SharedPrefsProvider.getUserUid()}")
+                }
+
                 Log.d("ZAP_TAG", "Object to send to callback is ${baseFoodListLocal.first()}")
                 snapshot.release()
                 callback.onSuccess(baseFoodListLocal.first())
