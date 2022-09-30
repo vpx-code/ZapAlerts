@@ -30,6 +30,7 @@ object AccountModel {
         AGConnectAuth.getInstance().signOut()
         User.reset()
         SharedPrefsProvider.deleteUserUid()
+        InterestsManager().deleteFile()
     }
 }
 

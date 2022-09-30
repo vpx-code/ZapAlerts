@@ -1,7 +1,6 @@
 package com.xvlaze.zapalerts.ui
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -28,17 +27,6 @@ class LoginActivity : AppCompatActivity() {
         } else {
             binding = ActivityLoginBinding.inflate(layoutInflater)
             setContentView(binding.root)
-            when (resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
-                Configuration.UI_MODE_NIGHT_YES -> {
-                    binding.bg.setImageResource(R.drawable.city_night)
-                }
-                Configuration.UI_MODE_NIGHT_NO -> {
-                    binding.bg.setImageResource(R.drawable.city_day)
-                }
-                Configuration.UI_MODE_NIGHT_UNDEFINED -> {
-                    binding.bg.setImageResource(R.drawable.city_day)
-                }
-            }
             binding.signIn.setOnClickListener {
                 val authParams =
                     HuaweiIdAuthParamsHelper(HuaweiIdAuthParams.DEFAULT_AUTH_REQUEST_PARAM).setAccessToken()
