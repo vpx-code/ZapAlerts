@@ -2,7 +2,6 @@ package com.xvlaze.zapalerts.model
 
 import android.app.Application
 import android.content.Context
-import android.util.Log
 import com.huawei.hms.searchkit.SearchKitInstance
 import com.newrelic.agent.android.NewRelic
 import com.xvlaze.zapalerts.util.Constants.clientId
@@ -24,15 +23,14 @@ class MyApplication : Application() {
         cloudDB.createObjectType()
         cloudDB.openCloudDbZone()
 
-        Log.d("ZAP_TAG", "Is first time.")
+        if (SharedPrefsProvider.isFirstTime()) {
+            Daily.updateSavedDate()
+            Weekly.updateSavedDate()
+            Realtime.updateSavedDate()
+        }
 
-        Daily.updateSavedDate()
         MyAlarmManager.scheduleAlarm(Daily, this)
-
-        Weekly.updateSavedDate()
         MyAlarmManager.scheduleAlarm(Weekly, this)
-
-        Realtime.updateSavedDate()
         MyAlarmManager.scheduleAlarm(Realtime, this)
     }
 

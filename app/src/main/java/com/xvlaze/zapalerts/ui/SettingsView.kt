@@ -29,9 +29,9 @@ class SettingsView @JvmOverloads constructor(
         isCollapsible = styledAttributes.getBoolean(R.styleable.SettingsView_isCollapsible, true)
         styledAttributes.recycle()
 
-        dropdownArrow = view.findViewById<ImageView>(R.id.arrowIcon)
+        dropdownArrow = view.findViewById(R.id.arrowIcon)
         dropdownArrow.visibility = if (isCollapsible) View.VISIBLE else View.GONE
-        dropdownMenu = findViewById<LinearLayout>(R.id.customize_dropdown)
+        dropdownMenu = findViewById(R.id.customize_dropdown)
 
         findViewById<TextView>(R.id.customize_option).setOnClickListener {
             toggle()
@@ -48,7 +48,7 @@ class SettingsView @JvmOverloads constructor(
             ArrayAdapter.createFromResource(context, R.array.freqs, (R.layout.spinner_item))
         freqAdapter.setDropDownViewResource(R.layout.spinner_item)
         freqSpinner.adapter = freqAdapter
-        freqSpinner.setSelection(0)
+        freqSpinner.setSelection(2)
 
         val countryAdapter =
             ArrayAdapter.createFromResource(context, R.array.countries, (R.layout.spinner_item))

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="freqs">
-        <item>Cada día, como máximo</item>
-        <item>Cada semana, como máximo</item>
-        <item>Tiempo real (BETA)</item>
+        <item>Cada día</item>
+        <item>Cada semana</item>
+        <item>Tiempo real</item>
     </string-array>
     <string-array name="types">
         <item>Webs</item>
