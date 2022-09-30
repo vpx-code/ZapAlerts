@@ -176,8 +176,8 @@ class AlertReceiver : BroadcastReceiver() {
     private fun notifySummaryNotification(context: Context) {
         Log.d("ZAP_TAG", "Notifying summary...")
         val summaryNotification = NotificationCompat.Builder(context, channelID)
-            .setContentTitle("New Updates on your Interests!")
-            .setContentText("Touch and browse your interest list.")
+            .setContentTitle(context.getString(R.string.summary_title))
+            .setContentText(context.getString(R.string.summary_subtitle))
             .setSmallIcon(R.mipmap.ic_launcher_round)
             .setGroup(groupKey)
             .setGroupSummary(true)
@@ -215,15 +215,15 @@ class AlertReceiver : BroadcastReceiver() {
 
         val updatesStringNumber = updates - 1
         val notificationDescription = if (updatesStringNumber == 0) {
-            "Touch and browse your interest list."
+            context.getString(R.string.summary_subtitle)
         } else {
-            "And $updatesStringNumber more updates."
+            context.getString(R.string.more_updates_1) + updatesStringNumber + context.getString(R.string.more_updates_2)
         }
 
         val alertNotification: Notification =
             NotificationCompat.Builder(context, channelID)
                 .setSmallIcon(R.mipmap.ic_launcher_round)
-                .setContentTitle(message)
+                .setContentTitle(context.getString(R.string.new_update_on) + interestName + "!")
                 .setContentText(notificationDescription)
                 .setAutoCancel(true)
                 .setGroup(groupKey)
@@ -231,7 +231,7 @@ class AlertReceiver : BroadcastReceiver() {
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setStyle(
                     NotificationCompat.BigTextStyle()
-                        .bigText(message)
+                        .bigText("$message.")
                 )
                 .setContentIntent(pendingIntent)
                 .build()
