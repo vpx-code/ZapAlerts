@@ -23,7 +23,10 @@ class InterestDetailActivity : AppCompatActivity() {
         var adapter = AlertsAdapter(arrayListOf())
         recyclerView.adapter = adapter
 
-        val name = intent.getStringExtra("name")
+        var name = intent.getStringExtra("fromNotificationName")
+        if (name.isNullOrEmpty()) {
+            name = intent.getStringExtra ("name")
+        }
         binding.collapsingToolbar.title = name
 
         viewModel.searchInterest(name!!)
@@ -39,10 +42,16 @@ class InterestDetailActivity : AppCompatActivity() {
                 viewModel.getSavedDate(foundInterest.frequency.toInt(), fromNotification)
                 viewModel.savedDate.observe(this) { savedDate ->
                     adapter = if (savedDate == null) {
-                        Log.d("ZAP_TAG", "About to load Adapter. Saved Date was null.")
+                        Log.d(
+                            "ZAP_TAG",
+                            "About to load Adapter. Saved Date was null and that's not a problem (we're just not coming from a notification)."
+                        )
                         AlertsAdapter(response)
                     } else {
-                        Log.d("ZAP_TAG", "About to load Adapter. Saved Date is ${savedDate!!.toTimeStamp()}")
+                        Log.d(
+                            "ZAP_TAG",
+                            "About to load Adapter. Saved Date is ${savedDate.toTimeStamp()}"
+                        )
                         AlertsAdapter(response, savedDate)
                     }
 

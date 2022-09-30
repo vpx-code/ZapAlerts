@@ -4,11 +4,12 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
-import android.os.Build
+import android.os.Bundle
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.GROUP_ALERT_SUMMARY
@@ -61,22 +62,19 @@ class AlertReceiver : BroadcastReceiver() {
                 c,
                 "Apple",
                 "This is a test notification about Apple",
-                99,
-                1
+                99
             )
             createAlertNotification(
                 c,
                 "Tesla",
                 "This is a test notification about Tesla",
-                99,
-                2
+                99
             )
             createAlertNotification(
                 c,
                 "Amazon",
                 "This is a test notification about Amazon",
-                99,
-                3
+                99
             )
 
             var i = 1
@@ -84,7 +82,7 @@ class AlertReceiver : BroadcastReceiver() {
                 notificationManager.notify(i, not)
                 i++
             }
-            notifySummaryNotification(c)
+            //notifySummaryNotification(c)
         } else {
             val cloudDBRepository = CloudDBRepository()
             cloudDBRepository.getAll(object : IOnGetAllSuccessCallback {
@@ -145,8 +143,7 @@ class AlertReceiver : BroadcastReceiver() {
                                                 c,
                                                 interest.name,
                                                 recent.random().title,
-                                                recent.size,
-                                                nextInt()
+                                                recent.size
                                             )
                                         }
                                     }
@@ -159,7 +156,7 @@ class AlertReceiver : BroadcastReceiver() {
                         notificationsList.forEach { not ->
                             notificationManager.notify(nextInt(), not)
                         }
-                        notifySummaryNotification(c)
+                        // notifySummaryNotification(c)
                         notificationsList.clear()
                     }
 
@@ -173,6 +170,7 @@ class AlertReceiver : BroadcastReceiver() {
     }
 
 
+    // TODO: Lo vamos a dejar porque no entiendo lo de que de repente se muestre esta notificación sola y no todos los intereses se actualizan a la vez.
     private fun notifySummaryNotification(context: Context) {
         Log.d("ZAP_TAG", "Notifying summary...")
         val summaryNotification = NotificationCompat.Builder(context, channelID)
@@ -189,35 +187,31 @@ class AlertReceiver : BroadcastReceiver() {
     private fun createAlertNotification(
         context: Context,
         interestName: String,
-        message: String?,
-        updates: Int,
-        reqCode: Int
+        message: String,
+        updates: Int
     ) {
         val intent = Intent(
             context,
             InterestDetailActivity::class.java
         )
-        intent.putExtra("name", interestName)
-        intent.putExtra("fromNotification", true)
+
+        val b = Bundle()
+        b.putString("fromNotificationName", interestName)
+        b.putBoolean("fromNotification", true)
+        intent.putExtras(b)
 
         val pendingIntent =
             PendingIntent.getActivity(
                 context,
-                reqCode,
+                nextInt(),
                 intent,
-                when {
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-                    }
-                    else -> PendingIntent.FLAG_IMMUTABLE
-                }
+                FLAG_UPDATE_CURRENT
             )
-
         val updatesStringNumber = updates - 1
         val notificationDescription = if (updatesStringNumber == 0) {
             context.getString(R.string.summary_subtitle)
         } else {
-            context.getString(R.string.more_updates_1) + updatesStringNumber + context.getString(R.string.more_updates_2)
+            context.getString(R.string.more_updates_1) + " " + updatesStringNumber + context.getString(R.string.more_updates_2)
         }
 
         val alertNotification: Notification =
@@ -231,7 +225,7 @@ class AlertReceiver : BroadcastReceiver() {
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setStyle(
                     NotificationCompat.BigTextStyle()
-                        .bigText("$message.")
+                        .bigText("${message.replace("&#39;", "'")}.")
                 )
                 .setContentIntent(pendingIntent)
                 .build()
