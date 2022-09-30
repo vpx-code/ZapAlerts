@@ -4,9 +4,9 @@
     <string name="log_out">Sign out</string>
     <string name="add_alert">Add Alert</string>
     <string-array name="freqs">
-        <item>Everyday, at most</item>
-        <item>Every week, at most</item>
-        <item>Realtime (BETA)</item>
+        <item>Everyday</item>
+        <item>Every week</item>
+        <item>Realtime</item>
     </string-array>
     <string-array name="types">
         <item>Webpage</item>

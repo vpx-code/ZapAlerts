@@ -8,7 +8,6 @@ import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.media.RingtoneManager
 import android.os.Bundle
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -47,14 +46,25 @@ class AlertReceiver : BroadcastReceiver() {
     }
 
     override fun onReceive(c: Context, intent: Intent) {
-        Log.d("ZAP_TAG", "Alarm received!")
+        val alarmFrequency = intent.getIntExtra("alarmFrequency", -1)
+        Log.d("ZAP_TAG", "Alarm received! Type = $alarmFrequency")
 
-        val lastDailyDate = Daily.getPreviouslySavedDate()
-        val lastWeeklyDate = Weekly.getPreviouslySavedDate()
-        val lastRealtimeDate = Realtime.getPreviouslySavedDate()
+        val lastUpdate = when (alarmFrequency) {
+            DAILY.id -> {
+                Daily.getPreviouslySavedDate()
+            }
+            WEEKLY.id -> {
+                Weekly.getPreviouslySavedDate()
+            }
+            REALTIME.id -> {
+                Realtime.getPreviouslySavedDate()
+            }
+            else -> {
+                Realtime.getPreviouslySavedDate()
+            }
+        }
 
         val savedDateCandidates = mutableListOf<Long>()
-
 
         // SOLO DEBUG
         if (BuildConfig.DEBUG && Constants.DEBUG) {
@@ -94,8 +104,9 @@ class AlertReceiver : BroadcastReceiver() {
                             ?: mutableListOf() // If this is null, we are in big trouble.
                     }
 
-                    Log.d("ZAP_TAG", "Number of interests to process: ${interestList.size}")
-                    for (interest in interestList) {
+                    Log.d("ZAP_TAG", "Number of interests to process: ${interestList.filter { it.frequency.toInt() == alarmFrequency}}")
+
+                    for (interest in interestList.filter { it.frequency.toInt() == alarmFrequency}) {
                         Log.d("ZAP_TAG", "Processing interest ${interest.name}")
                         NewsSearcher.search(
                             interest.name,
@@ -105,21 +116,6 @@ class AlertReceiver : BroadcastReceiver() {
                             object : OnNewsSearchPerformedCallback {
                                 override fun onNewsSearchResult(result: ArrayList<NewsItem>) {
                                     if (result.isNotEmpty()) {
-                                        val lastUpdate = when (interest.frequency.toInt()) {
-                                            DAILY.id -> {
-                                                lastDailyDate
-                                            }
-                                            WEEKLY.id -> {
-                                                lastWeeklyDate
-                                            }
-                                            REALTIME.id -> {
-                                                lastRealtimeDate
-                                            }
-                                            else -> {
-                                                lastRealtimeDate
-                                            }
-                                        }
-
                                         Log.d(
                                             "ZAP_TAG",
                                             "Comparing news publishing date vs. last saved date, must be >=): ${
@@ -161,14 +157,23 @@ class AlertReceiver : BroadcastReceiver() {
                     }
 
                     if (savedDateCandidates.isNotEmpty()) {
-                        Realtime.setSavedDate(savedDateCandidates.max())
+                        when (alarmFrequency) {
+                            DAILY.id -> {
+                                Daily.updateSavedDate(savedDateCandidates.max())
+                            }
+                            WEEKLY.id -> {
+                                Weekly.updateSavedDate(savedDateCandidates.max())
+                            }
+                            REALTIME.id -> {
+                                Realtime.updateSavedDate(savedDateCandidates.max())
+                            }
+                        }
                         savedDateCandidates.clear()
                     }
                 }
             })
         }
     }
-
 
     // TODO: Lo vamos a dejar porque no entiendo lo de que de repente se muestre esta notificación sola y no todos los intereses se actualizan a la vez.
     private fun notifySummaryNotification(context: Context) {
@@ -222,7 +227,7 @@ class AlertReceiver : BroadcastReceiver() {
                 .setAutoCancel(true)
                 .setGroup(groupKey)
                 .setGroupAlertBehavior(GROUP_ALERT_SUMMARY)
-                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .setDefaults(Notification.DEFAULT_SOUND)
                 .setStyle(
                     NotificationCompat.BigTextStyle()
                         .bigText("${message.replace("&#39;", "'")}.")

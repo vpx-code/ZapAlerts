@@ -16,7 +16,7 @@ interface AlertType {
     fun calculateNextDate(): Long
     fun getPreviouslySavedDate(): Long
     fun updateSavedDate()
-    fun setSavedDate(date: Long)
+    fun updateSavedDate(date: Long)
     fun getSavedDate(): Long
     fun hasDatePassed(): Boolean {
         val now = System.currentTimeMillis()
@@ -64,7 +64,7 @@ object Daily : AlertType {
         editor.apply()
     }
 
-    override fun setSavedDate(date: Long) {
+    override fun updateSavedDate(date: Long) {
         Log.d("ZAP_TAG", "Modifying Daily saved date to ${date.toTimeStamp()}")
         val sharedPrefs = appContext.getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
         val editor = sharedPrefs.edit()
@@ -114,7 +114,7 @@ object Weekly : AlertType {
         editor.apply()
     }
 
-    override fun setSavedDate(date: Long) {
+    override fun updateSavedDate(date: Long) {
         Log.d("ZAP_TAG", "Modifying Weekly saved date to ${date.toTimeStamp()}")
         val sharedPrefs = appContext.getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
         val editor = sharedPrefs.edit()
@@ -161,7 +161,7 @@ object Realtime : AlertType {
         editor.apply()
     }
 
-    override fun setSavedDate(date: Long) {
+    override fun updateSavedDate(date: Long) {
         Log.d("ZAP_TAG", "Modifying Realtime saved date to ${date.toTimeStamp()}")
         val sharedPrefs = appContext.getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
         val editor = sharedPrefs.edit()
