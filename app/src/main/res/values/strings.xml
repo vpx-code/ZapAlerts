@@ -80,4 +80,9 @@
     <string name="later">Later</string>
     <string name="come_back">You can always come back to this menu by pressing the 3-dots icon.</string>
     <string name="empty_message">No saved interests yet. Touch the bell button and add some!</string>
+    <string name="summary_title">New updates on your Interests!</string>
+    <string name="summary_subtitle">Touch and browse your interest list.</string>
+    <string name="more_updates_1">And </string>
+    <string name="more_updates_2"> more.</string>
+    <string name="new_update_on">New update on "</string>
 </resources>
