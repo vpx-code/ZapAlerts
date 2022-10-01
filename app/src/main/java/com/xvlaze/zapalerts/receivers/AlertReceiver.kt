@@ -8,6 +8,7 @@ import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color.CYAN
 import android.os.Bundle
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -24,19 +25,23 @@ import com.xvlaze.zapalerts.util.Constants.InterestFrequency.*
 import com.xvlaze.zapalerts.util.Extensions.toTimeStamp
 import kotlin.random.Random.Default.nextInt
 
+
 class AlertReceiver : BroadcastReceiver() {
     private val summaryID = 0
     private val groupKey = "com.xvlaze.zapalerts.ALERT_GROUP"
     private val notificationManager =
         appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     private val channelID = "channel_name"
-
     private val notificationsList = ArrayList<Notification>()
 
     init {
-        val name: CharSequence = "Zap Alerts Notification Channel"
+        val name: CharSequence = "Cyan Notification Channel"
         val importance = NotificationManager.IMPORTANCE_HIGH
-        val mChannel = NotificationChannel(channelID, name, importance)
+        val mChannel = NotificationChannel(channelID, name, importance).apply {
+            description = "Cyan's description"
+            lightColor = CYAN
+            enableLights(true)
+        }
         notificationManager.createNotificationChannel(mChannel)
 
         CloudDB.initAGConnectCloudDB(appContext.applicationContext)
@@ -228,6 +233,8 @@ class AlertReceiver : BroadcastReceiver() {
                 .setGroup(groupKey)
                 .setGroupAlertBehavior(GROUP_ALERT_SUMMARY)
                 .setDefaults(Notification.DEFAULT_SOUND)
+                .setVibrate(longArrayOf(0,500,1000))
+                .setDefaults(Notification.DEFAULT_LIGHTS )
                 .setStyle(
                     NotificationCompat.BigTextStyle()
                         .bigText("${message.replace("&#39;", "'")}.")
