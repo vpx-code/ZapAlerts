@@ -5,6 +5,8 @@ import com.xvlaze.zapalerts.model.*
 import com.xvlaze.zapalerts.util.Constants.InterestFrequency.*
 
 class Repository(private val c: Context) {
+    private val interestsManager = InterestsManager()
+
     fun doNewsSearch(
         query: String,
         language: Int,
@@ -12,7 +14,7 @@ class Repository(private val c: Context) {
         callback: OnNewsSearchPerformedCallback
     ) {
         NewsSearcher.search(
-            query,
+            query.trim(),
             language,
             country,
             c,
@@ -20,42 +22,25 @@ class Repository(private val c: Context) {
         )
     }
 
-    fun saveInterest(
-        frequency: Int,
-    ) {
-        when (frequency) {
-            DAILY.id -> {
-                Daily.updateSavedDate(c)
-                MyAlarmManager.scheduleAlarm(Daily, c)
-            }
-            WEEKLY.id -> {
-                Weekly.updateSavedDate(c)
-                MyAlarmManager.scheduleAlarm(Weekly, c)
-            }
-            REALTIME.id -> {
-                Realtime.updateSavedDate(c)
-                MyAlarmManager.scheduleAlarm(Realtime, c)
-            }
-        }
+    fun saveLocalCopy(interests: MutableList<InterestCloudObject>) = interestsManager.saveLocalCopy(interests)
 
-        MyAlarmManager.enableReceivers()
-    }
+    fun getSavedInterests(): MutableList<InterestCloudObject> = interestsManager.getFile() ?: mutableListOf()
 
-    fun overwriteInterest(
+    fun getSavedDate(
         frequency: Int
-    ) {
-        when (frequency) {
+    ): Long? {
+        return when (frequency) {
             DAILY.id -> {
-                Daily.updateSavedDate(c)
-                MyAlarmManager.scheduleAlarm(Daily, c)
+                Daily.getSavedDate()
             }
             WEEKLY.id -> {
-                Weekly.updateSavedDate(c)
-                MyAlarmManager.scheduleAlarm(Weekly, c)
+                Weekly.getSavedDate()
             }
             REALTIME.id -> {
-                Realtime.updateSavedDate(c)
-                MyAlarmManager.scheduleAlarm(Realtime, c)
+                Realtime.getSavedDate()
+            }
+            else -> {
+                null
             }
         }
     }

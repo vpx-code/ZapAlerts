@@ -5,8 +5,17 @@ import android.net.Uri
 object User {
     var openId = ""
     var unionId = ""
-    var email = ""
-    var photoUri: Uri? = null
-    var photoUriString = ""
-    var displayName = ""
+    private var email = ""
+    private var photoUri: Uri? = null
+    private var photoUriString = ""
+    private var displayName = ""
+
+    fun reset() {
+        openId = ""
+        unionId = ""
+        email = ""
+        photoUri = null
+        photoUriString = ""
+        displayName = ""
+    }
 }

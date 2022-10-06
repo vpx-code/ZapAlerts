@@ -3,6 +3,7 @@ package com.xvlaze.zapalerts.ui
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,6 +37,7 @@ class EditInterestFragment : DialogFragment() {
 
         viewModel.getInterestInfo(interestName)
         viewModel.interestToEdit.observe(this) { interest ->
+            Log.d("ZAP_TAG", "About to edit interest...")
             binding.settings.setFreqSelection(interest.frequency.toInt())
             binding.settings.setLangSelection(interest.language.toInt())
             binding.settings.setCountrySelection(interest.country.toInt())
@@ -48,7 +50,6 @@ class EditInterestFragment : DialogFragment() {
                 viewModel.editInterest(
                     interest
                 )
-
                 viewModel.isInterestSaved.observe(requireActivity()) { isSaveSuccessful ->
                     if (isSaveSuccessful) {
                         Snackbar.make(

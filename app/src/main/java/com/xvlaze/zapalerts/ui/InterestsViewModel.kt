@@ -4,20 +4,17 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.huawei.hms.searchkit.bean.NewsItem
-import com.xvlaze.zapalerts.model.IOnGetByNameSuccessCallback
-import com.xvlaze.zapalerts.model.InterestCloudObject
-import com.xvlaze.zapalerts.model.OnNewsSearchPerformedCallback
-import com.xvlaze.zapalerts.model.User
+import com.xvlaze.zapalerts.model.*
 import com.xvlaze.zapalerts.repository.CloudDBRepository
 import com.xvlaze.zapalerts.repository.Repository
 
 class InterestsViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = Repository(application.applicationContext)
-
-    private val cloudDBRepository = CloudDBRepository(application.applicationContext)
+    private val cloudDBRepository = CloudDBRepository()
 
     val searchResults = MutableLiveData<ArrayList<NewsItem>>()
     val isInterestSaved = MutableLiveData<Boolean>()
+    val isInterestUnique = MutableLiveData<Boolean>()
     val interestToEdit = MutableLiveData<InterestCloudObject>()
 
     fun doSearch(
@@ -37,8 +34,14 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
         )
     }
 
-    fun isInterestUnique(searchQuery: String): Boolean =
-        cloudDBRepository.isInterestUnique(searchQuery)
+    fun isInterestUnique(searchQuery: String) {
+        isInterestUnique.postValue(
+            cloudDBRepository.isInterestUnique(
+                searchQuery,
+                repository.getSavedInterests()
+            )
+        )
+    }
 
     fun saveInterest(
         searchQuery: String,
@@ -47,29 +50,34 @@ class InterestsViewModel(application: Application) : AndroidViewModel(applicatio
         country: Int
     ) {
         val interestToSave = InterestCloudObject()
-        interestToSave.name = searchQuery
+        interestToSave.name = searchQuery.trim()
         interestToSave.frequency = frequency.toString()
         interestToSave.country = country.toString()
         interestToSave.language = language.toString()
         interestToSave.unionId = User.unionId
 
-        isInterestSaved.postValue(
-            if (isInterestUnique(searchQuery)) {
-                cloudDBRepository.save(
-                    interestToSave
-                )
-                repository.saveInterest(frequency)
-                true
-            } else {
-                false
+        cloudDBRepository.save(
+            interestToSave,
+            object : IOnSaveInterestSuccessCallback {
+                override fun onSuccess(isCompleted: Boolean) {
+                    // Saves all interests (including the added one) to a local copy.
+                    cloudDBRepository.getAll(object : IOnGetAllSuccessCallback {
+                        override fun onSuccess(res: MutableList<InterestCloudObject>) {
+                            repository.saveLocalCopy(res)
+                            isInterestSaved.postValue(true)
+                        }
+                    })
+                }
             }
         )
     }
 
     fun editInterest(interest: InterestCloudObject) {
-        cloudDBRepository.edit(interest)
-        repository.overwriteInterest(interest.frequency.toInt())
-        isInterestSaved.postValue(true)
+        cloudDBRepository.edit(interest, object : IOnSaveInterestSuccessCallback {
+            override fun onSuccess(isCompleted: Boolean) {
+                isInterestSaved.postValue(isCompleted)
+            }
+        })
     }
 
     fun deleteInterest(interest: InterestCloudObject) {
