@@ -21,6 +21,11 @@ class InterestsManager {
         return gson.fromJson<MutableList<InterestCloudObject>>(reader, typeToken)
     }
 
+    fun deleteFile() {
+        val file = File(MyApplication.appContext.filesDir, "cache.json")
+        file.delete()
+    }
+
     fun saveLocalCopy(interests: MutableList<InterestCloudObject>) {
         val res = gson.toJson(interests)
         File(MyApplication.appContext.filesDir,"cache.json").writeText(res)
