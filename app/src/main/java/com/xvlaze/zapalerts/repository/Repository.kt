@@ -22,22 +22,6 @@ class Repository(private val c: Context) {
         )
     }
 
-    fun updateSavedDate(
-        frequency: Int
-    ) {
-        when (frequency) {
-            DAILY.id -> {
-                Daily.updateSavedDate(c)
-            }
-            WEEKLY.id -> {
-                Weekly.updateSavedDate(c)
-            }
-            REALTIME.id -> {
-                Realtime.updateSavedDate(c)
-            }
-        }
-    }
-
     fun saveLocalCopy(interests: MutableList<InterestCloudObject>) = interestsManager.saveLocalCopy(interests)
 
     fun getSavedInterests(): MutableList<InterestCloudObject> = interestsManager.getFile() ?: mutableListOf()
@@ -47,13 +31,13 @@ class Repository(private val c: Context) {
     ): Long? {
         return when (frequency) {
             DAILY.id -> {
-                Daily.getSavedDate(c)
+                Daily.getSavedDate()
             }
             WEEKLY.id -> {
-                Weekly.getSavedDate(c)
+                Weekly.getSavedDate()
             }
             REALTIME.id -> {
-                Realtime.getSavedDate(c)
+                Realtime.getSavedDate()
             }
             else -> {
                 null

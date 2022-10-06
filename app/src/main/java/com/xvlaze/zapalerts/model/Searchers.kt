@@ -5,6 +5,7 @@ import android.util.Log
 import com.huawei.hms.searchkit.SearchKitInstance
 import com.huawei.hms.searchkit.bean.CommonSearchRequest
 import com.huawei.hms.searchkit.bean.NewsItem
+import com.xvlaze.zapalerts.model.MyApplication.Companion.appContext
 import com.xvlaze.zapalerts.util.Constants
 import com.xvlaze.zapalerts.util.LanguageUtils.getLanguageFromDropdownSelection
 import com.xvlaze.zapalerts.util.LanguageUtils.getRegionFromDropdownSelection
@@ -44,6 +45,9 @@ object NewsSearcher : Searchable<OnNewsSearchPerformedCallback>() {
         commonSearchRequest.setPn(1)
         val searchKitInstance = SearchKitInstance.getInstance()
         val token = OAuthTokenProvider.getOAuthTokenFromSharedPrefs()
+
+        SearchKitInstance.init(appContext, Constants.clientId)
+        OAuthTokenProvider.requestOAuthToken()
         SearchKitInstance.instance.setInstanceCredential(token)
         val newsSearchResponse = searchKitInstance.newsSearcher.search(commonSearchRequest)
         var results = arrayListOf<NewsItem>()
@@ -60,6 +64,9 @@ object NewsSearcher : Searchable<OnNewsSearchPerformedCallback>() {
                 Log.d("ZAP_TAG", "Search response was empty.")
             }
         } else {
+            /*
+            FIXME: Vigilar con esto. Por qué a veces se rompe la app? Como lo podemos reproducir? Qué pasa con las summary?
+             */
             Log.d(
                 "ZAP_TAG",
                 "Search response was null. Weird thing! Let's pretend nothing happened..."

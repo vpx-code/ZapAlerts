@@ -1,12 +1,12 @@
 <resources>
-    <string name="app_name" translatable="false">Zap Alerts</string>
+    <string name="app_name" translatable="false">Cyan</string>
     <string name="help">Help</string>
     <string name="log_out">Sign out</string>
     <string name="add_alert">Add Alert</string>
     <string-array name="freqs">
-        <item>Everyday, at most</item>
-        <item>Every week, at most</item>
-        <item>Realtime (BETA)</item>
+        <item>Everyday</item>
+        <item>Every week</item>
+        <item>Realtime</item>
     </string-array>
     <string-array name="types">
         <item>Webpage</item>
@@ -75,9 +75,15 @@
     <string name="logout_sure">Do you want to sign out?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="settings_prompt">To always be up to date, please enable App Launch and disable Battery optimisation in Settings.\n\nOnce you touch the button, type in the search bar \"App launch\" and make sure Zap Alerts is UNCHECKED (managed manually).\n\nGo back to the settings main page and type \"Battery optimisation\", select All apps in the dropdown, find Zap Alerts and make sure its state is NOT ALLOWED.</string>
+    <string name="settings_prompt">To always be up to date, please enable App Launch and disable Battery optimisation in Settings.\n\nOnce you touch the button, type in the search bar \"App launch\" and make sure Cyan is UNCHECKED (managed manually).\n\nGo back to the settings main page and type \"Battery optimisation\", select All apps in the dropdown, find Zap Alerts and make sure its state is NOT ALLOWED.</string>
     <string name="settings">Settings</string>
     <string name="later">Later</string>
     <string name="come_back">You can always come back to this menu by pressing the 3-dots icon.</string>
     <string name="empty_message">No saved interests yet. Touch the bell button and add some!</string>
+    <string name="summary_title">New updates on your Interests!</string>
+    <string name="summary_subtitle">Touch and browse your interest list.</string>
+    <string name="more_updates_1">And </string>
+    <string name="more_updates_2"> more.</string>
+    <string name="new_update_on">New update on "</string>
+    <string name="welcome_to">Welcome to</string>
 </resources>
