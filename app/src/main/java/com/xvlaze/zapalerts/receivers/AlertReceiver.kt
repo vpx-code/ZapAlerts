@@ -1,18 +1,19 @@
 package com.xvlaze.zapalerts.receivers
 
 import android.app.Notification
-import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Context.POWER_SERVICE
 import android.content.Intent
-import android.graphics.Color.CYAN
+import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Bundle
+import android.os.PowerManager
 import android.util.Log
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationCompat.GROUP_ALERT_SUMMARY
+import androidx.core.app.NotificationManagerCompat
 import com.huawei.hms.searchkit.bean.NewsItem
 import com.xvlaze.zapalerts.BuildConfig
 import com.xvlaze.zapalerts.R
@@ -31,19 +32,10 @@ class AlertReceiver : BroadcastReceiver() {
     private val groupKey = "com.xvlaze.zapalerts.ALERT_GROUP"
     private val notificationManager =
         appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-    private val channelID = "channel_name"
+    private val channelID = "cyan"
     private val notificationsList = ArrayList<Notification>()
 
     init {
-        val name: CharSequence = "Cyan Notification Channel"
-        val importance = NotificationManager.IMPORTANCE_HIGH
-        val mChannel = NotificationChannel(channelID, name, importance).apply {
-            description = "Cyan's description"
-            lightColor = CYAN
-            enableLights(true)
-        }
-        notificationManager.createNotificationChannel(mChannel)
-
         CloudDB.initAGConnectCloudDB(appContext.applicationContext)
         MyApplication.cloudDB = CloudDB(appContext.applicationContext)
         MyApplication.cloudDB.createObjectType()
@@ -94,9 +86,13 @@ class AlertReceiver : BroadcastReceiver() {
 
             var i = 1
             for (not in notificationsList) {
-                notificationManager.notify(i, not)
+                with(NotificationManagerCompat.from(appContext)) {
+                    notify(i, not)
+                }
                 i++
             }
+            playRingtone()
+            performWakeLock()
             //notifySummaryNotification(c)
         } else {
             val cloudDBRepository = CloudDBRepository()
@@ -109,9 +105,12 @@ class AlertReceiver : BroadcastReceiver() {
                             ?: mutableListOf() // If this is null, we are in big trouble.
                     }
 
-                    Log.d("ZAP_TAG", "Number of interests to process: ${interestList.filter { it.frequency.toInt() == alarmFrequency}}")
+                    Log.d(
+                        "ZAP_TAG",
+                        "Number of interests to process: ${interestList.filter { it.frequency.toInt() == alarmFrequency }}"
+                    )
 
-                    for (interest in interestList.filter { it.frequency.toInt() == alarmFrequency}) {
+                    for (interest in interestList.filter { it.frequency.toInt() == alarmFrequency }) {
                         Log.d("ZAP_TAG", "Processing interest ${interest.name}")
                         NewsSearcher.search(
                             interest.name,
@@ -155,9 +154,11 @@ class AlertReceiver : BroadcastReceiver() {
 
                     if (notificationsList.isNotEmpty()) {
                         notificationsList.forEach { not ->
-                            notificationManager.notify(nextInt(), not)
+                            MyApplication.notificationManager.notify(nextInt(), not)
                         }
                         // notifySummaryNotification(c)
+                        playRingtone()
+                        performWakeLock()
                         notificationsList.clear()
                     }
 
@@ -180,10 +181,38 @@ class AlertReceiver : BroadcastReceiver() {
         }
     }
 
+    private fun performWakeLock() {
+        val screenLock = (appContext.getSystemService(POWER_SERVICE) as PowerManager).newWakeLock(
+            PowerManager.FULL_WAKE_LOCK or
+                    PowerManager.ACQUIRE_CAUSES_WAKEUP or
+                    PowerManager.ON_AFTER_RELEASE, "CYAN:Tag"
+        )
+        screenLock.acquire(3000)
+
+        val screenLock2 = (appContext.getSystemService(POWER_SERVICE) as PowerManager).newWakeLock(
+            PowerManager.PARTIAL_WAKE_LOCK, "CYAN:Tag2"
+        )
+
+        screenLock2.acquire(3000)
+    }
+
+    private fun playRingtone() {
+        try {
+            val notification: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+            val r = RingtoneManager.getRingtone(
+                appContext,
+                notification
+            )
+            r.play()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
     // TODO: Lo vamos a dejar porque no entiendo lo de que de repente se muestre esta notificación sola y no todos los intereses se actualizan a la vez.
     private fun notifySummaryNotification(context: Context) {
         Log.d("ZAP_TAG", "Notifying summary...")
-        val summaryNotification = NotificationCompat.Builder(context, channelID)
+        val summaryNotification = Notification.Builder(context, channelID)
             .setContentTitle(context.getString(R.string.summary_title))
             .setContentText(context.getString(R.string.summary_subtitle))
             .setSmallIcon(R.mipmap.ic_launcher_round)
@@ -221,22 +250,23 @@ class AlertReceiver : BroadcastReceiver() {
         val notificationDescription = if (updatesStringNumber == 0) {
             context.getString(R.string.summary_subtitle)
         } else {
-            context.getString(R.string.more_updates_1) + " " + updatesStringNumber + context.getString(R.string.more_updates_2)
+            context.getString(R.string.more_updates_1) + " " + updatesStringNumber + context.getString(
+                R.string.more_updates_2
+            )
         }
 
         val alertNotification: Notification =
-            NotificationCompat.Builder(context, channelID)
+            Notification.Builder(appContext, channelID)
                 .setSmallIcon(R.mipmap.ic_launcher_round)
                 .setContentTitle(context.getString(R.string.new_update_on) + interestName + "!")
                 .setContentText(notificationDescription)
                 .setAutoCancel(true)
                 .setGroup(groupKey)
-                .setGroupAlertBehavior(GROUP_ALERT_SUMMARY)
-                .setDefaults(Notification.DEFAULT_SOUND)
-                .setVibrate(longArrayOf(0,500,1000))
-                .setDefaults(Notification.DEFAULT_LIGHTS )
+                .setGroupAlertBehavior(
+                    Notification.GROUP_ALERT_SUMMARY
+                )
                 .setStyle(
-                    NotificationCompat.BigTextStyle()
+                    Notification.BigTextStyle()
                         .bigText("${message.replace("&#39;", "'")}.")
                 )
                 .setContentIntent(pendingIntent)
