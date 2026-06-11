@@ -9,16 +9,16 @@ plugins {
 android {
     signingConfigs {
         debug {
-            storeFile file('/Users/neochemical/Android/Keys/zapalerts.jks')
-            storePassword '12345678'
-            keyAlias 'zapalerts'
-            keyPassword '12345678'
+            storeFile file(System.getenv("KEYSTORE_PATH") ?: 'zapalerts.jks')
+            storePassword System.getenv("KEYSTORE_PASSWORD") ?: ''
+            keyAlias System.getenv("KEY_ALIAS") ?: 'zapalerts'
+            keyPassword System.getenv("KEY_PASSWORD") ?: ''
         }
         release {
-            storeFile file('/Users/neochemical/Android/Keys/zapalerts.jks')
-            storePassword '12345678'
-            keyAlias 'zapalerts'
-            keyPassword '12345678'
+            storeFile file(System.getenv("KEYSTORE_PATH") ?: 'zapalerts.jks')
+            storePassword System.getenv("KEYSTORE_PASSWORD") ?: ''
+            keyAlias System.getenv("KEY_ALIAS") ?: 'zapalerts'
+            keyPassword System.getenv("KEY_PASSWORD") ?: ''
         }
     }
     compileSdk 32
