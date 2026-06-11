@@ -3,7 +3,7 @@ package com.xvlaze.zapalerts.util
 object Constants {
     const val DEBUG = false
     const val clientId = "106008821"
-    const val clientSecret = "REDACTED_CLIENT_SECRET"
+    const val clientSecret = "" // Set via environment or secure config
     private const val baseUrl = "https://oauth-login.cloud.huawei.com/"
     private const val subdomains = "oauth2/v3/token"
     const val fullUrl = "$baseUrl$subdomains"

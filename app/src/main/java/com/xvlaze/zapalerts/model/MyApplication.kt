@@ -16,7 +16,7 @@ class MyApplication : Application() {
         appContext = applicationContext
 
         NewRelic.withApplicationToken(
-            "REDACTED_NEWRELIC_TOKEN"
+            "" // Set via environment or secure config
         ).start(appContext);
 
         SearchKitInstance.init(this, clientId)

@@ -1,0 +1,5 @@
+This was my submission to the AppsUP 2022 competition, created in record time and conceived exclusively for the contest.
+
+Take Google Alerts, use [Huawei's Search Kit](https://developer.huawei.com/consumer/en/doc/HMSCore-Guides/introduction-0000001055591730) to fetch news, authenticate users with [Huawei Account Kit](https://developer.huawei.com/consumer/en/hms/huawei-accountkit/) and save their preferences in [Huawei Cloud's Object Storage Service](https://www.huaweicloud.com/intl/en-us/product/obs.html). What you get is CYAN, an app that notifies users whenever new content appears online about the topics that interest them most.
+
+This was a cool concept to explore, not only because Google Alerts doesn't have a dedicated app, but also because it has received [mixed opinions](https://news.ycombinator.com/item?id=38872382) over time, leaving plenty of room for improvement. It also gave me a chance to dive deeper into more advanced topics such as user authentication and cloud object storage, effectively making it my first Internet-connected app.
