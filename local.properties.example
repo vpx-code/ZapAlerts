@@ -1,0 +1,11 @@
+# Copy this file to local.properties and fill in your values.
+# local.properties is gitignored and should never be committed.
+
+# Android SDK path (required)
+sdk.dir=/path/to/Android/sdk
+
+# Keystore signing config (optional — only needed to build signed APKs)
+keystore.path=/path/to/zapalerts.jks
+keystore.password=
+key.alias=zapalerts
+key.password=
